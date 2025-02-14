@@ -1,0 +1,67 @@
+@import "/fonts/fonts.css";
+@import "/fonts/font-icons.css";
+@import "/css/bootstrap.min.css";
+@import "/css/swiper-bundle.min.css";
+@import "/css/animate.css";
+@import "./app.scss";
+@import "./rtl.scss";
+@import "./custom.scss";
+// @import "photoswipe/dist/photoswipe.css";
+// @import "rc-slider/assets/index.css";
+.border-none-b {
+  border: none !important;
+  width: 100%;
+  background: transparent !important;
+}
+
+.rotate-180 {
+  transition: all ease 300ms;
+  transform: rotate(180deg);
+}
+
+.pp-list {
+  list-style-type: disc;
+  margin-left: 20px;
+  color: #666;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+.pp-list li {
+  list-style-type: disc;
+}
+
+.form-checkout .fieldset input,
+.tf-select,
+#orderNotes {
+  border: 1px solid rgba(0, 0, 0, 0.4); /* Black with 60% opacity */
+}
+
+.form-checkout .fieldset input:focus,
+.tf-select:focus,
+#orderNotes:focus {
+  border: 1px solid rgba(0, 0, 0, 0.9); /* Black with 80% opacity */
+  outline: none; /* Removes default browser outline */
+}
+
+@media (max-width: 768px) {
+  .my-account-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    overflow-x: auto;
+  }
+
+  .my-account-nav-item {
+    align-items: center;
+    height: 100%;
+  }
+
+  .my-account-nav .my-account-nav-item {
+    white-space: nowrap;
+  }
+}
+
+.tf-field-input .tf-input{
+  color: #363636;
+}

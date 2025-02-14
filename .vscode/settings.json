@@ -1,0 +1,8 @@
+{
+  "editor.codeActionsOnSave": {},
+  "files.autoSave": "afterDelay",
+  "editor.cursorStyle": "line-thin",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "files.autoSaveDelay": 6000,
+  "editor.formatOnSave": true
+}
