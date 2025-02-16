@@ -80,7 +80,8 @@ export default function page() {
                     methods.
                   </li>
                   <li>
-                    We also offer Cash on Delivery (COD) for eligible orders.
+                  We also offer Cash on Delivery (COD) for eligible orders. However, COD is not available for kids' bags.
+                  All prices are listed in Indian Rupees (INR) and are inclusive of applicable taxes.
                   </li>
                   <li>
                     All prices are listed in Indian Rupees (INR) and are

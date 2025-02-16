@@ -25,7 +25,7 @@ export default function Home() {
       {/* <Topbar2 /> */}
       <Header4 />
       <Hero />
-      <Marquee />
+      {/* <Marquee /> */}
       {/* <Categories /> */}
       <Products />
   

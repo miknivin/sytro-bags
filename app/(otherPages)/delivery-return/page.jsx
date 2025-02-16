@@ -62,10 +62,10 @@ export default function page() {
                     <b>Email: </b>sytrobags@gmail.com
                   </li>
                   <li>
-                    <b>Phone: </b>1444444552
+                    <b>Phone: </b>+91 72933 33483
                   </li>
                   <li>
-                    <b>WhatsApp: </b>1444444552
+                    <b>WhatsApp: </b>+91 72933 33483
                   </li>
                 </ul>
                 <p>Provide the following details:</p>
@@ -107,9 +107,7 @@ export default function page() {
               <div className="box">
                 <h4>5. Non-Returnable Items</h4>
                 <p>
-                  Currently, all products sold by Sytro are eligible for
-                  returns, provided they meet the return conditions outlined
-                  above
+                Currently, all products sold by Sytro are eligible for returns, provided they meet the return conditions outlined above. However, kids' bags are non-refundable and non-returnable.
                 </p>
               </div>
               <div className="box">
