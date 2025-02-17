@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -16,10 +16,18 @@ import {
   productsPages,
 } from "@/data/menu";
 import { usePathname } from "next/navigation";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
+import { useGetProductsQuery } from "@/redux/api/productsApi";
+
 export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
   const pathname = usePathname();
+  const [page, setPage] = useState(1);
   const products = useSelector((state) => state.product.items);
+  const { data, error, isLoading, isFetching } = useGetProductsQuery(1, {
+    skip: products.length > 0,
+  });
+  const finalProducts =
+    products.length > 0 ? products : data?.filteredProducts || [];
   const isMenuActive = (menuItem) => {
     let active = false;
     if (menuItem.href?.includes("/")) {
@@ -278,12 +286,15 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
                     spaceBetween={30}
                     className="swiper tf-product-header wrap-sw-over row"
                   >
-                    {[...products]
+                    {[...finalProducts]
                       .slice(0, 4)
 
                       .map((elm, i) => (
-                        <div >
-                          <SwiperSlide key={i} className="swiper-slide col-lg-4">
+                        <div>
+                          <SwiperSlide
+                            key={i}
+                            className="swiper-slide col-lg-4"
+                          >
                             <ProductCard product={elm} />
                           </SwiperSlide>
                         </div>

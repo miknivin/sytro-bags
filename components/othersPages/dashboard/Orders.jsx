@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import React from "react";
 import Link from "next/link";
 import { useMyOrdersQuery } from "@/redux/api/orderApi"; // Adjust the import path based on your project structure
 
 export default function Orders() {
-  const { data , isLoading, isError } = useMyOrdersQuery();
+  const { data, isLoading, isError, error } = useMyOrdersQuery();
   const orders = Array.isArray(data?.orders) ? data.orders : [];
   // Log orders data when available
 
@@ -14,7 +14,12 @@ export default function Orders() {
 
   if (isError) {
     console.error("Error fetching orders");
-    return <p>Error loading orders. Please try again later.</p>;
+    console.log(error);
+    return (
+      <p className="fs-3 text-danger text-center">
+        {error.data.message || "Error loading orders"}
+      </p>
+    );
   }
 
   return (
@@ -38,7 +43,7 @@ export default function Orders() {
                   <td>{new Date(order?.createdAt).toLocaleDateString()}</td>
                   <td>{order?.orderStatus}</td>
                   <td>
-                  ₹{order?.totalAmount} for {order?.orderItems.length} items
+                    ₹{order?.totalAmount} for {order?.orderItems.length} items
                   </td>
                   <td>
                     <Link

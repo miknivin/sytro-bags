@@ -62,7 +62,7 @@ export const orderApi = createApi({
           body,
         };
       },
-      invalidatesTags:["Coupons"]
+      invalidatesTags: ["Coupons"],
     }),
     getCoupons: builder.query({
       query: () => "/admin/coupons",
@@ -95,7 +95,7 @@ export const orderApi = createApi({
           body,
         };
       },
-      invalidatesTags:["Coupons"]
+      invalidatesTags: ["Coupons"],
     }),
     applyCoupon: builder.mutation({
       query(body) {
@@ -105,7 +105,7 @@ export const orderApi = createApi({
           body,
         };
       },
-      invalidatesTags:["Coupons"]
+      invalidatesTags: ["Coupons"],
     }),
   }),
 });
@@ -123,5 +123,5 @@ export const {
   useUpdateCouponMutation,
   useDeleteCouponMutation,
   useCheckCouponMutation,
-  useApplyCouponMutation
+  useApplyCouponMutation,
 } = orderApi;
