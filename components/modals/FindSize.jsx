@@ -1,98 +1,65 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+
 export default function FindSize() {
+  const productById = useSelector((state) => state.product.productById);
+  const [choiceImages, setChoiceImages] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const handleClick = (index) => {
+    setActiveIndex(index);
+  };
+  useEffect(() => {
+    console.log("Product By ID:", productById);
+    if (productById && productById._id === "67a70ca93f464380b64b05a6") {
+      setChoiceImages(productById?.choiceImages || []);
+      console.log("Choice Images:", productById?.choiceImages);
+    }
+  }, [productById]);
+
   return (
-    <div className="modal fade modalDemo tf-product-modal" id="find_size">
+    <div
+      className="modal fade modalDemo customize tf-product-modal"
+      id="custom_bag"
+    >
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
+        <div className="modal-content" style={{ overflowY: "auto" }}>
           <div className="header">
-            <div className="demo-title">Size chart</div>
+            <div className="demo-title">Choose from existing designs</div>
             <span
               className="icon-close icon-close-popup"
               data-bs-dismiss="modal"
             />
           </div>
           <div className="tf-rte">
-            <div className="tf-table-res-df">
-              <h6>Size guide</h6>
-              <table className="tf-sizeguide-table">
-                <thead>
-                  <tr>
-                    <th>Size</th>
-                    <th>US</th>
-                    <th>Bust</th>
-                    <th>Waist</th>
-                    <th>Low Hip</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>XS</td>
-                    <td>2</td>
-                    <td>32</td>
-                    <td>24 - 25</td>
-                    <td>33 - 34</td>
-                  </tr>
-                  <tr>
-                    <td>S</td>
-                    <td>4</td>
-                    <td>34 - 35</td>
-                    <td>26 - 27</td>
-                    <td>35 - 26</td>
-                  </tr>
-                  <tr>
-                    <td>M</td>
-                    <td>6</td>
-                    <td>36 - 37</td>
-                    <td>28 - 29</td>
-                    <td>38 - 40</td>
-                  </tr>
-                  <tr>
-                    <td>L</td>
-                    <td>8</td>
-                    <td>38 - 29</td>
-                    <td>30 - 31</td>
-                    <td>42 - 44</td>
-                  </tr>
-                  <tr>
-                    <td>XL</td>
-                    <td>10</td>
-                    <td>40 - 41</td>
-                    <td>32 - 33</td>
-                    <td>45 - 47</td>
-                  </tr>
-                  <tr>
-                    <td>XXL</td>
-                    <td>12</td>
-                    <td>42 - 43</td>
-                    <td>34 - 35</td>
-                    <td>48 - 50</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="tf-page-size-chart-content">
-              <div>
-                <h6>Measuring Tips</h6>
-                <div className="title">Bust</div>
-                <p>Measure around the fullest part of your bust.</p>
-                <div className="title">Waist</div>
-                <p>Measure around the narrowest part of your torso.</p>
-                <div className="title">Low Hip</div>
-                <p className="mb-0">
-                  With your feet together measure around the fullest part of
-                  your hips/rear.
-                </p>
-              </div>
-              <div>
-                <Image
-                  className="sizechart lazyload"
-                  data-src="/images/shop/products/size_chart2.jpg"
-                  alt="image"
-                  src="/images/shop/products/size_chart2.jpg"
-                  width={290}
-                  height={290}
-                />
+            {/* Bootstrap Grid to Display Images */}
+            <div className="mt-3">
+              <div className="row" style={{ overflowY: "auto" }}>
+                {choiceImages &&
+                  choiceImages.map((image, index) => (
+                    <div key={index} className="col-6 col-md-4 mb-3">
+                      <div
+                        className={`image-container rounded p-2`}
+                        style={
+                          activeIndex === index
+                            ? { border: "2px solid #fec007" }
+                            : {}
+                        }
+                        onClick={() => handleClick(index)}
+                      >
+                        <Image
+                          loading="lazy"
+                          src={image}
+                          alt={`Custom Bag ${index + 1}`}
+                          width={150}
+                          height={150}
+                          className="img-fluid rounded"
+                        />
+                      </div>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

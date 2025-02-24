@@ -18,3 +18,8 @@
     transition: all ease 300ms; 
     transform: rotate(180deg);
 }
+
+.image-container .border .rounded .p-2 .active {
+    border: 3px solid #fec007;
+  }
+  

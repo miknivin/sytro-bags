@@ -9,16 +9,16 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
 
-    const resPerPage = parseInt(searchParams.get('resPerPage')) || 4;
+    const resPerPage = parseInt(searchParams.get('resPerPage')) || 10;
     const queryParams = Object.fromEntries(searchParams.entries());
 
     const apiFilters = new APIFilters(products, queryParams).search().filter();
 
-    let filteredProducts = await apiFilters.query;
+    let filteredProducts = await apiFilters.query.select('-choiceImages');
     const filteredProductsCount = filteredProducts.length;
 
     apiFilters.pagination(resPerPage);
-    filteredProducts = await apiFilters.query.clone();
+    filteredProducts = await apiFilters.query.clone().select('-choiceImages');
 
     return NextResponse.json(
       {
@@ -39,4 +39,5 @@ export async function GET(req) {
     );
   }
 }
+
 

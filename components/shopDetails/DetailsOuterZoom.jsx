@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import CountdownComponent from "../common/Countdown";
@@ -20,8 +20,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setCartItem } from "@/redux/features/cartSlice.js";
 import toast from "react-hot-toast";
+import { setProductById } from "@/redux/features/productSlice";
 
 export default function DetailsOuterZoom({ product }) {
+  const kidsBagId = "67a70ca93f464380b64b05a6"
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [quantity, setQuantity] = useState(1);
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -55,6 +57,11 @@ export default function DetailsOuterZoom({ product }) {
     dispatch(setCartItem(cartItem));
     toast.success("Item added to Cart");
   };
+  useEffect(() => {
+    if (product) {
+      dispatch(setProductById(product));
+    }
+  }, [product, dispatch]);
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -86,7 +93,7 @@ export default function DetailsOuterZoom({ product }) {
                   </div>
                   <div className="tf-product-info-price">
                     <div className="price-on-sale">
-                      ${product.offer.toFixed(2)}
+                    ₹{product.offer.toFixed(2)}
                     </div>
                     <div className="badges-on-sale">
                       <span>
@@ -98,25 +105,31 @@ export default function DetailsOuterZoom({ product }) {
                   </div>
                   <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item"></div>
-                    <div className="variant-picker-item">
-                      {/* kids bag only */}
-                      {/* <div style={{gap:'15px'}} className="d-flex justify-content-between align-items-center ">
-                        <a
-                          href="#find_size"
-                          data-bs-toggle="modal"
-                          className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
-                        >
-                          Customize bag
-                        </a>
-                        <a
-                          href="#find_size"
-                          data-bs-toggle="modal"
-                          className="find-size fw-6"
-                        >
-                          Choose from existing bags
-                        </a>
-                      </div> */}
-                    </div>
+                    {product._id===kidsBagId&&(
+                       <div className="variant-picker-item mb-3">
+                       {/* kids bag only */}
+                       <div style={{gap:'15px'}} className="d-flex justify-content-between align-items-center ">
+                      
+                         <a
+                         href="#custom_bag"
+                         data-bs-toggle="modal"
+                         className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
+                       >
+                         Customize bag
+                       </a>
+                     
+                         
+                         {/* <a
+                           href="#find_size"
+                           data-bs-toggle="modal"
+                           className="find-size fw-6"
+                         >
+                           Choose from existing bags
+                         </a> */}
+                       </div>
+                     </div>
+                    )}
+                   
                   </div>
                   <div className="tf-product-info-quantity">
                     <div className="quantity-title fw-6">Quantity</div>

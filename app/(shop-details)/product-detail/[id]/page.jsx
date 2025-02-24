@@ -37,7 +37,7 @@ export default function Page({ params }) {
               <i className="icon icon-arrow-right" />
               <span className="text">{product?.title || "Product Details"}</span>
             </div>
-            <ProductSinglePrevNext currentId={product?.id} />
+            {/* <ProductSinglePrevNext currentId={product?.id} /> */}
           </div>
         </div>
       </div>

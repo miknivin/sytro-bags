@@ -5,6 +5,7 @@ const productsSlice = createSlice({
   initialState: {
     items: [], 
     singleProduct: null,
+    productById: {}, // Added productById state
   },
   reducers: {
     setProducts: (state, action) => {
@@ -19,8 +20,22 @@ const productsSlice = createSlice({
     resetSingleProduct: (state) => {
       state.singleProduct = null; 
     },
+    setProductById: (state, action) => {
+      state.productById = action.payload; // Sets product by ID
+    },
+    resetProductById: (state) => {
+      state.productById = {}; // Resets product by ID
+    },
   },
 });
 
-export const { setProducts, resetProducts, setSingleProductForQuickAdd, resetSingleProduct } = productsSlice.actions;
+export const { 
+  setProducts, 
+  resetProducts, 
+  setSingleProductForQuickAdd, 
+  resetSingleProduct, 
+  setProductById, 
+  resetProductById 
+} = productsSlice.actions;
+
 export default productsSlice.reducer;
