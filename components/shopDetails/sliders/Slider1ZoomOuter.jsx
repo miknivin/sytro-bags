@@ -11,8 +11,6 @@ export default function Slider1ZoomOuter({
   handleColor = () => {},
   firstImage,
 }) {
-
-
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const swiperRef = useRef(null);
   // useEffect(() => {
@@ -125,14 +123,10 @@ export default function Slider1ZoomOuter({
         >
           {firstImage.map((slide, index) => (
             <SwiperSlide key={index}>
-              <Item
-                original={slide.src}
-                thumbnail={slide.src}
-              >
+              <Item original={slide.url} thumbnail={slide.url}>
                 {({ ref, open }) => (
                   <a
                     className="item"
-                  
                     data-pswp-width={slide.width}
                     data-pswp-height={slide.height}
                     onClick={open}
@@ -145,8 +139,8 @@ export default function Slider1ZoomOuter({
                       alt="image"
                       width={250}
                       height={320}
-                      style={{ objectFit: "cover", }} 
-                      src={slide.url} 
+                      style={{ objectFit: "cover" }}
+                      src={slide.url}
                     />
                   </a>
                 )}

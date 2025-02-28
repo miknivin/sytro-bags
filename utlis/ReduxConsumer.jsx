@@ -8,7 +8,7 @@ import AskQuestion from "@/components/modals/AskQuestion";
 import BlogSidebar from "@/components/modals/BlogSidebar";
 import ColorCompare from "@/components/modals/ColorCompare";
 import DeliveryReturn from "@/components/modals/DeliveryReturn";
-import FindSize from "@/components/modals/FindSize";
+import ChoiceImages from "@/components/modals/ChoiceImages";
 import Login from "@/components/modals/Login";
 import MobileMenu from "@/components/modals/MobileMenu";
 import Register from "@/components/modals/Register";
@@ -44,7 +44,7 @@ export function ReduxConsumer({ children }) {
       <AskQuestion />
       {/* <BlogSidebar /> */}
       <DeliveryReturn />
-      <FindSize />
+      <ChoiceImages />
       {!isAuthenticated && (
         <>
           <Login />
