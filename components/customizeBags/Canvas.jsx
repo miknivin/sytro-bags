@@ -120,7 +120,7 @@ export default function Canvas({ modalRef }) {
                 <DraggableImage
                   key={index}
                   width={wrapperRef.current.clientWidth}
-                  height={wrapperRef.current.clientHeight + 80 || 700}
+                  height={600}
                   uploadedImage={imageUrl}
                   hideIcons={hideIcons}
                 />
@@ -128,7 +128,6 @@ export default function Canvas({ modalRef }) {
           </div>
         </div>
       ) : (
-        /* Show Upload Box */
         <div className="d-flex justify-content-center align-items-center">
           <DesignUpload onFileUpload={setIsFileUploaded} />
         </div>
