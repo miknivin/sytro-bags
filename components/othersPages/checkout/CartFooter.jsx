@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Rupee from "@/utlis/Rupeesvg";
 import { useSelector } from "react-redux";
 
-const CartFooter = ({ 
-  cartItems, 
-  subtotal, 
-  formData, 
-  email, 
+const CartFooter = ({
+  cartItems,
+  subtotal,
+  formData,
+  email,
   handleSubmit,
-  isLoading 
+  isLoading,
 }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [paymentMethod, setPaymentMethod] = useState("COD");
 
-  // Check if form is valid
   const isFormValid = () => {
     return (
       formData.firstName &&
@@ -29,11 +29,47 @@ const CartFooter = ({
     );
   };
 
+  const handleRazorpayPayment = async () => {
+    if (!isFormValid() || !cartItems.length) return;
+
+    const options = {
+      key: "YOUR_RAZORPAY_KEY_ID",
+      amount: subtotal * 100,
+      currency: "INR",
+      name: "Sytro",
+      description: "Order Payment",
+      image: "/your-logo.png",
+      handler: function (response) {
+        console.log("Payment successful", response);
+        handleSubmit();
+      },
+      prefill: {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: email,
+        contact: formData.phoneNo,
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const razor = new window.Razorpay(options);
+    razor.open();
+  };
+
   return (
     <div className="tf-page-cart-footer">
       <div className="tf-cart-footer-inner">
         <h5 className="fw-5 mb_20">Your order</h5>
-        <form onSubmit={handleSubmit} className="tf-page-cart-checkout widget-wrap-checkout">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            paymentMethod === "BANK"
+              ? handleRazorpayPayment()
+              : handleSubmit();
+          }}
+          className="tf-page-cart-checkout widget-wrap-checkout"
+        >
           <ul className="wrap-checkout-product">
             {cartItems.map((elm, i) => (
               <li key={i} className="checkout-product-item">
@@ -51,10 +87,7 @@ const CartFooter = ({
                   <div className="info">
                     <p className="name">{elm.name}</p>
                   </div>
-                  <span
-                    className="price"
-                    style={{ display: "inline-flex", alignItems: "center" }}
-                  >
+                  <span className="price">
                     <Rupee width={"8px"} />
                     {(elm.price * elm.quantity).toFixed(2)}
                   </span>
@@ -91,10 +124,7 @@ const CartFooter = ({
 
           <div className="d-flex justify-content-between line pb_20">
             <h6 className="fw-5">Total</h6>
-            <h6
-              className="total fw-5"
-              style={{ display: "inline-flex", alignItems: "center" }}
-            >
+            <h6 className="total fw-5">
               <Rupee width="8px" />
               {subtotal}
             </h6>
@@ -107,11 +137,11 @@ const CartFooter = ({
                 name="paymentMethod"
                 id="bank"
                 value="BANK"
-                disabled
                 className="tf-check"
-                onChange={(e) => formData.paymentMethod = e.target.value}
+                checked={paymentMethod === "BANK"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <label htmlFor="bank">Direct bank transfer</label>
+              <label htmlFor="bank">Online transfer</label>
             </div>
             <div className="fieldset-radio mb_20">
               <input
@@ -121,28 +151,32 @@ const CartFooter = ({
                 id="delivery"
                 value="COD"
                 className="tf-check"
-                defaultChecked
-                onChange={(e) => formData.paymentMethod = e.target.value}
+                checked={paymentMethod === "COD"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <label htmlFor="delivery">Cash on delivery</label>
             </div>
           </div>
 
           {!isAuthenticated ? (
-            <a 
-              href="#login" 
-              data-bs-toggle="modal" 
+            <a
+              href="#login"
+              data-bs-toggle="modal"
               className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
             >
               Place order
             </a>
           ) : (
-            <button 
+            <button
               type="submit"
               disabled={isLoading || !isFormValid() || !cartItems.length}
               className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
             >
-              {isLoading ? "Processing..." : "Place order"}
+              {isLoading
+                ? "Processing..."
+                : paymentMethod === "BANK"
+                ? "Go to payment"
+                : "Place order"}
             </button>
           )}
         </form>

@@ -68,8 +68,6 @@ const DraggableImage = ({ width, height, uploadedImage,hideIcons  }) => {
   };
   
   
-
-  // Handle drag end
   const handleDragEnd = () => {
     setIsDragging(false);
   };

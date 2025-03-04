@@ -36,14 +36,14 @@ export const ProductCard = ({ product }) => {
           <Image
             className="lazyload img-hover"
             data-src={
-              product.images[1].url
-                ? product.images[1].url
+              product.images[1]?.url
+                ? product.images[1]?.url
                 : product.images[0].url
             }
             src={
-              product.images[1].url
-                ? product.images[1].url
-                : product.images[0].url
+              product.images[1]?.url
+                ? product.images[1]?.url
+                : product.images[0]?.url
             }
             alt="image-product"
             width={720}

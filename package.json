@@ -32,6 +32,7 @@
     "next": "14.2.7",
     "nodemailer": "^6.9.16",
     "photoswipe": "^5.4.4",
+    "razorpay": "^2.9.6",
     "rc-slider": "^11.1.7",
     "react": "^18",
     "react-compare-slider": "^3.1.0",

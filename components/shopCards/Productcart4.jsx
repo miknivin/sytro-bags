@@ -33,8 +33,8 @@ export default function Productcard4({ product }) {
           />
           <Image
             className="lazyload img-hover"
-            data-src={product.images[1].url}
-            src={product.images[1].url}
+            data-src={product.images[1]?.url}
+            src={product.images[1]?.url}
             alt="image-product"
             width="720"
             height="1005"

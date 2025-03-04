@@ -75,7 +75,7 @@ export default function Checkout() {
         text: "Thank you for your purchase. Your order has been placed.",
         confirmButtonText: "OK",
       }).then(() => {
-        router.push("/my-account-orders"); // Navigate to orders page
+        router.push("/my-account-orders");
       });
     } catch (err) {
       Swal.fire({
