@@ -20,7 +20,7 @@ export default function Productcard4({ product }) {
   }, [product]);
 
   return (
-    <div className="card-product style-4 fl-item" key={product._id}>
+    <div className="card-product style-4 fl-item p-2 border" key={product._id}>
       <div className="card-product-wrapper">
         <Link href={`/product-detail/${product._id}`} className="product-img">
           <Image
@@ -94,14 +94,14 @@ export default function Productcard4({ product }) {
             ))}
           </div>
         )}
-        <a
+        {/* <a
           href="#quick_add"
           onClick={() => setQuickAddItem(product._id)}
           data-bs-toggle="modal"
           className="btn-quick-add quick-add"
         >
           Add to cart
-        </a>
+        </a> */}
 
         {/* {product.discount && (
           <div className="on-sale-wrap text-end">

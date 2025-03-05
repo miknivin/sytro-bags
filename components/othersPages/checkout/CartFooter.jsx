@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Rupee from "@/utlis/Rupeesvg";
@@ -33,7 +33,7 @@ const CartFooter = ({
     if (!isFormValid() || !cartItems.length) return;
 
     const options = {
-      key: "YOUR_RAZORPAY_KEY_ID",
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
       amount: subtotal * 100,
       currency: "INR",
       name: "Sytro",
@@ -41,7 +41,7 @@ const CartFooter = ({
       image: "/your-logo.png",
       handler: function (response) {
         console.log("Payment successful", response);
-        handleSubmit();
+        handleSubmit(null,"Online");
       },
       prefill: {
         name: `${formData.firstName} ${formData.lastName}`,
@@ -57,6 +57,17 @@ const CartFooter = ({
     razor.open();
   };
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    console.log(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="tf-page-cart-footer">
       <div className="tf-cart-footer-inner">
@@ -64,9 +75,9 @@ const CartFooter = ({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            paymentMethod === "BANK"
-              ? handleRazorpayPayment()
-              : handleSubmit();
+            console.log("clicked");
+
+            paymentMethod === "BANK" ? handleRazorpayPayment() : handleSubmit();
           }}
           className="tf-page-cart-checkout widget-wrap-checkout"
         >
@@ -170,7 +181,11 @@ const CartFooter = ({
             <button
               type="submit"
               disabled={isLoading || !isFormValid() || !cartItems.length}
-              className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
+              className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${
+                isLoading || !isFormValid() || !cartItems.length
+                  ? "disabled-btn"
+                  : ""
+              }`}
             >
               {isLoading
                 ? "Processing..."

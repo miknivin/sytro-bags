@@ -19,7 +19,7 @@ export default function Hero() {
         }}
         delay={2000}
         speed={1000}
-        modules={[Pagination,Autoplay]}
+        modules={[Pagination, Autoplay]}
         pagination={{ clickable: true, el: ".spd120" }}
         className="tf-sw-slideshow"
       >
@@ -37,7 +37,7 @@ export default function Hero() {
               />
               <div className="box-content">
                 <div className="container">
-                  <div className="card-box bg_dark">
+                  {/* <div className="card-box bg_dark">
                     <h6 className="fade-item fade-item-1 text-white subheading fw-7">
                       {slide.subheading}
                     </h6>
@@ -61,7 +61,7 @@ export default function Hero() {
                         <i className="icon icon-arrow-right" />
                       </Link>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

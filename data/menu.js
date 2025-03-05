@@ -1,5 +1,3 @@
-
-
 export const allHomepages = [
   {
     href: "/",
@@ -606,8 +604,7 @@ export const navItems = [
   {
     id: "dropdown-menu-one",
     label: "Home",
-    href:'/'
-    
+    href: "/",
   },
   {
     id: "dropdown-menu-three",
@@ -624,29 +621,22 @@ export const navItems = [
       {
         id: "sub-product-three",
         label: "Product swatchs",
-        
       },
       {
         id: "sub-product-four",
         label: "Product features",
-        
       },
     ],
   },
   {
     id: "dropdown-menu-four",
     label: "About",
-    href:"/about-us"
+    href: "/about-us",
   },
   {
     id: "dropdown-menu-five",
-    label: "Blogs",
-    links: [
-      { href: "/blog-grid", label: "Grid layout" },
-      { href: "/blog-sidebar-left", label: "Left sidebar" },
-      { href: "/blog-sidebar-right", label: "Right sidebar" },
-      { href: "/blog-list", label: "Blog list" },
-      { href: "/blog-detail/1", label: "Single Post" },
-    ],
+    label: "Contact",
+    href: "/contact-2",
+   
   },
 ];

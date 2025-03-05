@@ -6,6 +6,7 @@ const productsSlice = createSlice({
     items: [], 
     singleProduct: null,
     productById: {}, // Added productById state
+    selectedTemplate: null, // New selectedTemplate state
   },
   reducers: {
     setProducts: (state, action) => {
@@ -26,6 +27,12 @@ const productsSlice = createSlice({
     resetProductById: (state) => {
       state.productById = {}; // Resets product by ID
     },
+    setSelectedTemplate: (state, action) => {
+      state.selectedTemplate = action.payload; // Sets the selected template
+    },
+    resetSelectedTemplate: (state) => {
+      state.selectedTemplate = null; // Resets the selected template
+    },
   },
 });
 
@@ -35,7 +42,9 @@ export const {
   setSingleProductForQuickAdd, 
   resetSingleProduct, 
   setProductById, 
-  resetProductById 
+  resetProductById, 
+  setSelectedTemplate, // Exporting new action
+  resetSelectedTemplate, // Exporting reset action
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

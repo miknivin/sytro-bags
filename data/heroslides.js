@@ -75,26 +75,31 @@ export const slides2 = [
 
 export const slides3 = [
   {
-    imgSrc: "https://ik.imagekit.io/c1jhxlxiy/3918.jpg?updatedAt=1738347872283",
+    imgSrc:
+      "https://ik.imagekit.io/c1jhxlxiy/facebook%20cover%20image-01.jpg?updatedAt=1741189561951",
     alt: "fashion-slideshow",
     heading: "Transform Your Child Into A Superhero",
     subheading: "KIDS COLLECTION",
-    shortDescription: "Featuring customized school bags with children's faces merged with superhero bodies",
+    shortDescription:
+      "Featuring customized school bags with children's faces merged with superhero bodies",
   },
   {
-    imgSrc: "https://ik.imagekit.io/c1jhxlxiy/2148171108.jpg?updatedAt=1738347872321",
+    imgSrc:
+      "https://ik.imagekit.io/c1jhxlxiy/spiderman%20banner-01.jpg?updatedAt=1741189561993",
     alt: "fashion-slideshow-02",
     heading: "Engineered for the Urban Explorer",
     subheading: "TRAVEL COLLECTION",
-    shortDescription: "Showcasing premium travel bags that adapt to your journey",
+    shortDescription:
+      "Showcasing premium travel bags that adapt to your journey",
   },
-  {
-    imgSrc: "https://ik.imagekit.io/c1jhxlxiy/flipped_image.jpeg?updatedAt=1738347872430",
-    alt: "fashion-slideshow-03",
-    heading: "Elevate Your Professional Game",
-    subheading: "OFFICE COLLECTION",
-    shortDescription: "Highlighting executive office bags that mean business",
-  },
+  // {
+  //   imgSrc:
+  //     "https://ik.imagekit.io/c1jhxlxiy/flipped_image.jpeg?updatedAt=1738347872430",
+  //   alt: "fashion-slideshow-03",
+  //   heading: "Elevate Your Professional Game",
+  //   subheading: "OFFICE COLLECTION",
+  //   shortDescription: "Highlighting executive office bags that mean business",
+  // },
 ];
 
 export const slideshowData = [

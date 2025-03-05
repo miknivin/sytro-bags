@@ -23,6 +23,9 @@ export const productApi = createApi({
     getProductDetails: builder.query({
       query: (id) => `/products/${id}`,
       providesTags: ["Product"],
+      extraOptions: {
+        retry: 3,
+      },
     }),
     submitReview: builder.mutation({
       query(body) {

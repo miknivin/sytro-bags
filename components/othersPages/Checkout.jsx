@@ -7,12 +7,15 @@ import { countries } from "@/data/countries.js";
 import { states } from "@/data/states.js";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { clearCart } from "@/redux/features/cartSlice";
 export default function Checkout() {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [subtotal, setSubtotal] = useState(0);
   const [countryId, setCountryId] = useState("101");
   const [filteredStates, setFilteredStates] = useState([]);
-  const [email, setEmail] = useState(""); // Added email state
+  const [email, setEmail] = useState("");
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -49,18 +52,18 @@ export default function Checkout() {
     setEmail(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e = null, paymentMode = "COD") => {
+    if (e && paymentMode === "COD") e?.preventDefault();
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
 
     const orderData = {
-      shippingInfo: { 
-        ...formData, 
+      shippingInfo: {
+        ...formData,
         fullName,
-        email 
+        email,
       },
       orderItems: cartItems,
-      paymentMethod: formData.paymentMethod,
+      paymentMethod: paymentMode,
       itemsPrice: subtotal,
       taxAmount: 0,
       shippingAmount: 0,
@@ -68,13 +71,14 @@ export default function Checkout() {
     };
 
     try {
-      await createNewOrder(orderData).unwrap(); 
+      await createNewOrder(orderData).unwrap();
       Swal.fire({
         icon: "success",
         title: "Order Placed Successfully!",
         text: "Thank you for your purchase. Your order has been placed.",
         confirmButtonText: "OK",
       }).then(() => {
+        dispatch(clearCart());
         router.push("/my-account-orders");
       });
     } catch (err) {
@@ -139,7 +143,7 @@ export default function Checkout() {
                   />
                 </fieldset>
               </div>
-       
+
               <fieldset className="fieldset">
                 <label htmlFor="country">Country</label>
                 <div className="select-custom">
@@ -210,9 +214,9 @@ export default function Checkout() {
               {error && <p>Error placing order</p>}
             </form>
           </div>
-          <CartFooter 
-            cartItems={cartItems} 
-            subtotal={subtotal} 
+          <CartFooter
+            cartItems={cartItems}
+            subtotal={subtotal}
             formData={formData}
             email={email}
             handleSubmit={handleSubmit}

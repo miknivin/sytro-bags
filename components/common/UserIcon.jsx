@@ -15,11 +15,15 @@ export default function UserIcon() {
   return (
     <>
       {authState ? (
-        <Link href={"/my-account"} className="nav-icon-item">
+        <Link href={"/my-account"} className="nav-icon-item text-white">
           <i className="icon icon-account" />
         </Link>
       ) : (
-        <Link href={"#login"} data-bs-toggle="modal" className="nav-icon-item">
+        <Link
+          href={"#login"}
+          data-bs-toggle="modal"
+          className="nav-icon-item text-white"
+        >
           <i className="icon icon-account" />
         </Link>
       )}

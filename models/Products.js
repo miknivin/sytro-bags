@@ -108,6 +108,15 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    extraImages: [
+      {
+        _id: mongoose.Schema.Types.ObjectId,
+        url: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

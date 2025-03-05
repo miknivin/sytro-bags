@@ -20,8 +20,13 @@ export default function Slider1ZoomOuter({
   //     )[0]?.id - 1;
   //   swiperRef.current.slideTo(slideIndex);
   // }, [currentColor]);
+
+  useEffect(() => {
+    console.log(firstImage, "first image");
+  }, [firstImage]);
   useEffect(() => {
     // Function to initialize Drift
+
     const imageZoom = () => {
       const driftAll = document.querySelectorAll(".tf-image-zoom");
       const pane = document.querySelector(".tf-zoom-main");
@@ -94,9 +99,9 @@ export default function Slider1ZoomOuter({
                 className="lazyload"
                 data-src={slide.url}
                 alt={""}
-                src={slide.url} // Optional fallback for non-lazy loading
-                fill // Makes the image cover the entire parent container
-                style={{ objectFit: "cover" }} // Ensures the image fills without distortion
+                src={slide.url}
+                fill
+                style={{ objectFit: "cover" }}
               />
             </div>
           </SwiperSlide>
@@ -118,7 +123,7 @@ export default function Slider1ZoomOuter({
           modules={[Thumbs, Navigation]}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
           onSlideChange={(swiper) => {
-            handleColor(images[swiper.activeIndex].dataValue);
+            handleColor(Image[swiper.activeIndex]?.dataValue);
           }}
         >
           {firstImage.map((slide, index) => (
@@ -139,7 +144,7 @@ export default function Slider1ZoomOuter({
                       alt="image"
                       width={250}
                       height={320}
-                      style={{ objectFit: "cover" }}
+                      style={{ objectFit: "cover", maxHeight: "700px" }}
                       src={slide.url}
                     />
                   </a>

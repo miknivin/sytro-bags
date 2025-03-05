@@ -23,18 +23,25 @@ import toast from "react-hot-toast";
 import { setProductById } from "@/redux/features/productSlice";
 
 export default function DetailsOuterZoom({ product }) {
-  const kidsBagId = "67a70ca93f464380b64b05a6"
+  const kidsBagId = "67a70ca93f464380b64b05a6";
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [quantity, setQuantity] = useState(1);
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const [currentSize, setCurrentSize] = useState("Small");
+  const selectedDesigns = useSelector((state) => state.cart.selectedDesigns);
+  const uploadedImages = useSelector((state) => state.cart.uploadedImages);
+  const selectedTemplate = useSelector(
+    (state) => state.product.selectedTemplate
+  );
   const handleColor = (color) => {
-    const updatedColor = colors.filter(
-      (elm) => elm.value.toLowerCase() == color.toLowerCase()
-    )[0];
-    if (updatedColor) {
-      setCurrentColor(updatedColor);
-    }
+    // const updatedColor = colors.filter(
+    //   (elm) => elm.value.toLowerCase() == color.toLowerCase()
+    // )[0];
+    // if (updatedColor) {
+    //   setCurrentColor(updatedColor);
+    // }
   };
+  const sizeOptions = [{ value: "Small" }, { value: "Large" }];
 
   const isAddedToCartProducts = (id) => {
     return (
@@ -42,24 +49,36 @@ export default function DetailsOuterZoom({ product }) {
     );
   };
 
+  const hasCustomDesign =
+    selectedDesigns?.[product._id] && uploadedImages?.[product._id];
+
   const dispatch = useDispatch();
   const setItemToCart = () => {
     const cartItem = {
       product: product?._id,
       name: product?.name,
-      price: product?.price,
+      price: product?.offer,
       image: product?.images[0]?.url,
       stock: product?.stock,
       quantity: quantity,
-      price: product?.offer,
     };
+
+    const storedSelectedDesigns =
+      JSON.parse(localStorage.getItem("selectedDesigns")) || {};
+    const storedUploadedImages =
+      JSON.parse(localStorage.getItem("uploadedImages")) || {};
+
+    cartItem.selectedDesign = storedSelectedDesigns[product?._id] || null;
+    cartItem.uploadedImage = storedUploadedImages[product?._id] || null;
 
     dispatch(setCartItem(cartItem));
     toast.success("Item added to Cart");
   };
+
   useEffect(() => {
     if (product) {
       dispatch(setProductById(product));
+      console.log(uploadedImages, "uploadedImages");
     }
   }, [product, dispatch]);
   return (
@@ -79,7 +98,26 @@ export default function DetailsOuterZoom({ product }) {
                   <Slider1ZoomOuter
                     handleColor={handleColor}
                     currentColor={currentColor.value}
-                    firstImage={product?.images}
+                    firstImage={
+                      hasCustomDesign
+                        ? [
+                            {
+                              url:
+                                currentSize?.value === "Large"
+                                  ? selectedDesigns[product._id]?.largeBagImage
+                                  : selectedDesigns[product._id]?.smallBagImage,
+                              _id: selectedDesigns?._id,
+                            },
+                            ...(currentSize?.value === "Large"
+                              ? product?.extraImages?.slice(1) || []
+                              : product?.images?.slice(1) || []),
+                          ]
+                        : [
+                            ...(currentSize?.value === "Large"
+                              ? product?.extraImages || []
+                              : product?.images || []),
+                          ]
+                    }
                   />
                 </div>
               </div>
@@ -92,8 +130,8 @@ export default function DetailsOuterZoom({ product }) {
                     <h5>{product.name ? product.name : "Cotton jersey top"}</h5>
                   </div>
                   <div className="tf-product-info-price">
-                    <div className="price-on-sale">
-                    ₹{product.offer.toFixed(2)}
+                    <div style={{ fontWeight: 600 }} className="price-on-sale">
+                      ₹{product.offer.toFixed(2)}
                     </div>
                     <div className="badges-on-sale">
                       <span>
@@ -105,35 +143,119 @@ export default function DetailsOuterZoom({ product }) {
                   </div>
                   <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item"></div>
-                    {product._id===kidsBagId&&(
-                       <div className="variant-picker-item mb-3">
-                       {/* kids bag only */}
-                       <div style={{gap:'15px'}} className="d-flex justify-content-between align-items-center ">
-                      
-                         <a
-                         href="#custom_bag"
-                         data-bs-toggle="modal"
-                         className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
-                       >
-                         Customize bag
-                       </a>
-                     
-                         
-                         {/* <a
-                           href="#find_size"
-                           data-bs-toggle="modal"
-                           className="find-size fw-6"
-                         >
-                           Choose from existing bags
-                         </a> */}
-                       </div>
-                     </div>
+                    {product._id === kidsBagId && (
+                      <div className="variant-picker-item mb-3">
+                        <div
+                          style={{ gap: "15px" }}
+                          className="d-flex justify-content-between align-items-center"
+                        >
+                          {hasCustomDesign ? (
+                            <div className="d-flex gap-2">
+                              {/* <div className="position-relative border border-black rounded-2 overflow-hidden">
+                                <img
+                                  src={
+                                    selectedDesigns[product._id].smallBagImage
+                                  }
+                                  alt="Selected Design"
+                                  style={{
+                                    width: "125px",
+                                    height: "auto",
+                                    borderRadius: "5px",
+                                  }}
+                                />
+                                <div
+                                  style={{ opacity: 0.8 }}
+                                  className="position-absolute bottom-0 pt-1 bg-black w-100"
+                                >
+                                  <small className="text-white">
+                                    {selectedDesigns[product._id].name}
+                                  </small>
+                                </div>
+                              </div> */}
+                              <div className="position-relative border border-black rounded-2 overflow-hidden">
+                                <img
+                                  src={uploadedImages?.[product._id]}
+                                  alt="Uploaded Image"
+                                  style={{
+                                    width: "125px",
+                                    height: "125px",
+                                    borderRadius: "5px",
+                                  }}
+                                />
+                                <div
+                                  style={{ opacity: 0.7 }}
+                                  className="position-absolute bottom-0 pt-1 bg-black w-100"
+                                >
+                                  <small className="text-white">
+                                    {uploadedImages?.[product._id]
+                                      ? uploadedImages[product._id]
+                                          .split("/")
+                                          .pop()
+                                      : ""}
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            // Show Customize button if no design is selected
+                            <a
+                              href="#super_kidbag"
+                              data-bs-toggle="modal"
+                              className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
+                            >
+                              Customize bag
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     )}
-                   
                   </div>
                   <div className="tf-product-info-quantity">
                     <div className="quantity-title fw-6">Quantity</div>
                     <Quantity setQuantity={setQuantity} quantity={quantity} />
+                  </div>
+                  {/* size */}
+                  <div className="variant-picker-item">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="variant-picker-label">
+                        Size:
+                        <span className="fw-6 variant-picker-label-value">
+                          {currentSize ? currentSize.value : ""}
+                        </span>
+                      </div>
+                      {/* <a
+                        href="#find_size"
+                        data-bs-toggle="modal"
+                        className="find-size fw-6"
+                      >
+                        Find your size
+                      </a> */}
+                    </div>
+                    <form className="variant-picker-values">
+                      {sizeOptions.map((size, index) => (
+                        <React.Fragment key={index}>
+                          <input
+                            type="radio"
+                            name="size1"
+                            id={size?.value}
+                            readOnly
+                            checked={currentSize == size?.value}
+                          />
+                          <label
+                            onClick={() => setCurrentSize(size)}
+                            className={`style-text ${
+                              currentSize?.value === size?.value
+                                ? "border-black bg-black text-white"
+                                : ""
+                            }`}
+                            htmlFor={size.value}
+                            data-value={size.value}
+                          >
+                            <p>{size.value}</p>
+                          </label>
+                        </React.Fragment>
+                      ))}
+                    </form>
                   </div>
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="">
@@ -156,7 +278,7 @@ export default function DetailsOuterZoom({ product }) {
                       </a>
 
                       <div className="w-100">
-                        <button disabled className="btns-full">
+                        {/* <button disabled className="btns-full">
                           Buy with
                           <span className="d-flex gap-3 fs-4">
                             <FontAwesomeIcon
@@ -176,7 +298,7 @@ export default function DetailsOuterZoom({ product }) {
                               className="text-xl"
                             />
                           </span>
-                        </button>
+                        </button> */}
                       </div>
                     </form>
                   </div>
@@ -189,14 +311,14 @@ export default function DetailsOuterZoom({ product }) {
                           </div>
                           <p>
                             Estimate delivery times:
-                            <span className="fw-7">12-26 days</span>
-                            (International),
+                            <span className="fw-7">4-6 days</span>
+                            {/* (International),
                             <span className="fw-7">3-6 days</span> (United
-                            States).
+                            States). */}
                           </p>
                         </div>
                       </div>
-                      <div className="col-xl-6 col-12">
+                      {/* <div className="col-xl-6 col-12">
                         <div className="tf-product-delivery mb-0">
                           <div className="icon">
                             <i className="icon-return-order" />
@@ -206,7 +328,7 @@ export default function DetailsOuterZoom({ product }) {
                             of purchase. Duties &amp; taxes are non-refundable.
                           </p>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="tf-product-info-trust-seal">

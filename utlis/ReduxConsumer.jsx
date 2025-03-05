@@ -24,6 +24,7 @@ import ScrollTop from "@/components/common/ScrollTop";
 import { useGetMeQuery } from "@/redux/api/userApi.js";
 import { useSelector } from "react-redux";
 import FullScreenSpinner from "@/components/common/FullScreenSpinner";
+import SuperKidBag from "@/components/modals/SuperKidBag";
 
 export function ReduxConsumer({ children }) {
   const { isLoading } = useGetMeQuery();
@@ -57,6 +58,7 @@ export function ReduxConsumer({ children }) {
       <SearchModal />
       <ToolbarBottom />
       <ToolbarShop />
+      <SuperKidBag/>
       {/* <NewsletterModal /> */}
       <ShareModal />
     </div>

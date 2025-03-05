@@ -107,6 +107,15 @@ export const orderApi = createApi({
       },
       invalidatesTags: ["Coupons"],
     }),
+    uploadKidsImage: builder.mutation({
+      query(body) {
+        return {
+          url: "/orders/uploadImage",
+          method: "POST",
+          body,
+        };
+      },
+    }),
   }),
 });
 
@@ -124,4 +133,5 @@ export const {
   useDeleteCouponMutation,
   useCheckCouponMutation,
   useApplyCouponMutation,
+  useUploadKidsImageMutation
 } = orderApi;

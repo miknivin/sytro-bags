@@ -6,13 +6,16 @@ import { useState, useEffect } from "react";
 import { setProducts } from "@/redux/features/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 export default function Products() {
-  const [page, setPage] = useState(1); 
+  const [page, setPage] = useState(1);
   const dispatch = useDispatch();
   const { data, error, isLoading, isFetching } = useGetProductsQuery({
-    page
+    page,
   });
 
-  const products = data?.filteredProducts || [];
+  const products =
+    data?.filteredProducts?.filter(
+      (product) => product._id === "67a70ca93f464380b64b05a6"
+    ) || [];
   const totalPages = data?.totalPages || 1;
 
   const handleLoadMore = () => {
@@ -22,8 +25,8 @@ export default function Products() {
   };
   useEffect(() => {
     if (data?.filteredProducts) {
-      console.log(data?.filteredProducts)
-      dispatch(setProducts(data.filteredProducts)); 
+      console.log(data?.filteredProducts);
+      dispatch(setProducts(data.filteredProducts));
     }
   }, [data, dispatch]);
 
@@ -43,7 +46,9 @@ export default function Products() {
         {isLoading ? (
           <div className="text-center">Loading products...</div>
         ) : error ? (
-          <div className="text-center text-red-500">Failed to load products.</div>
+          <div className="text-center text-red-500">
+            Failed to load products.
+          </div>
         ) : (
           <>
             <div className="grid-layout" data-grid="grid-4">
