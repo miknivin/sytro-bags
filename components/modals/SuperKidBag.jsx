@@ -4,9 +4,12 @@ import { useSelector, useDispatch } from "react-redux";
 import DesignUpload from "../customizeBags/DesignUpload";
 import { setSelectedTemplate } from "@/redux/features/productSlice";
 import {
+  resetSelectedDesign,
   setSelectedDesign,
   setUploadedImage,
 } from "@/redux/features/cartSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function SuperKidBag() {
   const dispatch = useDispatch();
@@ -21,10 +24,13 @@ export default function SuperKidBag() {
   const modalRef = useRef(null);
   const closeRef = useRef(null);
   const modalContent = useRef(null);
-
+  const selectedDesigns = useSelector((state) => state.cart.selectedDesigns);
   useEffect(() => {
     if (productById && productById._id === "67a70ca93f464380b64b05a6") {
       setChoiceImages(productById?.templateImages || []);
+      if (selectedDesigns?.[productById._id]) {
+        setShowDesignUpload(true);
+      }
     }
   }, [productById]);
 
@@ -57,6 +63,7 @@ export default function SuperKidBag() {
 
   const handleClick = (index) => {
     setActiveIndex(index);
+    setIsScrolled(true);
   };
 
   const handleFileUpload = (blobUrl) => {
@@ -106,9 +113,26 @@ export default function SuperKidBag() {
             style={{ zIndex: 999, top: "-40px" }}
             className="header bg-white py-4 px-2 position-sticky "
           >
-            {!isScrolled ? (
-              <div className="demo-title">
-                {isDesign ? "Customize" : "Choose your Template"}
+            {showDesignUpload ? (
+              <div className="demo-title d-flex align-items-center">
+                {showDesignUpload ? (
+                  <button
+                    type="button"
+                    className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 animate-hover-btn d-flex align-items-center gap-2"
+                    onClick={() => {
+                      setShowDesignUpload(false);
+                      dispatch(
+                        resetSelectedDesign({
+                          productId: productById._id,
+                        })
+                      );
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back
+                  </button>
+                ) : (
+                  "Choose your Template"
+                )}
               </div>
             ) : (
               <button

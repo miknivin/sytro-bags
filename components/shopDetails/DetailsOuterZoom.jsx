@@ -18,7 +18,7 @@ import {
   faApplePay,
 } from "@fortawesome/free-brands-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setCartItem } from "@/redux/features/cartSlice.js";
+import { resetUploadedImage, setCartItem } from "@/redux/features/cartSlice.js";
 import toast from "react-hot-toast";
 import { setProductById } from "@/redux/features/productSlice";
 
@@ -78,7 +78,6 @@ export default function DetailsOuterZoom({ product }) {
   useEffect(() => {
     if (product) {
       dispatch(setProductById(product));
-      console.log(uploadedImages, "uploadedImages");
     }
   }, [product, dispatch]);
   return (
@@ -99,7 +98,7 @@ export default function DetailsOuterZoom({ product }) {
                     handleColor={handleColor}
                     currentColor={currentColor.value}
                     firstImage={
-                      hasCustomDesign
+                      selectedDesigns[product._id]
                         ? [
                             {
                               url:
@@ -127,7 +126,12 @@ export default function DetailsOuterZoom({ product }) {
                 <div className="tf-zoom-main" />
                 <div className="tf-product-info-list other-image-zoom">
                   <div className="tf-product-info-title">
-                    <h5>{product.name ? product.name : "Cotton jersey top"}</h5>
+                    <h5>
+                      {product.name ? product.name : "Supershell collection"}{" "}
+                      {selectedDesigns[product._id] && (
+                        <span>({selectedDesigns[product._id].name})</span>
+                      )}
+                    </h5>
                   </div>
                   <div className="tf-product-info-price">
                     <div style={{ fontWeight: 600 }} className="price-on-sale">
@@ -172,7 +176,19 @@ export default function DetailsOuterZoom({ product }) {
                                   </small>
                                 </div>
                               </div> */}
-                              <div className="position-relative border border-black rounded-2 overflow-hidden">
+                              <div className="position-relative border border-black rounded-2">
+                                <button
+                                  onClick={() =>
+                                    dispatch(
+                                      resetUploadedImage({
+                                        productId: product._id,
+                                      })
+                                    )
+                                  }
+                                  className="remove-button badge"
+                                >
+                                  X
+                                </button>
                                 <img
                                   src={uploadedImages?.[product._id]}
                                   alt="Uploaded Image"
