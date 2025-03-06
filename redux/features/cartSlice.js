@@ -8,7 +8,6 @@ const initialState = {
   selectedDesigns: {},
 };
 
-// Load cart items, uploaded images, and selected designs from local storage
 if (typeof window !== "undefined") {
   initialState.cartItems = localStorage.getItem("cartItems")
     ? JSON.parse(localStorage.getItem("cartItems"))

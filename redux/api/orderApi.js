@@ -31,6 +31,15 @@ export const orderApi = createApi({
         };
       },
     }),
+    razorpayWebhook: builder.mutation({
+      query(body) {
+        return {
+          url: "/payments/webhook",
+          method: "POST",
+          body,
+        };
+      },
+    }),
     getAdminOrders: builder.query({
       query: () => `/admin/orders`,
       providesTags: ["AdminOrders"],
@@ -122,6 +131,7 @@ export const orderApi = createApi({
 export const {
   useCreateNewOrderMutation,
   useRazorpayCheckoutSessionMutation,
+  useRazorpayWebhookMutation,
   useMyOrdersQuery,
   useOrderDetailsQuery,
   useGetAdminOrdersQuery,
@@ -133,5 +143,5 @@ export const {
   useDeleteCouponMutation,
   useCheckCouponMutation,
   useApplyCouponMutation,
-  useUploadKidsImageMutation
+  useUploadKidsImageMutation,
 } = orderApi;

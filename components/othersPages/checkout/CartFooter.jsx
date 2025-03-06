@@ -31,7 +31,7 @@ const CartFooter = ({
 
   const handleRazorpayPayment = async () => {
     if (!isFormValid() || !cartItems.length) return;
-
+  
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
       amount: subtotal * 100,
@@ -39,9 +39,36 @@ const CartFooter = ({
       name: "Sytro",
       description: "Order Payment",
       image: "/your-logo.png",
-      handler: function (response) {
-        console.log("Payment successful", response);
-        handleSubmit(null,"Online");
+      handler: async function (response) {
+        console.log("Payment successful, verifying with server...", response);
+  
+        const paymentData = {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+          shippingInfo: formData, // Include your shipping details
+          cartItems,
+          user, // Pass the logged-in user details
+          itemsPrice: subtotal,
+          shippingPrice: shippingCost,
+          totalPrice: subtotal + shippingCost,
+          taxPrice: taxAmount,
+        };
+  
+        try {
+          const serverResponse = await razorpayWebhook(paymentData).unwrap();
+  
+          if (serverResponse.success) {
+            console.log("Payment verified. Order placed:", serverResponse.orderId);
+            //handleSubmit(null, "Online"); 
+          } else {
+            console.error("Payment verification failed:", serverResponse.error);
+            alert("Payment verification failed. Please contact support.");
+          }
+        } catch (error) {
+          console.error("Error verifying payment:", error);
+          alert("Error verifying payment. Please try again.");
+        }
       },
       prefill: {
         name: `${formData.firstName} ${formData.lastName}`,
@@ -52,7 +79,7 @@ const CartFooter = ({
         color: "#3399cc",
       },
     };
-
+  
     const razor = new window.Razorpay(options);
     razor.open();
   };

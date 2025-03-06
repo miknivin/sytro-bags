@@ -2,11 +2,12 @@
 import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Rupee from "@/utlis/Rupeesvg";
 import { removeCartItem, updateCartItem } from "@/redux/features/cartSlice";
 import TruckIcon from "@/utlis/TruckSvg";
+import { resetSingleProduct } from "@/redux/features/productSlice";
 
 export default function ShopCart() {
   const dispatch = useDispatch();
@@ -14,63 +15,50 @@ export default function ShopCart() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [subtotal, setSubtotal] = useState(0);
 
-  // Calculate subtotal whenever cartItems change
   useEffect(() => {
     const newSubtotal = cartItems.reduce((total, item) => {
-      return total + item.price * item.quantity;
+      const price = Number(item.price) || 0;
+      const quantity = Number(item.quantity) || 0;
+      return total + price * quantity;
     }, 0);
+   // console.log(cartItems,'cartItems'); 
     setSubtotal(newSubtotal);
   }, [cartItems]);
 
-  // Function to increase quantity
   const increaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) + 1;
     updateQuantity(cartItem, id, newQuantity);
   };
 
-  // Function to decrease quantity
   const decreaseQuantity = (cartItem, id) => {
-    console.log(id);
     const newQuantity = Number(cartItem.quantity) - 1;
-    console.log(newQuantity);
     if (newQuantity >= 1) {
       updateQuantity(cartItem, id, newQuantity);
     }
   };
 
-  // Function to update quantity in both local state and Redux store
   const updateQuantity = (item, id, quantity) => {
-    //Update local state
-    const updatedCartProducts = cartProducts.map((item) =>
-      item.id === id ? { ...item, quantity } : item
+    const safeQuantity = Number(quantity) || 1;
+    const updatedCartProducts = cartProducts.map((product) =>
+      product.id === id ? { ...product, quantity: safeQuantity } : product
     );
     setCartProducts(updatedCartProducts);
-
-    // Update Redux store
     const cartItem = {
       product: id,
-      name: item?.name,
-      price: item?.offer,
-      image: item?.image,
-      stock: item?.stock,
-      quantity: quantity,
-      offer: item?.offer,
+      name: item?.name || "",
+      price: Number(item?.offer) || Number(item?.price) || 0,
+      image: item?.image || "",
+      stock: item?.stock || 0,
+      quantity: safeQuantity,
+      offer: item?.offer || 0,
     };
-
     dispatch(updateCartItem(cartItem));
   };
 
-  const removeItemFromCart = (item, id) => {
-    dispatch(removeCartItem(item));
-  };
-
-  // Function to remove an item from the cart
   const removeItem = (id) => {
-    // Remove from local state
     setCartProducts((prev) => prev.filter((item) => item.product !== id));
-
-    // Remove from Redux store
     dispatch(removeCartItem(id));
+    dispatch(resetSingleProduct())
   };
 
   return (
@@ -93,10 +81,7 @@ export default function ShopCart() {
                   </div>
                 </span>
               </div>
-              <div className="tf-progress-msg">
-                {/* Buy <span className="price fw-6">$75.00</span> more to enjoy
-                <span className="fw-6">Free Shipping</span> */}
-              </div>
+              <div className="tf-progress-msg"></div>
             </div>
             <div className="tf-mini-cart-wrap">
               <div className="tf-mini-cart-main">
@@ -127,7 +112,9 @@ export default function ShopCart() {
                           </Link>
                           <div className="price fw-6">
                             <Rupee width={"10px"} />{" "}
-                            {(elm.price * elm.quantity).toFixed(2)}
+                            {(Number(elm.price) * Number(elm.quantity)).toFixed(
+                              2
+                            )}
                           </div>
                           <div className="tf-mini-cart-btns">
                             <div className="wg-quantity small">
@@ -164,7 +151,7 @@ export default function ShopCart() {
                             <div
                               className="tf-mini-cart-remove"
                               style={{ cursor: "pointer" }}
-                              onClick={() => removeItemFromCart(elm.product)}
+                              onClick={() => removeItem(elm.product)}
                             >
                               Remove
                             </div>
@@ -172,8 +159,7 @@ export default function ShopCart() {
                         </div>
                       </div>
                     ))}
-
-                    {!cartItems.length && (
+                    {!cartItems?.length && (
                       <div className="container">
                         <div className="row align-items-center mt-5 mb-5">
                           <div className="col-12 fs-18">

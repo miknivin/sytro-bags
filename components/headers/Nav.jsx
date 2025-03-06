@@ -27,7 +27,11 @@ export default function Nav({ isArrow = true, textColor = "", Linkfs = "" }) {
     skip: products.length > 0,
   });
   const finalProducts =
-    products.length > 0 ? products : data?.filteredProducts || [];
+    products.length > 0
+      ? products
+      : data?.filteredProducts?.filter(
+          (product) => product._id === "67a70ca93f464380b64b05a6"
+        ) || [];
   const isMenuActive = (menuItem) => {
     let active = false;
     if (menuItem.href?.includes("/")) {
