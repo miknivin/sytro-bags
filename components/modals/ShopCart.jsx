@@ -8,7 +8,8 @@ import Rupee from "@/utlis/Rupeesvg";
 import { removeCartItem, updateCartItem } from "@/redux/features/cartSlice";
 import TruckIcon from "@/utlis/TruckSvg";
 import { resetSingleProduct } from "@/redux/features/productSlice";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRupeeSign } from "@fortawesome/free-solid-svg-icons";
 export default function ShopCart() {
   const dispatch = useDispatch();
   const { cartProducts, setCartProducts } = useContextElement();
@@ -21,7 +22,7 @@ export default function ShopCart() {
       const quantity = Number(item.quantity) || 0;
       return total + price * quantity;
     }, 0);
-   // console.log(cartItems,'cartItems'); 
+    // console.log(cartItems,'cartItems');
     setSubtotal(newSubtotal);
   }, [cartItems]);
 
@@ -58,7 +59,7 @@ export default function ShopCart() {
   const removeItem = (id) => {
     setCartProducts((prev) => prev.filter((item) => item.product !== id));
     dispatch(removeCartItem(id));
-    dispatch(resetSingleProduct())
+    dispatch(resetSingleProduct());
   };
 
   return (
@@ -111,7 +112,7 @@ export default function ShopCart() {
                             {elm.name}
                           </Link>
                           <div className="price fw-6">
-                            <Rupee width={"10px"} />{" "}
+                            ₹{" "}
                             {(Number(elm.price) * Number(elm.quantity)).toFixed(
                               2
                             )}
@@ -185,7 +186,7 @@ export default function ShopCart() {
                   <div className="tf-cart-totals-discounts">
                     <div className="tf-cart-total">Subtotal</div>
                     <div className="tf-totals-total-value fw-6">
-                      <Rupee width={"10px"} /> {subtotal.toFixed(2)}
+                      ₹ {subtotal.toFixed(2)}
                     </div>
                   </div>
                   <div className="tf-mini-cart-line" />

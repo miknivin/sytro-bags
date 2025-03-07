@@ -3,9 +3,9 @@ import { options } from "@/data/singleProductOptions";
 import Image from "next/image";
 import React from "react";
 import Quantity from "./Quantity";
-import { products4 } from "@/data/products";
-import { useContextElement } from "@/context/Context";
-
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { openCartModal } from "@/utlis/openCartModal";
 export default function StickyItem({
   soldOut = false,
   product,
@@ -14,6 +14,8 @@ export default function StickyItem({
   setQuantity,
   quantity,
 }) {
+  const uploadedImages = useSelector((state) => state.cart.uploadedImages);
+  const hasCustomDesign = uploadedImages?.[product._id];
   // const { addProductToCart, isAddedToCartProducts } = useContextElement();
   return (
     <div className="tf-sticky-btn-atc">
@@ -39,7 +41,7 @@ export default function StickyItem({
               <div className="tf-sticky-atc-variant-price text-center"></div>
               <div className="tf-sticky-atc-btns">
                 <div className="tf-product-info-quantity">
-                 <Quantity quantity={quantity} setQuantity={setQuantity} />
+                  <Quantity quantity={quantity} setQuantity={setQuantity} />
                 </div>
                 {product.stocks <= 0 ? (
                   <a className="tf-btn btns-sold-out cursor-not-allowed btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn ">
@@ -47,7 +49,14 @@ export default function StickyItem({
                   </a>
                 ) : (
                   <a
-                    onClick={() => setItemsTocart()}
+                    onClick={() => {
+                      if (!hasCustomDesign) {
+                        toast.error("You need to upload your image");
+                        return;
+                      }
+                      openCartModal();
+                      setItemsTocart();
+                    }}
                     className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
                   >
                     <span>
