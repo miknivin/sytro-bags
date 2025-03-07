@@ -27,7 +27,7 @@ export default function ShopDefault() {
               </a>
             </div>
             <ul className="tf-control-layout d-flex justify-content-center">
-              {layouts.map((layout, index) => (
+              {/* {layouts.map((layout, index) => (
                 <li
                   key={index}
                   className={`tf-view-layout-switch ${layout.className} ${
@@ -39,7 +39,7 @@ export default function ShopDefault() {
                     <span className={`icon ${layout.iconClass}`} />
                   </div>
                 </li>
-              ))}
+              ))} */}
             </ul>
             <div className="tf-control-sorting d-flex justify-content-end">
               <div className="tf-dropdown-sort" data-bs-toggle="dropdown">

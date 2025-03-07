@@ -19,11 +19,11 @@ export default function page() {
         <div className="container-full">
           <div className="heading text-center">New Arrival</div>
           <p className="text-center text-2 text_black-2 mt_5">
-            Shop through our latest selection of Fashion
+            Shop through our latest collection
           </p>
         </div>
       </div>
-      <Subcollections />
+      {/* <Subcollections /> */}
       <ShopDefault />
       <Footer1 />
     </>

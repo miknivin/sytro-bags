@@ -28,23 +28,24 @@ export const collections = [
 
 export const slidesData = [
   {
-    imgSrc: "https://ik.imagekit.io/c1jhxlxiy/kid%20backpack.jpg?updatedAt=1738348627716",
+    imgSrc:
+      "https://ik.imagekit.io/c1jhxlxiy/kid%20backpack.jpg?updatedAt=1738348627716",
     alt: "collection-img",
     title: "Kids Collection",
     price: "₹800",
   },
-  {
-    imgSrc: "https://ik.imagekit.io/c1jhxlxiy/freepik__travel.jpg?updatedAt=1738348876251",
-    alt: "collection-img",
-    title: "Travel Collection",
-    price: "₹1999",
-  },
-  {
-    imgSrc: "https://ik.imagekit.io/c1jhxlxiy/freepik__pro__74306.jpg?updatedAt=1738349102521",
-    alt: "collection-img",
-    title: "Professional Collection",
-    price: "₹1199",
-  },
+  // {
+  //   imgSrc: "https://ik.imagekit.io/c1jhxlxiy/freepik__travel.jpg?updatedAt=1738348876251",
+  //   alt: "collection-img",
+  //   title: "Travel Collection",
+  //   price: "₹1999",
+  // },
+  // {
+  //   imgSrc: "https://ik.imagekit.io/c1jhxlxiy/freepik__pro__74306.jpg?updatedAt=1738349102521",
+  //   alt: "collection-img",
+  //   title: "Professional Collection",
+  //   price: "₹1199",
+  // },
 ];
 
 export const collectionData = [
