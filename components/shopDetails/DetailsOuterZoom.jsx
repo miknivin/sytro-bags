@@ -258,8 +258,8 @@ export default function DetailsOuterZoom({ product }) {
                       <a
                         onClick={() => {
                           if (!hasCustomDesign) {
-                            toast.error("You need to upload your image")
-                            return
+                            toast.error("You need to upload your image");
+                            return;
                           }
                           openCartModal();
                           setItemToCart();
@@ -276,7 +276,6 @@ export default function DetailsOuterZoom({ product }) {
                           ₹{(product.offer * quantity).toFixed(2)}
                         </span>
                       </a>
-
                       <div className="w-100">
                         {/* <button disabled className="btns-full">
                           Buy with

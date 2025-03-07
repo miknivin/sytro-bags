@@ -30,28 +30,8 @@ export const iconBoxData = [
   },
   {
     iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
-  },
-  {
-    iconClass: "icon-suport",
-    title: "Premium Support",
-    description: "Outstanding premium support",
-  },
-  {
-    iconClass: "icon-shipping",
-    title: "Free Shipping",
-    description: "Free shipping over order $120",
-  },
-  {
-    iconClass: "icon-payment fs-22",
-    title: "Flexible Payment",
-    description: "Pay with Multiple Credit Cards",
-  },
-  {
-    iconClass: "icon-return fs-20",
-    title: "14 Day Returns",
-    description: "Within 30 days for an exchange",
+    title: "2 Years Warranty",
+    description: "Guaranteed Quality, Long-Term Protection",
   },
   {
     iconClass: "icon-suport",

@@ -26,7 +26,7 @@ export default function Page({ params }) {
   }
 
   if (isLoading) return <FullScreenSpinner />;
-  if (error) return <p>Error fetching product details</p>;
+  if (error && !data?.productById) return <p>Error fetching product details</p>;
 
   return (
     <>
