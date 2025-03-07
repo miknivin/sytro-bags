@@ -12,10 +12,7 @@ export default function Products() {
     page,
   });
 
-  const products =
-    data?.filteredProducts?.filter(
-      (product) => product._id === "67a70ca93f464380b64b05a6"
-    ) || [];
+  const products = data?.filteredProducts || [];
   const totalPages = data?.totalPages || 1;
 
   const handleLoadMore = () => {

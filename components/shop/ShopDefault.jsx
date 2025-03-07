@@ -14,7 +14,7 @@ export default function ShopDefault() {
     <>
       <section className="flat-spacing-2">
         <div className="container">
-          <div className="tf-shop-control grid-3 align-items-center">
+          {/* <div className="tf-shop-control grid-3 align-items-center">
             <div className="tf-control-filter">
               <a
                 href="#filterShop"
@@ -27,7 +27,7 @@ export default function ShopDefault() {
               </a>
             </div>
             <ul className="tf-control-layout d-flex justify-content-center">
-              {/* {layouts.map((layout, index) => (
+              {layouts.map((layout, index) => (
                 <li
                   key={index}
                   className={`tf-view-layout-switch ${layout.className} ${
@@ -39,14 +39,14 @@ export default function ShopDefault() {
                     <span className={`icon ${layout.iconClass}`} />
                   </div>
                 </li>
-              ))} */}
+              ))}
             </ul>
             <div className="tf-control-sorting d-flex justify-content-end">
               <div className="tf-dropdown-sort" data-bs-toggle="dropdown">
                 <Sorting setFinalSorted={setFinalSorted} products={products} />
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="wrapper-control-shop">
             <div className="meta-filter-shop" />
             <ProductGrid allproducts={finalSorted} gridItems={gridItems} />

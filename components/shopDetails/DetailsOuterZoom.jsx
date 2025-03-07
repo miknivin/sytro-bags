@@ -49,8 +49,7 @@ export default function DetailsOuterZoom({ product }) {
     );
   };
 
-  const hasCustomDesign =
-    selectedDesigns?.[product._id] && uploadedImages?.[product._id];
+  const hasCustomDesign = uploadedImages?.[product._id];
 
   const dispatch = useDispatch();
   const setItemToCart = () => {
@@ -139,15 +138,17 @@ export default function DetailsOuterZoom({ product }) {
                     </div>
                     <div className="badges-on-sale">
                       <span>
-                        {(1 - product.offer / product.actualPrice).toFixed(2) *
-                          100}
+                        {(
+                          (1 - product.offer / product.actualPrice) *
+                          100
+                        ).toFixed(2)}
                       </span>
                       % OFF
                     </div>
                   </div>
                   <div className="tf-product-info-variant-picker">
                     <div className="variant-picker-item"></div>
-                    {product._id === kidsBagId && (
+                    {product.category === "Kids Bags" && (
                       <div className="variant-picker-item mb-3">
                         <div
                           style={{ gap: "15px" }}
@@ -155,27 +156,6 @@ export default function DetailsOuterZoom({ product }) {
                         >
                           {hasCustomDesign ? (
                             <div className="d-flex gap-2">
-                              {/* <div className="position-relative border border-black rounded-2 overflow-hidden">
-                                <img
-                                  src={
-                                    selectedDesigns[product._id].smallBagImage
-                                  }
-                                  alt="Selected Design"
-                                  style={{
-                                    width: "125px",
-                                    height: "auto",
-                                    borderRadius: "5px",
-                                  }}
-                                />
-                                <div
-                                  style={{ opacity: 0.8 }}
-                                  className="position-absolute bottom-0 pt-1 bg-black w-100"
-                                >
-                                  <small className="text-white">
-                                    {selectedDesigns[product._id].name}
-                                  </small>
-                                </div>
-                              </div> */}
                               <div className="position-relative border border-black rounded-2">
                                 <button
                                   onClick={() =>
@@ -219,7 +199,7 @@ export default function DetailsOuterZoom({ product }) {
                               data-bs-toggle="modal"
                               className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
                             >
-                              Customize bag
+                              Upload your image
                             </a>
                           )}
                         </div>
@@ -233,12 +213,12 @@ export default function DetailsOuterZoom({ product }) {
                   {/* size */}
                   <div className="variant-picker-item">
                     <div className="d-flex justify-content-between align-items-center">
-                      <div className="variant-picker-label">
+                      {/* <div className="variant-picker-label">
                         Size:
                         <span className="fw-6 variant-picker-label-value">
                           {currentSize ? currentSize.value : ""}
                         </span>
-                      </div>
+                      </div> */}
                       {/* <a
                         href="#find_size"
                         data-bs-toggle="modal"
@@ -247,7 +227,7 @@ export default function DetailsOuterZoom({ product }) {
                         Find your size
                       </a> */}
                     </div>
-                    <form className="variant-picker-values">
+                    {/* <form className="variant-picker-values">
                       {sizeOptions.map((size, index) => (
                         <React.Fragment key={index}>
                           <input
@@ -271,12 +251,16 @@ export default function DetailsOuterZoom({ product }) {
                           </label>
                         </React.Fragment>
                       ))}
-                    </form>
+                    </form> */}
                   </div>
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="">
                       <a
                         onClick={() => {
+                          if (!hasCustomDesign) {
+                            toast.error("You need to upload your image")
+                            return
+                          }
                           openCartModal();
                           setItemToCart();
                         }}

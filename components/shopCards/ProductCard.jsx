@@ -107,7 +107,7 @@ export const ProductCard = ({ product }) => {
             className="box-icon bg_white quickview tf-btn-loading"
           >
             <span className="icon icon-view" />
-            <span className="tooltip">Quick View</span>
+            {/* <span className="tooltip">Quick View</span> */}
           </Link>
         </div>
         {/* {product.countdown && (
@@ -129,7 +129,7 @@ export const ProductCard = ({ product }) => {
         <Link href={`/product-detail/${product.id}`} className="title link">
           {product.name}
         </Link>
-        <span className="price">${product.offer.toFixed(2)}</span>
+        <span className="price">₹ {product.offer.toFixed(2)}</span>
         {/* {product.colors && (
           <ul className="list-color-product">
             {product.colors.map((color) => (

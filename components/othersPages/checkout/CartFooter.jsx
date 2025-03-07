@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Rupee from "@/utlis/Rupeesvg";
 import { useSelector } from "react-redux";
+import { useRazorpayWebhookMutation } from "@/redux/api/orderApi";
 
 const CartFooter = ({
   cartItems,
@@ -15,7 +16,8 @@ const CartFooter = ({
   isLoading,
 }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [paymentMethod, setPaymentMethod] = useState("BANK");
+  const [razorpayWebhook] = useRazorpayWebhookMutation();
 
   const isFormValid = () => {
     return (
@@ -31,36 +33,39 @@ const CartFooter = ({
 
   const handleRazorpayPayment = async () => {
     if (!isFormValid() || !cartItems.length) return;
-  
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
       amount: subtotal * 100,
       currency: "INR",
       name: "Sytro",
       description: "Order Payment",
-      image: "/your-logo.png",
+      image:
+        "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
       handler: async function (response) {
         console.log("Payment successful, verifying with server...", response);
-  
+
         const paymentData = {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,
           shippingInfo: formData, // Include your shipping details
           cartItems,
-          user, // Pass the logged-in user details
           itemsPrice: subtotal,
-          shippingPrice: shippingCost,
-          totalPrice: subtotal + shippingCost,
-          taxPrice: taxAmount,
+          shippingPrice: 0,
+          totalPrice: subtotal + 0,
+          taxPrice: 0,
         };
-  
+
         try {
           const serverResponse = await razorpayWebhook(paymentData).unwrap();
-  
+
           if (serverResponse.success) {
-            console.log("Payment verified. Order placed:", serverResponse.orderId);
-            //handleSubmit(null, "Online"); 
+            console.log(
+              "Payment verified. Order placed:",
+              serverResponse.orderId
+            );
+            //handleSubmit(null, "Online");
           } else {
             console.error("Payment verification failed:", serverResponse.error);
             alert("Payment verification failed. Please contact support.");
@@ -79,7 +84,7 @@ const CartFooter = ({
         color: "#3399cc",
       },
     };
-  
+
     const razor = new window.Razorpay(options);
     razor.open();
   };
@@ -110,25 +115,45 @@ const CartFooter = ({
         >
           <ul className="wrap-checkout-product">
             {cartItems.map((elm, i) => (
-              <li key={i} className="checkout-product-item">
-                <figure className="img-product">
-                  <Image
-                    style={{ borderRadius: "10px" }}
-                    alt="product"
-                    src={elm.image}
-                    width={720}
-                    height={1005}
-                  />
-                  <span className="quantity bg-warning">{elm.quantity}</span>
-                </figure>
-                <div className="content">
-                  <div className="info">
-                    <p className="name">{elm.name}</p>
+              <li
+                key={i}
+                className="d-flex flex-column border-black border p-2 rounded-2"
+              >
+                <div className="checkout-product-item">
+                  <figure className="img-product">
+                    <Image
+                      style={{ borderRadius: "10px" }}
+                      alt="product"
+                      src={elm.image}
+                      width={720}
+                      height={1005}
+                    />
+                    <span className="quantity bg-warning">{elm.quantity}</span>
+                  </figure>
+                  <div className="content">
+                    <div className="info">
+                      <p className="name">{elm.name}</p>
+                    </div>
+                    <span className="price">
+                      ₹{(elm.price * elm.quantity).toFixed(2)}
+                    </span>
                   </div>
-                  <span className="price">
-                    <Rupee width={"8px"} />
-                    {(elm.price * elm.quantity).toFixed(2)}
-                  </span>
+                </div>
+                <div className="checkout-product-item">
+                  <figure className="img-product">
+                    <Image
+                      style={{ borderRadius: "10px" }}
+                      alt="product"
+                      src={elm.uploadedImage}
+                      width={720}
+                      height={1005}
+                    />
+                  </figure>
+                  <div className="content">
+                    <div className="info">
+                      <p className="name">Uploaded image</p>
+                    </div>
+                  </div>
                 </div>
               </li>
             ))}
@@ -162,10 +187,7 @@ const CartFooter = ({
 
           <div className="d-flex justify-content-between line pb_20">
             <h6 className="fw-5">Total</h6>
-            <h6 className="total fw-5">
-              <Rupee width="8px" />
-              {subtotal}
-            </h6>
+            <h6 className="total fw-5">₹{subtotal}</h6>
           </div>
 
           <div className="wd-check-payment">
@@ -181,7 +203,7 @@ const CartFooter = ({
               />
               <label htmlFor="bank">Online transfer</label>
             </div>
-            <div className="fieldset-radio mb_20">
+            {/* <div className="fieldset-radio mb_20">
               <input
                 required
                 type="radio"
@@ -193,7 +215,7 @@ const CartFooter = ({
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <label htmlFor="delivery">Cash on delivery</label>
-            </div>
+            </div> */}
           </div>
 
           {!isAuthenticated ? (
