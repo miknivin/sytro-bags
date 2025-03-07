@@ -3,18 +3,25 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useOrderDetailsQuery } from "@/redux/api/orderApi";
+import ImageModal from "@/components/modals/ImageModal";
 
 export default function OrderDetails() {
   const searchParams = useSearchParams();
+  const [currentImage, setCurrentImage] = useState("");
   const orderId = searchParams.get("orderId");
   const { data, isLoading, error } = useOrderDetailsQuery(orderId, {
     skip: !orderId,
   });
   const [orderDetails, setOrderDetails] = useState(null);
   const [activeTab, setActiveTab] = useState("Order History"); // State to track active tab
-
+  const [isOpen, setIsOpen] = useState(false);
+  const openModal = (imageurl) => {
+    setCurrentImage(imageurl);
+    setIsOpen(true);
+  };
+  const closeModal = () => setIsOpen(false);
   const handleTabClick = (tabName) => {
-    setActiveTab(tabName); // Update the active tab when a tab is clicked
+    setActiveTab(tabName);
   };
 
   const formatDate = (dateString) => {
@@ -244,6 +251,15 @@ export default function OrderDetails() {
                           item.quantity > 1 ? ` * ${item.quantity}` : ""
                         }`}
                       </div>
+                      <div className="">
+                        <button
+                          style={{textDecoration:"underline"}}
+                          onClick={() => openModal(item.uploadedImage)}
+                          className="fw-6 border-0 text-brand-primary bg-transparent"
+                        >
+                          Uploaded image
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -265,6 +281,11 @@ export default function OrderDetails() {
               </div>
             </div>
           </div>
+          <ImageModal
+            isOpen={isOpen}
+            imageUrl={currentImage}
+            onClose={closeModal}
+          />
         </div>
       )}
     </>

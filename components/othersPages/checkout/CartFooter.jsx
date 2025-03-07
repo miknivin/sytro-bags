@@ -3,10 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Rupee from "@/utlis/Rupeesvg";
-import { useSelector } from "react-redux";
-import { useRazorpayWebhookMutation } from "@/redux/api/orderApi";
-
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  useRazorpayCheckoutSessionMutation,
+  useRazorpayWebhookMutation,
+} from "@/redux/api/orderApi";
+import Swal from "sweetalert2";
+import { clearCart } from "@/redux/features/cartSlice";
 const CartFooter = ({
   cartItems,
   subtotal,
@@ -16,9 +20,12 @@ const CartFooter = ({
   isLoading,
 }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("BANK");
   const [razorpayWebhook] = useRazorpayWebhookMutation();
-
+  const [checkoutSession, { isLoading: sessionLoading, error }] =
+    useRazorpayCheckoutSessionMutation();
+  const dispatch = useDispatch();
   const isFormValid = () => {
     return (
       formData.firstName &&
@@ -32,6 +39,14 @@ const CartFooter = ({
   };
 
   const handleRazorpayPayment = async () => {
+    const orderData = {
+      orderItems: cartItems,
+      currency: "INR",
+      itemsPrice: Math.trunc(subtotal),
+    };
+    const checkoutData = await checkoutSession({
+      orderData,
+    }).unwrap();
     if (!isFormValid() || !cartItems.length) return;
 
     const options = {
@@ -39,6 +54,7 @@ const CartFooter = ({
       amount: subtotal * 100,
       currency: "INR",
       name: "Sytro",
+      order_id: checkoutData.id,
       description: "Order Payment",
       image:
         "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
@@ -49,7 +65,7 @@ const CartFooter = ({
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,
-          shippingInfo: formData, // Include your shipping details
+          shippingInfo: formData,
           cartItems,
           itemsPrice: subtotal,
           shippingPrice: 0,
@@ -61,11 +77,17 @@ const CartFooter = ({
           const serverResponse = await razorpayWebhook(paymentData).unwrap();
 
           if (serverResponse.success) {
-            console.log(
-              "Payment verified. Order placed:",
-              serverResponse.orderId
-            );
-            //handleSubmit(null, "Online");
+            console.log("Payment verified. Order placed:", serverResponse);
+
+            Swal.fire({
+              icon: "success",
+              title: "Order Placed Successfully!",
+              text: "Thank you for your purchase. Your order has been placed.",
+              confirmButtonText: "OK",
+            }).then(() => {
+              dispatch(clearCart());
+              router.push("/my-account-orders");
+            });
           } else {
             console.error("Payment verification failed:", serverResponse.error);
             alert("Payment verification failed. Please contact support.");
@@ -81,7 +103,7 @@ const CartFooter = ({
         contact: formData.phoneNo,
       },
       theme: {
-        color: "#3399cc",
+        color: "#fbb52b",
       },
     };
 
@@ -175,7 +197,7 @@ const CartFooter = ({
             </div>
           )}
 
-          <div className="coupon-box">
+          {/* <div className="coupon-box">
             <input type="text" placeholder="Discount code" />
             <a
               href="#"
@@ -183,7 +205,7 @@ const CartFooter = ({
             >
               Apply
             </a>
-          </div>
+          </div> */}
 
           <div className="d-flex justify-content-between line pb_20">
             <h6 className="fw-5">Total</h6>
@@ -197,7 +219,7 @@ const CartFooter = ({
                 name="paymentMethod"
                 id="bank"
                 value="BANK"
-                className="tf-check"
+                className="tf-check d-flex align-items-center"
                 checked={paymentMethod === "BANK"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />

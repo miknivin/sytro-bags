@@ -51,7 +51,7 @@ export const ProductCard = ({ product }) => {
           />
         </Link>
         <div className="list-product-btn">
-          <button
+          {/* <button
             href="#quick_add"
             aria-disabled
             disabled
@@ -64,7 +64,7 @@ export const ProductCard = ({ product }) => {
           >
             <span className="icon icon-bag" />
             <span className="tooltip">Quick Add</span>
-          </button>
+          </button> */}
           {/* <a
             onClick={() => addToWishlist(product.id)}
             className="box-icon bg_white wishlist btn-icon-action"
@@ -126,7 +126,7 @@ export const ProductCard = ({ product }) => {
         )} */}
       </div>
       <div className="card-product-info">
-        <Link href={`/product-detail/${product.id}`} className="title link">
+        <Link href={`/product-detail/${product._id}`} className="title link">
           {product.name}
         </Link>
         <span className="price">₹ {product.offer.toFixed(2)}</span>

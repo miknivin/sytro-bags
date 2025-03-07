@@ -13,8 +13,6 @@ export async function POST(req) {
     console.log(user);
     
     if (user) {
-        console.log(user.role);
-        
         authorizeRoles(user,'admin')
     }
     
