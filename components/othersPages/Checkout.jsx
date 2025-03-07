@@ -39,7 +39,7 @@ export default function Checkout() {
   }, [cartItems]);
 
   useEffect(() => {
-    console.log(cartItems, "cartItems");
+    //console.log(cartItems, "cartItems");
 
     setFilteredStates(
       states.filter((state) => state.country_id.toString() === countryId)

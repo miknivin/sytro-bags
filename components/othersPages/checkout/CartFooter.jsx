@@ -11,6 +11,8 @@ import {
 } from "@/redux/api/orderApi";
 import Swal from "sweetalert2";
 import { clearCart } from "@/redux/features/cartSlice";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
+import { Tooltip } from "react-tooltip";
 const CartFooter = ({
   cartItems,
   subtotal,
@@ -22,7 +24,8 @@ const CartFooter = ({
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("BANK");
-  const [razorpayWebhook] = useRazorpayWebhookMutation();
+  const [razorpayWebhook, { isLoading: webhookLoading }] =
+    useRazorpayWebhookMutation();
   const [checkoutSession, { isLoading: sessionLoading, error }] =
     useRazorpayCheckoutSessionMutation();
   const dispatch = useDispatch();
@@ -116,88 +119,94 @@ const CartFooter = ({
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
-    console.log(script);
+    // console.log(script);
     return () => {
       document.body.removeChild(script);
     };
   }, []);
-
+  const isAnyLoading = isLoading || sessionLoading || webhookLoading;
   return (
-    <div className="tf-page-cart-footer">
-      <div className="tf-cart-footer-inner">
-        <h5 className="fw-5 mb_20">Your order</h5>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log("clicked");
+    <>
+      {isAnyLoading && <FullScreenSpinner />}
+      <div className="tf-page-cart-footer">
+        <div className="tf-cart-footer-inner">
+          <h5 className="fw-5 mb_20">Your order</h5>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              //console.log("clicked");
 
-            paymentMethod === "BANK" ? handleRazorpayPayment() : handleSubmit();
-          }}
-          className="tf-page-cart-checkout widget-wrap-checkout"
-        >
-          <ul className="wrap-checkout-product">
-            {cartItems.map((elm, i) => (
-              <li
-                key={i}
-                className="d-flex flex-column border-black border p-2 rounded-2"
-              >
-                <div className="checkout-product-item">
-                  <figure className="img-product">
-                    <Image
-                      style={{ borderRadius: "10px" }}
-                      alt="product"
-                      src={elm.image}
-                      width={720}
-                      height={1005}
-                    />
-                    <span className="quantity bg-warning">{elm.quantity}</span>
-                  </figure>
-                  <div className="content">
-                    <div className="info">
-                      <p className="name">{elm.name}</p>
-                    </div>
-                    <span className="price">
-                      ₹{(elm.price * elm.quantity).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-                <div className="checkout-product-item">
-                  <figure className="img-product">
-                    <Image
-                      style={{ borderRadius: "10px" }}
-                      alt="product"
-                      src={elm.uploadedImage}
-                      width={720}
-                      height={1005}
-                    />
-                  </figure>
-                  <div className="content">
-                    <div className="info">
-                      <p className="name">Uploaded image</p>
+              paymentMethod === "BANK"
+                ? handleRazorpayPayment()
+                : handleSubmit();
+            }}
+            className="tf-page-cart-checkout widget-wrap-checkout"
+          >
+            <ul className="wrap-checkout-product">
+              {cartItems.map((elm, i) => (
+                <li
+                  key={i}
+                  className="d-flex flex-column border-black border p-2 rounded-2"
+                >
+                  <div className="checkout-product-item">
+                    <figure className="img-product">
+                      <Image
+                        style={{ borderRadius: "10px" }}
+                        alt="product"
+                        src={elm.image}
+                        width={720}
+                        height={1005}
+                      />
+                      <span className="quantity bg-warning">
+                        {elm.quantity}
+                      </span>
+                    </figure>
+                    <div className="content">
+                      <div className="info">
+                        <p className="name">{elm.name}</p>
+                      </div>
+                      <span className="price">
+                        ₹{(elm.price * elm.quantity).toFixed(2)}
+                      </span>
                     </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  <div className="checkout-product-item">
+                    <figure className="img-product">
+                      <Image
+                        style={{ borderRadius: "10px" }}
+                        alt="product"
+                        src={elm.uploadedImage}
+                        width={720}
+                        height={1005}
+                      />
+                    </figure>
+                    <div className="content">
+                      <div className="info">
+                        <p className="name">Uploaded image</p>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-          {!cartItems.length && (
-            <div className="container">
-              <div className="row align-items-center mt-5 mb-5">
-                <div className="col-12 fs-18">Your shop cart is empty</div>
-                <div className="col-12 mt-3">
-                  <Link
-                    href={`/shop-default`}
-                    className="tf-btn btn-fill animate-hover-btn radius-3 w-100"
-                  >
-                    Explore Products!
-                  </Link>
+            {!cartItems.length && (
+              <div className="container">
+                <div className="row align-items-center mt-5 mb-5">
+                  <div className="col-12 fs-18">Your shop cart is empty</div>
+                  <div className="col-12 mt-3">
+                    <Link
+                      href={`/shop-default`}
+                      className="tf-btn btn-fill animate-hover-btn radius-3 w-100"
+                    >
+                      Explore Products!
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* <div className="coupon-box">
+            {/* <div className="coupon-box">
             <input type="text" placeholder="Discount code" />
             <a
               href="#"
@@ -207,25 +216,25 @@ const CartFooter = ({
             </a>
           </div> */}
 
-          <div className="d-flex justify-content-between line pb_20">
-            <h6 className="fw-5">Total</h6>
-            <h6 className="total fw-5">₹{subtotal}</h6>
-          </div>
-
-          <div className="wd-check-payment">
-            <div className="fieldset-radio mb_20">
-              <input
-                type="radio"
-                name="paymentMethod"
-                id="bank"
-                value="BANK"
-                className="tf-check d-flex align-items-center"
-                checked={paymentMethod === "BANK"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <label htmlFor="bank">Online transfer</label>
+            <div className="d-flex justify-content-between line pb_20">
+              <h6 className="fw-5">Total</h6>
+              <h6 className="total fw-5">₹{subtotal}</h6>
             </div>
-            {/* <div className="fieldset-radio mb_20">
+
+            <div className="wd-check-payment">
+              <div className="fieldset-radio mb_20">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  id="bank"
+                  value="BANK"
+                  className="tf-check d-flex align-items-center"
+                  checked={paymentMethod === "BANK"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <label htmlFor="bank">Online transfer</label>
+              </div>
+              {/* <div className="fieldset-radio mb_20">
               <input
                 required
                 type="radio"
@@ -238,36 +247,49 @@ const CartFooter = ({
               />
               <label htmlFor="delivery">Cash on delivery</label>
             </div> */}
-          </div>
+            </div>
 
-          {!isAuthenticated ? (
-            <a
-              href="#login"
-              data-bs-toggle="modal"
-              className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
-            >
-              Place order
-            </a>
-          ) : (
-            <button
-              type="submit"
-              disabled={isLoading || !isFormValid() || !cartItems.length}
-              className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${
-                isLoading || !isFormValid() || !cartItems.length
-                  ? "disabled-btn"
-                  : ""
-              }`}
-            >
-              {isLoading
-                ? "Processing..."
-                : paymentMethod === "BANK"
-                ? "Go to payment"
-                : "Place order"}
-            </button>
-          )}
-        </form>
+            {!isAuthenticated ? (
+              <a
+                href="#login"
+                data-bs-toggle="modal"
+                className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
+              >
+                Please login to place order
+              </a>
+            ) : (
+              <button
+                type="submit"
+                disabled={isLoading || !isFormValid() || !cartItems.length}
+                className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${
+                  isAnyLoading || !isFormValid() || !cartItems.length
+                    ? "disabled-btn"
+                    : ""
+                }`}
+                data-tooltip-id="cart-tooltip"
+                data-tooltip-content={
+                  isAnyLoading
+                    ? "Processing..."
+                    : !isFormValid()
+                    ? "Fill all the details"
+                    : !cartItems.length
+                    ? "Cart is empty"
+                    : ""
+                }
+              >
+                {isLoading
+                  ? "Processing..."
+                  : paymentMethod === "BANK"
+                  ? "Go to payment"
+                  : "Place order"}
+              </button>
+              
+            )}
+            <Tooltip id="cart-tooltip" place="top" />
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

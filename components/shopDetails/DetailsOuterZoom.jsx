@@ -23,7 +23,7 @@ import toast from "react-hot-toast";
 import { setProductById } from "@/redux/features/productSlice";
 
 export default function DetailsOuterZoom({ product }) {
-  const kidsBagId = "67a70ca93f464380b64b05a6";
+  //const kidsBagId = "67a70ca93f464380b64b05a6";
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const [quantity, setQuantity] = useState(1);
   const cartItems = useSelector((state) => state.cart.cartItems);
