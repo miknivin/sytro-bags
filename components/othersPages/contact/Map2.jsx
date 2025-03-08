@@ -30,7 +30,7 @@ export default function Map2() {
                 <p className="mb_15">
                   <strong>Phone</strong>
                 </p>
-                <p>+91 72933 33483</p>
+                <p>+91 62829 58691</p>
               </div>
               <div className="mb_20">
                 <p className="mb_15">
