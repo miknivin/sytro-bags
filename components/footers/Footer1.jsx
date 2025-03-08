@@ -176,10 +176,10 @@ export default function Footer1({ bgColor = "" }) {
                     <h6>Sign Up for Email</h6>
                   </div>
                   <div className="tf-collapse-content">
-                    <div className="footer-menu_item">
+                    {/* <div className="footer-menu_item">
                       Sign up to get first dibs on new arrivals, sales,
                       exclusive content, events and more!
-                    </div>
+                    </div> */}
                     <div
                       className={`tfSubscribeMsg ${
                         showMessage ? "active" : ""

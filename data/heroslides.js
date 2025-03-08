@@ -76,7 +76,7 @@ export const slides2 = [
 export const slides3 = [
   {
     imgSrc:
-      "https://ik.imagekit.io/c1jhxlxiy/facebook%20cover%20image-01.jpg?updatedAt=1741189561951",
+      "https://ik.imagekit.io/c1jhxlxiy/sgwe1phpuv5niwzej6cx.webp?updatedAt=1741438690756",
     alt: "fashion-slideshow",
     heading: "Transform Your Child Into A Superhero",
     subheading: "KIDS COLLECTION",
@@ -85,7 +85,7 @@ export const slides3 = [
   },
   {
     imgSrc:
-      "https://ik.imagekit.io/c1jhxlxiy/spiderman%20banner-01.jpg?updatedAt=1741189561993",
+      "https://ik.imagekit.io/c1jhxlxiy/u1d3zm7uxlaihgeevavt.webp?updatedAt=1741438878940",
     alt: "fashion-slideshow-02",
     heading: "Engineered for the Urban Explorer",
     subheading: "TRAVEL COLLECTION",

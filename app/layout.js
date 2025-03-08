@@ -6,12 +6,15 @@ import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 export const metadata = {
   title: "Sytro",
-  description: "Your website description",
+  description: "Sytro bags",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+      </head>
       <body className="preload-wrapper">
         <div className="preload preload-container" id="preloader">
           <div className="preload-logo">

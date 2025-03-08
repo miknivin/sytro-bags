@@ -13,10 +13,10 @@ export default function Hero() {
         slidesPerView={1}
         spaceBetween={0}
         loop={true}
-        autoplay={{
-          delay: 6000, // Set autoplay delay
-          disableOnInteraction: false, // Continue autoplay after interaction
-        }}
+        // autoplay={{
+        //   delay: 6000, // Set autoplay delay
+        //   disableOnInteraction: false, // Continue autoplay after interaction
+        // }}
         delay={2000}
         speed={1000}
         modules={[Pagination, Autoplay]}

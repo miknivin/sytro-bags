@@ -3,16 +3,16 @@ export const allHomepages = [
     href: "/",
     imgSrc: "/images/demo/home-01.jpg",
     alt: "home-01",
-    name: "Home Fashion 01",
+    name: "Home",
     labels: ["New", "Trend"],
   },
-  {
-    href: "/home-multi-brand",
-    imgSrc: "/images/demo/home-multi-brand.jpg",
-    alt: "home-multi-brand",
-    name: "Home Multi Brand",
-    labels: ["New", "Hot"],
-  },
+  // {
+  //   href: "/home-multi-brand",
+  //   imgSrc: "/images/demo/home-multi-brand.jpg",
+  //   alt: "home-multi-brand",
+  //   name: "Home Multi Brand",
+  //   labels: ["New", "Hot"],
+  // },
   {
     href: "/home-02",
     imgSrc: "/images/demo/home-02.jpg",
@@ -434,12 +434,21 @@ export const productDetailPages = [
   },
 ];
 
+export const contact = [
+  {
+    href: "/contact-2",
+    text: "Contact",
+    className: "menu-link-text link text_black-2",
+    links: [],
+  },
+];
+
 export const pages = [
   {
     href: "/about-us",
     text: "About us",
     className: "menu-link-text link text_black-2",
-    links: null,
+    links: [],
   },
   {
     href: "#",
@@ -469,11 +478,11 @@ export const pages = [
         text: "Contact 1",
         className: "menu-link-text link text_black-2",
       },
-      {
-        href: "/contact-2",
-        text: "Contact 2",
-        className: "menu-link-text link text_black-2",
-      },
+      // {
+      //   href: "/contact-2",
+      //   text: "Contact 2",
+      //   className: "menu-link-text link text_black-2",
+      // },
     ],
   },
   {
@@ -637,6 +646,5 @@ export const navItems = [
     id: "dropdown-menu-five",
     label: "Contact",
     href: "/contact-2",
-   
   },
 ];

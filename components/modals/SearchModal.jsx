@@ -69,9 +69,12 @@ export default function SearchModal() {
                 </ul>
               </div>
               <div className="tf-col-content">
-                <div className="tf-search-content-title fw-5">
-                  Need some inspiration?
-                </div>
+                {!searchTerm && (
+                  <div className="tf-search-content-title fw-5">
+                    Need some inspiration?
+                  </div>
+                )}
+
                 <div className="tf-search-hidden-inner">
                   {isLoading ? (
                     <div className="spinner-border text-warning" role="status">

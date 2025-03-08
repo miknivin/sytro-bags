@@ -1,16 +1,19 @@
 .wrap-slider {
   position: relative;
+
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; // Default for larger screens
   }
+
   .box-content {
     position: absolute;
     left: 0;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
+
     .heading,
     h1 {
       margin-bottom: 18px;
@@ -18,6 +21,7 @@
         margin-bottom: 38px;
       }
     }
+
     p {
       margin-bottom: 48px;
       font-size: 20px;
@@ -35,7 +39,14 @@
       }
     }
   }
+
+  @media (max-width: 768px) {
+    img {
+      object-fit: contain;
+    }
+  }
 }
+
 .tf-slideshow {
   overflow: hidden;
   .wrap-pagination {

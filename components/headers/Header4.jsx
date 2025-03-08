@@ -94,16 +94,16 @@ export default function Header4() {
             </div>
             <div className="col-xl-5 col-md-4 col-3">
               <ul className="nav-icon d-flex justify-content-end align-items-center gap-20">
-                {/* <li className="nav-search">
+                <li className="nav-search">
                   <a
                     href="#canvasSearch"
                     data-bs-toggle="offcanvas"
                     aria-controls="offcanvasLeft"
                     className="nav-icon-item"
                   >
-                    <i className="icon icon-search" />
+                    <i className="icon icon-search text-white" />
                   </a>
-                </li> */}
+                </li>
                 <li className="nav-account">
                   <UserIcon />
                 </li>
@@ -138,11 +138,7 @@ export default function Header4() {
             <nav className="box-navigation text-center">
               <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
                 <Nav />
-                <li className="menu-item">
-                  <Link href="/contact-2" className="item-link">
-                    Contact
-                  </Link>
-                </li>
+                
               </ul>
             </nav>
           </div>
