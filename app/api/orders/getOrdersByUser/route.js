@@ -15,7 +15,7 @@ export async function GET(req) {
             );
         }
 
-        const orders = await Order.find({ user: user._id });
+        const orders = await Order.find({ user: user._id }).sort({ createdAt: -1 });
 
         if (!orders || orders.length === 0) {
             return NextResponse.json(

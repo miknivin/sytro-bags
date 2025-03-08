@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRegisterMutation } from "@/redux/api/authApi";
 import Swal from "sweetalert2";
 import dynamic from "next/dynamic";
-
+import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 // Dynamically import Bootstrap with no SSR
 const BootstrapClient = dynamic(
   () => import("bootstrap/dist/js/bootstrap.bundle.min.js"),
@@ -190,6 +190,7 @@ export default function Register() {
                 </div>
               </div>
             </form>
+            <GoogleSigninButton/>
             {error && (
               <p className="error-message text-danger">{error.data?.message}</p>
             )}

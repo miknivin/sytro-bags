@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useLoginMutation } from "@/redux/api/authApi";
 import Swal from "sweetalert2";
-
+import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 export default function Login() {
   const [login, { isLoading, error }] = useLoginMutation();
   const [formData, setFormData] = useState({
@@ -119,6 +119,7 @@ export default function Login() {
                   >
                     {isLoading ? "Logging in..." : "Log in"}
                   </button>
+          
                 </div>
                 <div className="w-100">
                   <a
@@ -132,6 +133,7 @@ export default function Login() {
                 </div>
               </div>
             </form>
+            <GoogleSigninButton/>
             {error && (
               <p className="error-message text-danger">{error.data?.message}</p>
             )}

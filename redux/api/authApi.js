@@ -26,7 +26,7 @@ export const authApi = createApi({
     googleSignIn: builder.mutation({
       query(body) {
         return {
-          url: `/register/${process.env.REACT_APP_PROJECT_ID}`,
+          url: `auth/google`,
           method: "POST",
           body,
         };
