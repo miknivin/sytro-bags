@@ -73,23 +73,26 @@ export const testimonials2 = [
 
 export const testimonialsData = [
   {
-    imgSrc: "/images/item/tets4.jpg",
+    imgSrc:
+      "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Razia+Beevi.webp",
     alt: "image-product",
-    name: "Fathima",
+    name: "Razia Beevi",
     item: "Mother of twins",
     quote: `"I discovered Sytro Bags when searching for school bags for my twins, and it's been a game-changer for our family. The personalized superhero design caught their attention, but it's the quality that truly won me over. My kids have been using their bags for over a year now, and despite the daily rough handling that comes with active 8-year-olds, they still look almost new. The water-resistant material has saved their books during unexpected rain, and their customer service is exceptional - they helped me through the entire customization process"`,
   },
   {
-    imgSrc: "/images/item/tets4.jpg",
+    imgSrc:
+      "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Yaseen.webp",
     alt: "image-product",
-    name: "Richard",
+    name: "Yaseen",
     item: "Photographer",
     quote: `"As someone who travels extensively for work, I've gone through numerous bags over the years, but none have matched the durability of Sytro's travel collection. I purchased their Voyager series bag 18 months ago, and it has already accompanied me on over 50 domestic flights and 6 international trips. What impresses me most is how they've thought through every detail - from the perfectly sized laptop compartment to the strategically placed quick-access pockets for travel documents. For a proudly Indian brand to deliver this level of quality at such a competitive price point is remarkable."`,
   },
   {
-    imgSrc: "/images/item/tets5.jpg",
+    imgSrc:
+      "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Irshad+k+a.webp",
     alt: "image-product",
-    name: "William",
+    name: "Irshad K A",
     item: "Entrepreneur",
     quote: `"Working in the merchant navy means my bags need to withstand extreme conditions and heavy usage. After trying numerous international brands, I found Sytro Bags through a colleague's recommendation, and I couldn't be more satisfied. I've been using their heavy-duty backpack for my sailing contracts for the past year, and it has survived everything from tropical storms to rough cargo ship conditions. The water-repellent material is genuinely effective, and the stitching quality is exceptional - it's refreshing to see an Indian company delivering such world-class quality"`,
   },
@@ -97,19 +100,19 @@ export const testimonialsData = [
 
 export const imagesData = [
   {
-    src: "/images/item/tets4.jpg",
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Razia+Beevi.webp",
     alt: "image-testimonial",
     width: 750,
     height: 851,
   },
   {
-    src: "/images/item/tets5.jpg",
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Yaseen.webp",
     alt: "image-testimonial",
     width: 750,
     height: 851,
   },
   {
-    src: "/images/item/tets3.jpg",
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Irshad+k+a.webp",
     alt: "image-testimonial",
     width: 750,
     height: 851,
