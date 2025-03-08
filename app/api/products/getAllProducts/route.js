@@ -9,7 +9,7 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
 
-    const resPerPage = parseInt(searchParams.get("resPerPage")) || 5;
+    const resPerPage = parseInt(searchParams.get("resPerPage")) || 50;
     const queryParams = Object.fromEntries(searchParams.entries());
 
     const apiFilters = new APIFilters(products, queryParams).search().filter();

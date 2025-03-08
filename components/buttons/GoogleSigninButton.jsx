@@ -1,9 +1,9 @@
-'use client';
-import React, {useEffect } from "react";
-import { useGoogleSignInMutation } from '@/redux/api/authApi';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '@/lib/firebase.config';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+"use client";
+import React, { useEffect } from "react";
+import { useGoogleSignInMutation } from "@/redux/api/authApi";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/lib/firebase.config";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 export default function GoogleSigninButton() {
   const [googleSignIn, { isLoading }] = useGoogleSignInMutation();
@@ -13,7 +13,6 @@ export default function GoogleSigninButton() {
       import("bootstrap");
     }
   }, []);
-  
 
   const handleGoogleSignIn = async () => {
     try {
@@ -27,7 +26,7 @@ export default function GoogleSigninButton() {
         uid: result.user.uid,
         photoURL: result.user.photoURL,
       };
-      console.log("User Data Sent:", userData);
+      console.log("User Data Sent:", result);
       await googleSignIn(userData).unwrap();
 
       if (typeof document !== "undefined") {
@@ -45,21 +44,20 @@ export default function GoogleSigninButton() {
       }
       // Success alert
       await Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'You have successfully signed in with Google.',
-        confirmButtonText: 'OK',
+        icon: "success",
+        title: "Success!",
+        text: "You have successfully signed in with Google.",
+        confirmButtonText: "OK",
       });
-
     } catch (error) {
-      console.error('Google Sign-in failed:', error);
+      console.error("Google Sign-in failed:", error);
 
       // Error alert
       await Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: error.message || 'Google sign-in failed. Please try again.',
-        confirmButtonText: 'OK',
+        icon: "error",
+        title: "Oops...",
+        text: error.message || "Google sign-in failed. Please try again.",
+        confirmButtonText: "OK",
       });
     }
   };

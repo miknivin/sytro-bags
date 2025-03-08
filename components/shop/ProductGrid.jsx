@@ -1,15 +1,51 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ProductCard } from "../shopCards/ProductCard";
 import { useGetProductsQuery } from "@/redux/api/productsApi";
 
 export default function ProductGrid({ gridItems = 4 }) {
-  const { data, isLoading, isError, error } = useGetProductsQuery({
-    page: 1,
+  const [page, setPage] = useState(1);
+  const [allProducts, setAllProducts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const loaderRef = useRef(null);
+
+  const { data, isLoading, isError, error, isFetching } = useGetProductsQuery({
+    page,
+    resPerPage: 8,
     category: "Kids Bags",
   });
 
-  if (isLoading) {
+  // Append new products when data changes
+  useEffect(() => {
+    if (data?.filteredProducts) {
+      setAllProducts((prev) => [...prev, ...data.filteredProducts]);
+      setHasMore(data.filteredProducts.length === 8); // Check if there’s more to load
+    }
+  }, [data]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetching) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
+    };
+  }, [hasMore, isFetching]);
+
+  if (isLoading && page === 1) {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         Loading products...
@@ -25,8 +61,6 @@ export default function ProductGrid({ gridItems = 4 }) {
     );
   }
 
-  const allproducts = data?.filteredProducts || [];
-
   return (
     <>
       <div
@@ -37,13 +71,18 @@ export default function ProductGrid({ gridItems = 4 }) {
           marginBottom: "24px",
         }}
       >
-        {allproducts.length} product(s) found
+        {allProducts.length} product(s) found
       </div>
       <div className="grid-layout wrapper-shop" data-grid={`grid-${gridItems}`}>
-        {allproducts.map((elm, i) => (
+        {allProducts.map((elm, i) => (
           <ProductCard product={elm} key={i} />
         ))}
       </div>
+      {hasMore && (
+        <div ref={loaderRef} style={{ textAlign: "center", padding: "20px" }}>
+          {isFetching ? "Loading more..." : "Scroll to load more"}
+        </div>
+      )}
     </>
   );
 }
