@@ -5,8 +5,8 @@ import DashboardNav from "@/components/othersPages/dashboard/DashboardNav";
 import React from "react";
 
 export const metadata = {
-  title: "My Account Edit || Sytro - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus ",
+  title: "My Account || Sytrobags",
+  description: "My account",
 };
 export default function page() {
   return (
