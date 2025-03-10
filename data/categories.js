@@ -32,7 +32,7 @@ export const slidesData = [
       "https://ik.imagekit.io/c1jhxlxiy/kid%20backpack.jpg?updatedAt=1738348627716",
     alt: "collection-img",
     title: "Kids Collection",
-    price: "₹800",
+    price: "₹890",
   },
   // {
   //   imgSrc: "https://ik.imagekit.io/c1jhxlxiy/freepik__travel.jpg?updatedAt=1738348876251",
