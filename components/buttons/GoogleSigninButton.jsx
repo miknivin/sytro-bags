@@ -26,7 +26,7 @@ export default function GoogleSigninButton() {
         uid: result.user.uid,
         photoURL: result.user.photoURL,
       };
-      console.log("User Data Sent:", result);
+     // console.log("User Data Sent:", result);
       await googleSignIn(userData).unwrap();
 
       if (typeof document !== "undefined") {
