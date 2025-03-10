@@ -7,6 +7,9 @@ import "rc-slider/assets/index.css";
 export const metadata = {
   title: "Sytro",
   description: "Sytro bags",
+  icons: {
+    icon: "/favicon.ico", 
+  },
 };
 
 export default function RootLayout({ children }) {
