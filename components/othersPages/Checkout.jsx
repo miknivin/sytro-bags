@@ -10,13 +10,19 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { clearCart } from "@/redux/features/cartSlice";
 export default function Checkout() {
+  const indiaPhoneRegex = /^[6-9][0-9]{9}$/; // 10 digits, starts with 6-9
+  const uaePhoneRegex =
+    /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/; // UAE valid prefixes with 9 digits
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const dispatch = useDispatch();
   const router = useRouter();
   const [subtotal, setSubtotal] = useState(0);
   const [countryId, setCountryId] = useState("101");
+  const [stateId, setStateId] = useState(countryId === "101" && "19");
   const [filteredStates, setFilteredStates] = useState([]);
   const [email, setEmail] = useState("");
-
+  const [touched, setTouched] = useState({});
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,6 +38,9 @@ export default function Checkout() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [createNewOrder, { isLoading, error }] = useCreateNewOrderMutation();
 
+  const handleBlur = (e) => {
+    setTouched({ ...touched, [e.target.id]: true });
+  };
   useEffect(() => {
     setSubtotal(
       cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
@@ -109,7 +118,11 @@ export default function Checkout() {
                     id="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                   />
+                  {touched.firstName && !formData.firstName && (
+                    <div className="text-danger">First name is required</div>
+                  )}
                 </fieldset>
                 <fieldset className="fieldset">
                   <label htmlFor="lastName">Last Name</label>
@@ -120,10 +133,13 @@ export default function Checkout() {
                     value={formData.lastName}
                     onChange={handleChange}
                   />
+                  {touched.lastName && !formData.lastName && (
+                    <div className="text-danger">First name is required</div>
+                  )}
                 </fieldset>
               </div>
               <div className="box grid-2">
-                <fieldset className="fieldset">
+                <fieldset className="fieldset mb-2">
                   <label htmlFor="phoneNo">Phone Number</label>
                   <input
                     required
@@ -131,22 +147,37 @@ export default function Checkout() {
                     id="phoneNo"
                     value={formData.phoneNo}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                   />
+                  {touched.phoneNo &&
+                    !(
+                      indiaPhoneRegex.test(formData.phoneNo.trim()) ||
+                      uaePhoneRegex.test(formData.phoneNo.trim())
+                    ) && (
+                      <div className="text-danger">
+                        Invalid phone number format
+                      </div>
+                    )}
                 </fieldset>
-                <fieldset className="fieldset">
+
+                <fieldset className="fieldset mb-2">
                   <label htmlFor="email">Email</label>
                   <input
                     required
                     type="email"
                     id="email"
                     value={email}
+                    onBlur={handleBlur}
                     onChange={handleEmailChange}
                     autoComplete="abc@xyz.com"
                   />
+                  {touched.email && !emailRegex.test(email) && (
+                    <div className="text-danger">Invalid email format</div>
+                  )}
                 </fieldset>
               </div>
 
-              <fieldset className="fieldset">
+              <fieldset className="fieldset mb-3">
                 <label htmlFor="country">Country</label>
                 <div className="select-custom">
                   <select
@@ -154,7 +185,9 @@ export default function Checkout() {
                     id="country"
                     value={countryId}
                     onChange={(e) => setCountryId(e.target.value)}
+                    onBlur={() => setTouched({ ...touched, country: true })}
                   >
+                    <option value="">Select Country</option>
                     {countries.map((country) => (
                       <option key={country.id} value={country.id}>
                         {country.name}
@@ -162,20 +195,35 @@ export default function Checkout() {
                     ))}
                   </select>
                 </div>
+                {touched.country && !countryId && (
+                  <div className="text-danger">Country is required</div>
+                )}
               </fieldset>
-              <fieldset className="fieldset">
+
+              <fieldset className="fieldset mb-3">
                 <label htmlFor="state">State</label>
                 <div className="select-custom">
-                  <select id="state" className="tf-select w-100">
+                  <select
+                    id="state"
+                    className="tf-select w-100"
+                    value={stateId}
+                    onChange={(e) => setStateId(e.target.value)}
+                    onBlur={() => setTouched({ ...touched, state: true })}
+                  >
+                    <option value="">Select State</option>
                     {filteredStates.map((state) => (
-                      <option key={state.id} value={state.name}>
+                      <option key={state.id} value={state.id}>
                         {state.name}
                       </option>
                     ))}
                   </select>
                 </div>
+                {touched.state && !stateId && (
+                  <div className="text-danger">State is required</div>
+                )}
               </fieldset>
-              <fieldset className="fieldset">
+
+              <fieldset className="fieldset mb-3">
                 <label htmlFor="city">City</label>
                 <input
                   required
@@ -183,9 +231,14 @@ export default function Checkout() {
                   id="city"
                   value={formData.city}
                   onChange={handleChange}
+                  onBlur={() => setTouched({ ...touched, city: true })}
                 />
+                {touched.city && !formData.city && (
+                  <div className="text-danger">City is required</div>
+                )}
               </fieldset>
-              <fieldset className="fieldset">
+
+              <fieldset className="fieldset mb-3">
                 <label htmlFor="address">Address</label>
                 <input
                   required
@@ -193,9 +246,14 @@ export default function Checkout() {
                   id="address"
                   value={formData.address}
                   onChange={handleChange}
+                  onBlur={() => setTouched({ ...touched, address: true })}
                 />
+                {touched.address && !formData.address && (
+                  <div className="text-danger">Address is required</div>
+                )}
               </fieldset>
-              <fieldset className="fieldset">
+
+              <fieldset className="fieldset mb-3">
                 <label htmlFor="zipCode">Zip Code</label>
                 <input
                   required
@@ -203,10 +261,16 @@ export default function Checkout() {
                   id="zipCode"
                   value={formData.zipCode}
                   onChange={handleChange}
+                  onBlur={() => setTouched({ ...touched, zipCode: true })}
                 />
+                {touched.zipCode && !formData.zipCode && (
+                  <div className="text-danger">Zip Code is required</div>
+                )}
               </fieldset>
               <fieldset className="fieldset">
-                <label htmlFor="orderNotes">Order Notes (optional)</label>
+                <label htmlFor="orderNotes" class="non-mandatory">
+                  Order Notes (optional)
+                </label>
                 <textarea
                   id="orderNotes"
                   value={formData.orderNotes}

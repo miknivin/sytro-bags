@@ -29,9 +29,9 @@ export const collections = [
 export const slidesData = [
   {
     imgSrc:
-      "https://ik.imagekit.io/c1jhxlxiy/kid%20backpack.jpg?updatedAt=1738348627716",
+      "https://ik.imagekit.io/c1jhxlxiy/supershell.webp?updatedAt=1741619407000",
     alt: "collection-img",
-    title: "Kids Collection",
+    title: "Supershell Collection",
     price: "₹890",
   },
   // {

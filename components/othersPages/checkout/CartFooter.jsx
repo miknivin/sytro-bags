@@ -30,6 +30,10 @@ const CartFooter = ({
     useRazorpayCheckoutSessionMutation();
   const dispatch = useDispatch();
   const isFormValid = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
+    const uaePhoneRegex =
+      /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/; 
     return (
       formData.firstName &&
       formData.lastName &&
@@ -37,7 +41,10 @@ const CartFooter = ({
       formData.city &&
       formData.phoneNo &&
       formData.zipCode &&
-      email
+      email &&
+      emailRegex.test(email) &&
+      (uaePhoneRegex.test(formData.phoneNo) ||
+        indiaPhoneRegex.test(formData.phoneNo)) 
     );
   };
 
@@ -283,7 +290,6 @@ const CartFooter = ({
                   ? "Go to payment"
                   : "Place order"}
               </button>
-              
             )}
             <Tooltip id="cart-tooltip" place="top" />
           </form>

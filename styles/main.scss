@@ -92,14 +92,23 @@
   padding: 4px;
 }
 
-.text-brand-primary{
-  color:var(--primary);
+.text-brand-primary {
+  color: var(--primary);
 }
 
-.sign-in-button{
-  transition:300ms ease all;
+.sign-in-button {
+  transition: 300ms ease all;
 }
 
-.sign-in-button:hover{
-  opacity:0.7;
+.sign-in-button:hover {
+  opacity: 0.7;
+}
+
+.error-text {
+  color: red;
+}
+
+label.non-mandatory:after {
+  content: none !important;
+  display: none !important;
 }

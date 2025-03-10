@@ -34,7 +34,7 @@ export default function Categories() {
                       src={slide.imgSrc}
                       width={600}
                       height={666}
-                      style={{opacity:"0.7"}}
+                      style={{ opacity: "0.8" }}
                     />
                   </div>
                   <div className="collection-content">
