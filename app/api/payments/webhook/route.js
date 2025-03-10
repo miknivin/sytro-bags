@@ -45,6 +45,7 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    console.log("verified payment");
 
     await dbConnect();
 

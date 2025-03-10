@@ -33,7 +33,7 @@ const CartFooter = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
     const uaePhoneRegex =
-      /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/; 
+      /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/;
     return (
       formData.firstName &&
       formData.lastName &&
@@ -44,7 +44,7 @@ const CartFooter = ({
       email &&
       emailRegex.test(email) &&
       (uaePhoneRegex.test(formData.phoneNo) ||
-        indiaPhoneRegex.test(formData.phoneNo)) 
+        indiaPhoneRegex.test(formData.phoneNo))
     );
   };
 
@@ -104,7 +104,9 @@ const CartFooter = ({
           }
         } catch (error) {
           console.error("Error verifying payment:", error);
-          alert("Error verifying payment. Please try again.");
+          alert(
+            "Payment verification failed. Please visit the Contact page for assistance."
+          );
         }
       },
       prefill: {
