@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
@@ -19,10 +20,16 @@ export async function POST(req) {
     }
 
     const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const uniqueId = randomUUID().replace(/-/g, "").slice(0, 6);
+    const fileExtension = file.name.split(".").pop();
+    const newFileName = `${file.name.replace(
+      `.${fileExtension}`,
+      ""
+    )}_${uniqueId}.${fileExtension}`;
 
     const uploadParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `user-uploads/${file.name}`,
+      Key: `user-uploads/${newFileName}`,
       Body: fileBuffer,
       ContentType: file.type,
     };
@@ -30,9 +37,9 @@ export async function POST(req) {
     const command = new PutObjectCommand(uploadParams);
     await s3.send(command);
 
-    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/user-uploads/${file.name}`;
+    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/user-uploads/${newFileName}`;
 
-    return NextResponse.json({ name: file.name, url: fileUrl });
+    return NextResponse.json({ name: newFileName, url: fileUrl });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
