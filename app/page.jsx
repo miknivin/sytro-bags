@@ -16,7 +16,7 @@ import Categories2 from "@/components/homes/home-4/Categories2";
 import Topbar2 from "@/components/headers/Topbar2";
 import Header4 from "@/components/headers/Header4";
 export const metadata = {
-  title: "Home 1 || Sytro",
+  title: "Home || Sytro",
   description: "Sytro",
 };
 export default function Home() {

@@ -32,7 +32,7 @@ export async function POST(req) {
             totalAmount,
             paymentMethod,
             paymentInfo,
-            user: user._id, // Ensure you use the authenticated user
+            user: user?._id, 
         });
 
         return NextResponse.json(
