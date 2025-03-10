@@ -8,7 +8,7 @@ export const metadata = {
   title: "Sytro",
   description: "Sytro bags",
   icons: {
-    icon: "/favicon.ico", 
+    icon: "/favicon.ico?v=2",
   },
 };
 
