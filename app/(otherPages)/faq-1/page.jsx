@@ -6,14 +6,15 @@ import Faq3 from "@/components/othersPages/faq/Faq3";
 import React from "react";
 import Link from "next/link";
 import Faq4 from "@/components/othersPages/faq/Faq4";
+import Header4 from "@/components/headers/Header4";
 export const metadata = {
-  title: "Faq 1 || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Faq || Sytro",
+  description: "Sytro",
 };
 export default function page() {
   return (
     <>
-      <Header2 />
+      <Header4 />
       <>
         <div className="tf-page-title style-2">
           <div className="container-full">
@@ -29,7 +30,7 @@ export default function page() {
                 <Faq1 />
                 <Faq2 />
                 <Faq3 />
-                <Faq4/>
+                <Faq4 />
               </div>
               <div className="box tf-other-content radius-10 bg_grey-8">
                 <h5 className="mb_20">Have a question</h5>
@@ -44,7 +45,7 @@ export default function page() {
                 </p>
                 <div className="d-flex gap-20 align-items-center">
                   <Link
-                    href={`/contact-1`}
+                    href={`/contact-2`}
                     className="tf-btn radius-3 btn-fill animate-hover-btn justify-content-center"
                   >
                     Contact us
