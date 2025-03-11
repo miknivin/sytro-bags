@@ -77,7 +77,7 @@ const CartFooter = ({
           razorpay_signature: response.razorpay_signature,
           shippingInfo: {
             ...formData,
-            fullName
+            fullName,
           },
           cartItems,
           itemsPrice: subtotal,
@@ -90,7 +90,7 @@ const CartFooter = ({
           const serverResponse = await razorpayWebhook(paymentData).unwrap();
 
           if (serverResponse.success) {
-            console.log("Payment verified. Order placed:", serverResponse);
+            // console.log("Payment verified. Order placed:", serverResponse);
 
             Swal.fire({
               icon: "success",
@@ -106,10 +106,42 @@ const CartFooter = ({
             alert("Payment verification failed. Please contact support.");
           }
         } catch (error) {
-          console.error("Error verifying payment:", error);
-          alert(
-            "Payment verification failed. Please visit the Contact page for assistance."
-          );
+          try {
+            const apiResponse = await fetch(`${process.env.PAYMENT_URL}/api/order`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+              body: JSON.stringify(paymentData),
+            });
+
+            const result = await apiResponse.json();
+           // console.log(result, "result");
+
+            if (result.success) {
+              console.log('retried')
+              Swal.fire({
+                icon: "success",
+                title: "Order Created Successfully!",
+                text: "Your order has been placed.",
+                confirmButtonText: "OK",
+              }).then(() => {
+                dispatch(clearCart());
+                router.push("/my-account-orders");
+              });
+            } else {
+              console.error("Retry failed:", result.error);
+              alert(
+                "Retry failed: " + result.error + ". Please contact support."
+              );
+            }
+          } catch (apiError) {
+            console.error("Error calling retry API:", apiError);
+            alert(
+              "Payment verification and retry failed. Please visit the Contact page for assistance."
+            );
+          }
         }
       },
       prefill: {
@@ -146,8 +178,6 @@ const CartFooter = ({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              //console.log("clicked");
-
               paymentMethod === "BANK"
                 ? handleRazorpayPayment()
                 : handleSubmit();
@@ -217,16 +247,6 @@ const CartFooter = ({
                 </div>
               </div>
             )}
-
-            {/* <div className="coupon-box">
-            <input type="text" placeholder="Discount code" />
-            <a
-              href="#"
-              className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
-            >
-              Apply
-            </a>
-          </div> */}
 
             <div className="d-flex justify-content-between line pb_20">
               <h6 className="fw-5">Total</h6>
