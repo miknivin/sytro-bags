@@ -37,8 +37,8 @@ export default function ToolbarBottom() {
           <div className="toolbar-label">Account</div>
         </a>
       </div>
-      <div className="toolbar-item">
-        {/* <Link href={`/wishlist`}>
+      {/* <div className="toolbar-item">
+        <Link href={`/wishlist`}>
           <div className="toolbar-icon">
             <i className="icon-heart" />
             <div className="toolbar-count">
@@ -46,8 +46,8 @@ export default function ToolbarBottom() {
             </div>
           </div>
           <div className="toolbar-label">Wishlist</div>
-        </Link> */}
-      </div>
+        </Link>
+      </div> */}
       <div className="toolbar-item">
         <a href="#shoppingCart" data-bs-toggle="modal">
           <div className="toolbar-icon">
