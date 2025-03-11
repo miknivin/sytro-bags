@@ -74,11 +74,11 @@ export const testimonials2 = [
 export const testimonialsData = [
   {
     imgSrc:
-      "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Razia+Beevi.webp",
+      "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/WhatsApp+Image+2025-03-11+at+4.26.52+PM.jpeg",
     alt: "image-product",
-    name: "Razia Beevi",
-    item: "Mother of twins",
-    quote: `"I discovered Sytro Bags when searching for school bags for my twins, and it's been a game-changer for our family. The personalized superhero design caught their attention, but it's the quality that truly won me over. My kids have been using their bags for over a year now, and despite the daily rough handling that comes with active 8-year-olds, they still look almost new. The water-resistant material has saved their books during unexpected rain, and their customer service is exceptional - they helped me through the entire customization process"`,
+    name: "Shahanas Rasheed",
+    item: "Mother of a child",
+    quote: `"I discovered Sytro Bags while searching for a school bag for my child, and it has been a game-changer for our family. The personalized superhero design immediately caught my child's attention, but it's the quality that truly impressed me. My kid has been using their bag for over a year now, and despite the daily wear and tear that comes with an active 8-year-old, it still looks almost new. The water-resistant material has saved their books from unexpected rain, and their customer service is exceptional—they guided me through the entire customization process."`,
   },
   {
     imgSrc:
@@ -100,7 +100,7 @@ export const testimonialsData = [
 
 export const imagesData = [
   {
-    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Razia+Beevi.webp",
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/WhatsApp+Image+2025-03-11+at+4.26.52+PM.jpeg",
     alt: "image-testimonial",
     width: 750,
     height: 851,

@@ -70,12 +70,15 @@ const CartFooter = ({
         "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
       handler: async function (response) {
         console.log("Payment successful, verifying with server...", response);
-
+        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
         const paymentData = {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,
-          shippingInfo: formData,
+          shippingInfo: {
+            ...formData,
+            fullName
+          },
           cartItems,
           itemsPrice: subtotal,
           shippingPrice: 0,
