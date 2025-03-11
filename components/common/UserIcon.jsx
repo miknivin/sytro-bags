@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function UserIcon() {
+export default function UserIcon({ isText = false }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [authState, setAuthState] = useState(isAuthenticated);
 
@@ -16,7 +16,8 @@ export default function UserIcon() {
     <>
       {authState ? (
         <Link href={"/my-account"} className="nav-icon-item text-white">
-          <i className="icon icon-account" />
+          {!isText && <i className="icon icon-account" />}
+          {isText && <span className="text-black">My Account</span>}
         </Link>
       ) : (
         <Link
@@ -24,7 +25,8 @@ export default function UserIcon() {
           data-bs-toggle="modal"
           className="nav-icon-item text-white"
         >
-          <i className="icon icon-account" />
+          {!isText && <i className="icon icon-account" />}
+          {isText && <span className="text-black">Login</span>}
         </Link>
       )}
     </>

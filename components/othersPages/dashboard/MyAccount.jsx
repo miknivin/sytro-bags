@@ -16,7 +16,7 @@ export default function MyAccount() {
   }, [isAuthenticated, router]);
 
   if (!isAuthenticated) {
-    return null; 
+    return null;
   }
 
   return (
@@ -34,7 +34,7 @@ export default function MyAccount() {
           </Link>
           , and{" "}
           <Link className="text_primary" href={`/my-account-edit`}>
-            edit your password and account details
+            edit your account details
           </Link>
           .
         </p>

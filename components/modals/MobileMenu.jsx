@@ -1,21 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import LanguageSelect from "../common/LanguageSelect";
 import CurrencySelect from "../common/CurrencySelect";
 import { navItems as staticNavItems } from "@/data/menu";
 import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+
 export default function MobileMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState({});
   const [shouldDismiss, setShouldDismiss] = useState(false);
   const products = useSelector((state) => state.product.items);
-
+  const user = useSelector((state) => state.auth.user); // Assuming auth state
+  const closeRef = useRef()
   const updatedNavItems = staticNavItems.map((item) => {
     if (item.label === "Products") {
       return {
@@ -24,7 +26,7 @@ export default function MobileMenu() {
           ...products.map((product) => ({
             id: product._id,
             label: product.name,
-            href: `/product-detail/${product._id}`, // Assuming product pages follow this route
+            href: `/product-detail/${product._id}`,
           })),
         ],
       };
@@ -33,13 +35,12 @@ export default function MobileMenu() {
   });
 
   const toggleMenu = (item) => {
-    console.log(updatedNavItems)
     if (item.href) {
-      setShouldDismiss(true)
+      setShouldDismiss(true);
       router.push(item.href);
-      return; 
+      return;
     }
-    setShouldDismiss(false)
+    setShouldDismiss(false);
     setOpenMenus((prev) => ({
       ...prev,
       [item.id]: !prev[item.id],
@@ -74,7 +75,12 @@ export default function MobileMenu() {
 
   return (
     <div className="offcanvas offcanvas-start canvas-mb" id="mobileMenu">
-      <span className="icon-close icon-close-popup" data-bs-dismiss="offcanvas" aria-label="Close" />
+      <span
+        className="icon-close icon-close-popup"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+        ref={closeRef}
+      />
       <div className="mb-canvas-content">
         <div className="mb-body">
           <ul className="nav-ul-mb" id="wrapper-menu-navigation">
@@ -82,18 +88,20 @@ export default function MobileMenu() {
               <li key={i} className="nav-mb-item">
                 <button
                   onClick={() => toggleMenu(item)}
-                  //data-bs-dismiss="offcanvas"
                   {...(shouldDismiss && { "data-bs-dismiss": "offcanvas" })}
-                  className={`mb-menu-link current ${isMenuActive(item) ? "activeMenu" : ""} border-none-b p-0`}
+                  className={`mb-menu-link current ${
+                    isMenuActive(item) ? "activeMenu" : ""
+                  } border-none-b p-0`}
                 >
                   <span>{item.label}</span>
-                  {item.links&&(
+                  {item.links && (
                     <FontAwesomeIcon
-                     icon={faChevronDown}
-                     className={`chevron-icon ${openMenus[item.id] ? "rotate-180" : ""}`}
-                   />
+                      icon={faChevronDown}
+                      className={`chevron-icon ${
+                        openMenus[item.id] ? "rotate-180" : ""
+                      }`}
+                    />
                   )}
-                  
                 </button>
                 {openMenus[item.id] && (
                   <div className="sub-nav-menu">
@@ -103,13 +111,17 @@ export default function MobileMenu() {
                           <>
                             <button
                               onClick={() => toggleMenu(subItem.id)}
-                              className={`sub-nav-link ${isMenuActive(subItem) ? "activeMenu" : ""} p-0 border-none-b`}
+                              className={`sub-nav-link ${
+                                isMenuActive(subItem) ? "activeMenu" : ""
+                              } p-0 border-none-b`}
                             >
                               <span>{subItem.label}</span>
 
                               <FontAwesomeIcon
                                 icon={faChevronDown}
-                                className={`chevron-icon ${openMenus[subItem.id] ? "rotate-180" : ""}`}
+                                className={`chevron-icon ${
+                                  openMenus[subItem.id] ? "rotate-180" : ""
+                                }`}
                               />
                             </button>
                             {openMenus[subItem.id] && (
@@ -118,7 +130,11 @@ export default function MobileMenu() {
                                   <li key={i3}>
                                     <Link
                                       href={innerItem.href}
-                                      className={`sub-nav-link ${isMenuActive(innerItem) ? "activeMenu" : ""}`}
+                                      className={`sub-nav-link ${
+                                        isMenuActive(innerItem)
+                                          ? "activeMenu"
+                                          : ""
+                                      }`}
                                     >
                                       {innerItem.label}
                                       {innerItem.demoLabel && (
@@ -135,7 +151,9 @@ export default function MobileMenu() {
                         ) : (
                           <Link
                             href={subItem.href}
-                            className={`sub-nav-link ${isMenuActive(subItem) ? "activeMenu" : ""}`}
+                            className={`sub-nav-link ${
+                              isMenuActive(subItem) ? "activeMenu" : ""
+                            }`}
                           >
                             {subItem.label}
                             {subItem.demoLabel && (
@@ -151,6 +169,24 @@ export default function MobileMenu() {
                 )}
               </li>
             ))}
+            <li className="nav-account">
+              {user ? (
+                <Link href="/my-account" className="user-account">
+                  <span>My Account</span>
+                </Link>
+              ) : (
+                <Link
+                  href={"#login"}
+                  data-bs-toggle="modal"
+                  data-bs-dismiss="offcanvas"
+                  onClick={() => closeRef?.current?.click()}
+                  className="user-account"
+
+                >
+                  <span>Login</span>
+                </Link>
+              )}
+            </li>
           </ul>
         </div>
       </div>
