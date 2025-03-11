@@ -11,7 +11,7 @@ import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 export default function Page({ params }) {
   const { id } = params; // Extract product ID from params
 
-  // Call the query directly (Hooks must be used inside the component)
+ 
   const { data, error, isLoading } = useGetProductDetailsQuery(id);
 
   let product = null;

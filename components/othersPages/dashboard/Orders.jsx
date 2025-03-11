@@ -6,7 +6,6 @@ import { useMyOrdersQuery } from "@/redux/api/orderApi"; // Adjust the import pa
 export default function Orders() {
   const { data, isLoading, isError, error } = useMyOrdersQuery();
   const orders = Array.isArray(data?.orders) ? data.orders : [];
-  // Log orders data when available
 
   if (isLoading) {
     return <p>Loading orders...</p>;
@@ -21,6 +20,17 @@ export default function Orders() {
       </p>
     );
   }
+
+  // Function to check if the order date is today
+  const isToday = (date) => {
+    const today = new Date();
+    const orderDate = new Date(date);
+    return (
+      orderDate.getDate() === today.getDate() &&
+      orderDate.getMonth() === today.getMonth() &&
+      orderDate.getFullYear() === today.getFullYear()
+    );
+  };
 
   return (
     <div className="my-account-content account-order">
@@ -40,7 +50,19 @@ export default function Orders() {
               orders.map((order) => (
                 <tr key={order.id} className="tf-order-item">
                   <td>#{order._id.slice(-6)}</td>
-                  <td>{new Date(order?.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    {order?.createdAt && (
+                      <>
+                        {new Date(order.createdAt).toLocaleDateString()}{" "}
+                        {isToday(order.createdAt) && (
+                          <span className="badge badge-warning text-black">
+                            New
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </td>
+
                   <td>{order?.orderStatus}</td>
                   <td>
                     ₹{order?.totalAmount} for {order?.orderItems.length} items

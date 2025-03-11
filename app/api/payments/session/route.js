@@ -1,8 +1,10 @@
 import Razorpay from "razorpay";
-
+import dbConnect from "@/lib/db/connection";
 export async function POST(req) {
   try {
     const body = await req.json();
+    await dbConnect();
+    console.log("db connected");
 
     const { itemsPrice } = body?.orderData;
 

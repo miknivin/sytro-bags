@@ -155,8 +155,8 @@ export default function DetailsOuterZoom({ product }) {
                           className="d-flex justify-content-between align-items-center"
                         >
                           {hasCustomDesign ? (
-                            <div className="d-flex gap-2">
-                              <div className="position-relative border border-black rounded-2">
+                            <div className="d-flex gap-2 flex-column">
+                              <div style={{width:"fit-content"}} className="position-relative border border-black rounded-2">
                                 <button
                                   onClick={() =>
                                     dispatch(
@@ -175,21 +175,19 @@ export default function DetailsOuterZoom({ product }) {
                                   style={{
                                     width: "125px",
                                     height: "125px",
+                                    objectFit: "contain",
                                     borderRadius: "5px",
                                   }}
                                 />
-                                <div
-                                  style={{ opacity: 0.7 }}
-                                  className="position-absolute bottom-0 pt-1 bg-black w-100"
-                                >
-                                  <small className="text-white">
-                                    {uploadedImages?.[product._id]
-                                      ? uploadedImages[product._id]
-                                          .split("/")
-                                          .pop()
-                                      : ""}
-                                  </small>
-                                </div>
+                              </div>
+                              <div style={{ opacity: 0.7 }} className=" w-100">
+                                <small title="" className="line-clamp">
+                                  {uploadedImages?.[product._id]
+                                    ? uploadedImages[product._id]
+                                        .split("/")
+                                        .pop()
+                                    : ""}
+                                </small>
                               </div>
                             </div>
                           ) : (
