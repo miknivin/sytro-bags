@@ -2,7 +2,7 @@ import dbConnect from '@/lib/db/connection';
 import { isAuthenticatedUser } from '@/middlewares/auth';
 import Order from '@/models/Order';
 import { NextResponse } from 'next/server';
-
+import User from "@/models/User"; 
 export async function POST(req) {
     try {
         await dbConnect();
