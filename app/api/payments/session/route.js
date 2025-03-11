@@ -1,6 +1,7 @@
 import Razorpay from "razorpay";
 import dbConnect from "@/lib/db/connection";
 import Order from "@/models/Order";
+import User from "@/models/User";
 
 export async function POST(req) {
   try {
