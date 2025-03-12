@@ -320,7 +320,7 @@ const CartFooter = ({
                   isAnyLoading
                     ? "Processing..."
                     : !isFormValid()
-                    ? "Fill all the details"
+                    ? "Fill all the details correctly"
                     : !cartItems.length
                     ? "Cart is empty"
                     : ""

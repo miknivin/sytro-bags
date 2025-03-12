@@ -30,13 +30,13 @@ export default function Map2() {
                 <p className="mb_15">
                   <strong>Phone</strong>
                 </p>
-                <p>+91 62829 58691</p>
+                <a href="tel:+919567678465">+91 9567678465</a>
               </div>
               <div className="mb_20">
                 <p className="mb_15">
                   <strong>Email</strong>
                 </p>
-                <p>sytrobags@gmail.com</p>
+                <a href="mailto:sytrobags@gmail.com">sytrobags@gmail.com</a>
               </div>
               {/* <div className="mb_36">
                 <p className="mb_15">
