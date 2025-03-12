@@ -84,6 +84,7 @@ const CartFooter = ({
           shippingPrice: 0,
           totalPrice: subtotal + 0,
           taxPrice: 0,
+          orderNotes: formData.orderNotes || "",
         };
 
         try {
@@ -107,20 +108,23 @@ const CartFooter = ({
           }
         } catch (error) {
           try {
-            const apiResponse = await fetch(`${process.env.PAYMENT_URL}/api/order`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify(paymentData),
-            });
+            const apiResponse = await fetch(
+              `${process.env.NEXT_PUBLIC_PAYMENT_URL}/api/order`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(paymentData),
+              }
+            );
 
             const result = await apiResponse.json();
-           // console.log(result, "result");
+            // console.log(result, "result");
 
             if (result.success) {
-              console.log('retried')
+              console.log("retried");
               Swal.fire({
                 icon: "success",
                 title: "Order Created Successfully!",

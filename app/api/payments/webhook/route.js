@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-// import Order from "@/models/Order";
+import Order from "@/models/Order";
 import dbConnect from "@/lib/db/connection";
 import { isAuthenticatedUser } from "@/middlewares/auth";
 import User from "@/models/User";
@@ -25,6 +25,7 @@ export async function POST(req) {
       shippingPrice,
       totalPrice,
       taxPrice,
+      orderNotes,
     } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -62,6 +63,7 @@ export async function POST(req) {
       itemsPrice,
       shippingAmount: shippingPrice,
       taxAmount: taxPrice,
+      orderNotes: orderNotes,
       totalAmount: totalPrice,
     });
 
