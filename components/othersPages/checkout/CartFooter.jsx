@@ -22,7 +22,9 @@ const CartFooter = ({
   isLoading,
 }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const user = useSelector((state) => state.auth.user);
   const router = useRouter();
+  const [retryLoading, setRetryLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("BANK");
   const [razorpayWebhook, { isLoading: webhookLoading }] =
     useRazorpayWebhookMutation();
@@ -108,6 +110,14 @@ const CartFooter = ({
           }
         } catch (error) {
           try {
+            setRetryLoading(true); // Start loading
+
+            const backupPaymentData = {
+              ...paymentData,
+              userId: user._id,
+            };
+
+            setRetryLoading(true);
             const apiResponse = await fetch(
               `${process.env.NEXT_PUBLIC_PAYMENT_URL}/api/order`,
               {
@@ -116,14 +126,14 @@ const CartFooter = ({
                   "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify(paymentData),
+                body: JSON.stringify(backupPaymentData),
               }
             );
 
             const result = await apiResponse.json();
-            // console.log(result, "result");
-
+            setRetryLoading(false);
             if (result.success) {
+              setRetryLoading(false);
               console.log("retried");
               Swal.fire({
                 icon: "success",
@@ -145,6 +155,8 @@ const CartFooter = ({
             alert(
               "Payment verification and retry failed. Please visit the Contact page for assistance."
             );
+          } finally {
+            setRetryLoading(false);
           }
         }
       },
@@ -172,7 +184,8 @@ const CartFooter = ({
       document.body.removeChild(script);
     };
   }, []);
-  const isAnyLoading = isLoading || sessionLoading || webhookLoading;
+  const isAnyLoading =
+    isLoading || sessionLoading || webhookLoading || retryLoading;
   return (
     <>
       {isAnyLoading && <FullScreenSpinner />}
