@@ -27,6 +27,7 @@ export default function Checkout() {
     firstName: "",
     lastName: "",
     address: "",
+    state:stateId==="19"?"Kerala":"",
     city: "",
     phoneNo: "",
     zipCode: "",
@@ -208,7 +209,11 @@ export default function Checkout() {
                     id="state"
                     className="tf-select w-100"
                     value={stateId}
-                    onChange={(e) => setStateId(e.target.value)}
+                    onChange={(e) => {
+                      const selectedState = filteredStates.find(state => state.id === e.target.value);
+                      setStateId(e.target.value); 
+                      setFormData({ ...formData, state: selectedState ? selectedState.name : "" }); // Also update formData.state with state name
+                    }}
                     onBlur={() => setTouched({ ...touched, state: true })}
                   >
                     <option value="">Select State</option>

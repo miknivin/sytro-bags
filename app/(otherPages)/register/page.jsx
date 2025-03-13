@@ -1,16 +1,16 @@
 import Footer1 from "@/components/footers/Footer1";
-import Header2 from "@/components/headers/Header2";
+import Header4 from "@/components/headers/Header4";
 import Register from "@/components/othersPages/Register";
 import React from "react";
 
 export const metadata = {
-  title: "Register || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Sytro",
+  description: "Sytro",
 };
 export default function page() {
   return (
     <>
-      <Header2 />
+      <Header4 />
       <div className="tf-page-title style-2">
         <div className="container-full">
           <div className="heading text-center">Register</div>

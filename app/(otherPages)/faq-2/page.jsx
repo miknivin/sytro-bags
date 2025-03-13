@@ -5,6 +5,7 @@ import Faq2 from "@/components/othersPages/faq/Faq2";
 import Faq3 from "@/components/othersPages/faq/Faq3";
 import React from "react";
 import Link from "next/link";
+import Header4 from "@/components/headers/Header4";
 export const metadata = {
   title: "Faq 2 || Ecomus - Ultimate Nextjs Ecommerce Template",
   description: "Ecomus - Ultimate Nextjs Ecommerce Template",
@@ -12,7 +13,7 @@ export const metadata = {
 export default function page() {
   return (
     <>
-      <Header2 />
+      <Header4 />
       <>
         {/* page-title */}
         <div className="tf-page-title style-2">

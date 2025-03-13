@@ -51,8 +51,15 @@ const CartFooter = ({
   };
 
   const handleRazorpayPayment = async () => {
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
     const orderData = {
       orderItems: cartItems,
+      shippingInfo: {
+        ...formData,
+        fullName,
+        email,
+      },
+      totalPrice: subtotal + 0,
       currency: "INR",
       itemsPrice: Math.trunc(subtotal),
     };
@@ -80,6 +87,7 @@ const CartFooter = ({
           shippingInfo: {
             ...formData,
             fullName,
+            email,
           },
           cartItems,
           itemsPrice: subtotal,
@@ -117,7 +125,6 @@ const CartFooter = ({
               userId: user._id,
             };
 
-            setRetryLoading(true);
             const apiResponse = await fetch(
               `${process.env.NEXT_PUBLIC_PAYMENT_URL}/api/order`,
               {
@@ -146,15 +153,25 @@ const CartFooter = ({
               });
             } else {
               console.error("Retry failed:", result.error);
-              alert(
-                "Retry failed: " + result.error + ". Please contact support."
-              );
+              Swal.fire({
+                icon: "error",
+                title: "Payment & Retry Failed",
+                text: `Please visit the Contact page for assistance. Your order ID: ${
+                  response.razorpay_order_id || "Unavailable"
+                }`,
+                confirmButtonText: "OK",
+              });
             }
           } catch (apiError) {
             console.error("Error calling retry API:", apiError);
-            alert(
-              "Payment verification and retry failed. Please visit the Contact page for assistance."
-            );
+            Swal.fire({
+              icon: "error",
+              title: "Payment & Retry Failed",
+              text: `Please visit the Contact page for assistance. Your order ID: ${
+                response.razorpay_order_id || "Unavailable"
+              }`,
+              confirmButtonText: "OK",
+            });
           } finally {
             setRetryLoading(false);
           }

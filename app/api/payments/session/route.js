@@ -1,17 +1,28 @@
 import Razorpay from "razorpay";
 import dbConnect from "@/lib/db/connection";
-import Order from "@/models/Order";
 import User from "@/models/User";
+import Order from "@/models/Order";
+import SessionStartedOrder from "@/models/SessionStartedOrder";
+import { isAuthenticatedUser } from "@/middlewares/auth";
 
 export async function POST(req) {
   try {
     const body = await req.json();
     await dbConnect();
-    console.log("db connected");
+    console.log("DB connected");
 
-    const { itemsPrice } = body?.orderData;
+    const user = await isAuthenticatedUser(req);
+    if (!user) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Unauthorized user" }),
+        { status: 401 }
+      );
+    }
 
-    if (!itemsPrice) {
+    const { orderData } = body;
+    const { itemsPrice, shippingInfo, orderItems } = orderData;
+
+    if (!itemsPrice || !orderItems) {
       return new Response(JSON.stringify({ error: "Missing fields" }), {
         status: 400,
       });
@@ -23,13 +34,26 @@ export async function POST(req) {
     });
 
     const options = {
-      amount: itemsPrice * 100,
+      amount: itemsPrice * 100, // Convert to paise
       currency: "INR",
       receipt: `order_${Date.now()}`,
       payment_capture: 1,
     };
 
     const order = await razorpay.orders.create(options);
+
+    // Save order to MongoDB
+    const newOrder = new SessionStartedOrder({
+      razorpayOrderId: order.id,
+      razorpayPaymentStatus: order.status,
+      user: user._id,
+      orderItems,
+      shippingInfo,
+      itemsPrice,
+      totalAmount: itemsPrice,
+    });
+
+    await newOrder.save();
 
     return new Response(JSON.stringify(order), { status: 200 });
   } catch (error) {
