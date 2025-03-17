@@ -6,9 +6,9 @@ const sendToken = (user, statusCode) => {
   // Set cookie options
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "PRODUCTION", // Ensure HTTPS in production
-    sameSite: "Lax", // Important for Safari
-    maxAge: process.env.COOKIE_EXPIRES_TIME * 24 * 60 * 60, // in seconds
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Lax",
+    maxAge: (process.env.JWT_EXPIRES_TIME || 7) * 24 * 60 * 60,
     path: "/",
   };
 
