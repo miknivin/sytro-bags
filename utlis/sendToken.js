@@ -8,9 +8,10 @@ const sendToken = (user, statusCode) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "Lax",
-    maxAge: (process.env.JWT_EXPIRES_TIME || 7) * 24 * 60 * 60,
+    maxAge: (process.env.COOKIE_EXPIRES_TIME || 7) * 24 * 60 * 60,
     path: "/",
   };
+  console.log(cookieOptions, "cookieOptions");
 
   // Create the response
   const response = NextResponse.json(

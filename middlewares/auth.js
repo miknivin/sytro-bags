@@ -6,6 +6,8 @@ import dbConnect from "@/lib/db/connection";
 export const isAuthenticatedUser = async (req) => {
   await dbConnect();
   const token = req.cookies.get("token")?.value;
+  console.log(token);
+
   if (!token) {
     throw new Error("You need to login to access this resource");
   }
@@ -17,11 +19,8 @@ export const isAuthenticatedUser = async (req) => {
   return user;
 };
 
-export const authorizeRoles = (user,...roles)=>{
-
-      
-      if (!roles.includes(user.role)) {
-          throw new Error("Not allowed")
-      }
-      
-}
+export const authorizeRoles = (user, ...roles) => {
+  if (!roles.includes(user.role)) {
+    throw new Error("Not allowed");
+  }
+};
