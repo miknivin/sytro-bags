@@ -137,6 +137,21 @@ label.non-mandatory:after {
   }
 }
 
+.whatsapp-button {
+  position: fixed;
+  bottom: 132px;
+  right: 25px;
+  height: 40px;
+  width: 40px;
+  padding: 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+  z-index: 99999999999999;
+}
+
 .whatsapp-icon {
   width: 35px;
   height: 35px;
