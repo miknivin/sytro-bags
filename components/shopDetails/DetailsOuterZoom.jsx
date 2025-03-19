@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
 import CountdownComponent from "../common/Countdown";
@@ -21,15 +21,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetUploadedImage, setCartItem } from "@/redux/features/cartSlice.js";
 import toast from "react-hot-toast";
 import { setProductById } from "@/redux/features/productSlice";
-
+import { useRouter, useSearchParams } from "next/navigation";
 export default function DetailsOuterZoom({ product }) {
   //const kidsBagId = "67a70ca93f464380b64b05a6";
   const [currentColor, setCurrentColor] = useState(colors[0]);
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [currentSize, setCurrentSize] = useState("Small");
   const selectedDesigns = useSelector((state) => state.cart.selectedDesigns);
   const uploadedImages = useSelector((state) => state.cart.uploadedImages);
+  const searchParams = useSearchParams();
+  const uploadModal = useRef();
   const selectedTemplate = useSelector(
     (state) => state.product.selectedTemplate
   );
@@ -79,6 +82,16 @@ export default function DetailsOuterZoom({ product }) {
       dispatch(setProductById(product));
     }
   }, [product, dispatch]);
+
+  useEffect(() => {
+    const isUploadImage = searchParams.get("isUploadImage");
+    if (isUploadImage === "true" && hasCustomDesign) {
+      if (!isAddedToCartProducts(product._id)) {
+        setItemToCart();
+      }
+      openCartModal();
+    }
+  }, [searchParams]);
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -156,7 +169,10 @@ export default function DetailsOuterZoom({ product }) {
                         >
                           {hasCustomDesign ? (
                             <div className="d-flex gap-2 flex-column">
-                              <div style={{width:"fit-content"}} className="position-relative border border-black rounded-2">
+                              <div
+                                style={{ width: "fit-content" }}
+                                className="position-relative border border-black rounded-2"
+                              >
                                 <button
                                   onClick={() =>
                                     dispatch(
@@ -193,6 +209,7 @@ export default function DetailsOuterZoom({ product }) {
                           ) : (
                             // Show Customize button if no design is selected
                             <a
+                              ref={uploadModal}
                               href="#super_kidbag"
                               data-bs-toggle="modal"
                               className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
@@ -210,21 +227,7 @@ export default function DetailsOuterZoom({ product }) {
                   </div>
                   {/* size */}
                   <div className="variant-picker-item">
-                    <div className="d-flex justify-content-between align-items-center">
-                      {/* <div className="variant-picker-label">
-                        Size:
-                        <span className="fw-6 variant-picker-label-value">
-                          {currentSize ? currentSize.value : ""}
-                        </span>
-                      </div> */}
-                      {/* <a
-                        href="#find_size"
-                        data-bs-toggle="modal"
-                        className="find-size fw-6"
-                      >
-                        Find your size
-                      </a> */}
-                    </div>
+                    <div className="d-flex justify-content-between align-items-center"></div>
                     {/* <form className="variant-picker-values">
                       {sizeOptions.map((size, index) => (
                         <React.Fragment key={index}>
@@ -256,6 +259,13 @@ export default function DetailsOuterZoom({ product }) {
                       <a
                         onClick={() => {
                           if (!hasCustomDesign) {
+                            uploadModal.current.click();
+                            router.push(
+                              `${window.location.pathname}?isUploadImage=proceeding`,
+                              {
+                                scroll: false,
+                              }
+                            );
                             toast.error("You need to upload your image");
                             return;
                           }
@@ -274,29 +284,7 @@ export default function DetailsOuterZoom({ product }) {
                           ₹{(product.offer * quantity).toFixed(2)}
                         </span>
                       </a>
-                      <div className="w-100">
-                        {/* <button disabled className="btns-full">
-                          Buy with
-                          <span className="d-flex gap-3 fs-4">
-                            <FontAwesomeIcon
-                              icon={faGooglePay}
-                              className="text-xl"
-                            />
-                            <FontAwesomeIcon
-                              icon={faCcVisa}
-                              className="text-xl"
-                            />
-                            <FontAwesomeIcon
-                              icon={faCcMastercard}
-                              className="text-xl"
-                            />
-                            <FontAwesomeIcon
-                              icon={faApplePay}
-                              className="text-xl"
-                            />
-                          </span>
-                        </button> */}
-                      </div>
+                      <div className="w-100"></div>
                     </form>
                   </div>
                   <div className="tf-product-info-delivery-return">
@@ -344,6 +332,7 @@ export default function DetailsOuterZoom({ product }) {
         <StickyItem
           product={product}
           isAddedToCartProducts={isAddedToCartProducts}
+          openUploadModal={() => uploadModal.current.click()}
           setItemsTocart={setItemToCart}
           quantity={quantity}
           setQuantity={setQuantity}

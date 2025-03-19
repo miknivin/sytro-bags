@@ -1,23 +1,33 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Link from "next/link";
-import LanguageSelect from "../common/LanguageSelect";
-import CurrencySelect from "../common/CurrencySelect";
 import { navItems as staticNavItems } from "@/data/menu";
 import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { useListProductsQuery } from "@/redux/api/productsApi";
+
 
 export default function MobileMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState({});
   const [shouldDismiss, setShouldDismiss] = useState(false);
-  const products = useSelector((state) => state.product.items);
-  const user = useSelector((state) => state.auth.user); // Assuming auth state
-  const closeRef = useRef()
+  const productsFromStore = useSelector((state) => state.product.items) || [];
+  const user = useSelector((state) => state.auth.user); 
+  const closeRef = useRef();
+
+
+  const shouldFetch = productsFromStore.length <= 30;
+  const { data, isLoading, isError } = useListProductsQuery(undefined, {
+    skip: !shouldFetch, 
+  });
+
+
+  const products = shouldFetch && data ? data.filteredProducts : productsFromStore;
+
   const updatedNavItems = staticNavItems.map((item) => {
     if (item.label === "Products") {
       return {
@@ -73,6 +83,16 @@ export default function MobileMenu() {
     return active;
   };
 
+
+  if (isLoading && shouldFetch) {
+    return <div>Loading products...</div>;
+  }
+
+
+  if (isError && shouldFetch) {
+    return <div>Error fetching products</div>;
+  }
+
   return (
     <div className="offcanvas offcanvas-start canvas-mb" id="mobileMenu">
       <span
@@ -116,7 +136,6 @@ export default function MobileMenu() {
                               } p-0 border-none-b`}
                             >
                               <span>{subItem.label}</span>
-
                               <FontAwesomeIcon
                                 icon={faChevronDown}
                                 className={`chevron-icon ${
@@ -181,7 +200,6 @@ export default function MobileMenu() {
                   data-bs-dismiss="offcanvas"
                   onClick={() => closeRef?.current?.click()}
                   className="user-account"
-
                 >
                   <span>Login</span>
                 </Link>

@@ -11,6 +11,7 @@ export default function StickyItem({
   product,
   isAddedToCartProducts,
   setItemsTocart,
+  openUploadModal,
   setQuantity,
   quantity,
 }) {
@@ -51,7 +52,8 @@ export default function StickyItem({
                   <a
                     onClick={() => {
                       if (!hasCustomDesign) {
-                        toast.error("You need to upload your image");
+                        openUploadModal()
+                        toast.error("You need to upload the image");
                         return;
                       }
                       openCartModal();

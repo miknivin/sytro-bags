@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 
-
 import Context from "@/context/Context";
 import { usePathname } from "next/navigation";
 import ScrollTop from "@/components/common/ScrollTop";
 import { ReduxConsumer } from "@/utlis/ReduxConsumer";
 import { Toaster } from "react-hot-toast";
+import WhatsAppButton from "../modals/WhatsAppButton";
 export default function ClientWrapper({ children }) {
   const pathname = usePathname();
   const [scrollDirection, setScrollDirection] = useState("down");
@@ -109,6 +109,7 @@ export default function ClientWrapper({ children }) {
       <Toaster position="top-center" reverseOrder={false} />
       <ReduxConsumer>{children}</ReduxConsumer>
       <ScrollTop />
+      <WhatsAppButton />
     </Context>
   );
 }

@@ -28,6 +28,10 @@ export const productApi = createApi({
         retry: 3,
       },
     }),
+    listProducts: builder.query({
+      query: (id) => `/products/list-products`,
+      providesTags: ["Product"],
+    }),
     submitReview: builder.mutation({
       query(body) {
         return {
@@ -106,6 +110,7 @@ export const {
   useGetProductDetailsQuery,
   useGetAdminProductsQuery,
   useCreateProductMutation,
+  useListProductsQuery,
   useUpdateProductMutation,
   useDeleteProductMutation,
   useDeleteProductImageMutation,

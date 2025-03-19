@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import WhatsAppButton from "../modals/WhatsAppButton";
 
 export default function ScrollTop() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -9,15 +10,15 @@ export default function ScrollTop() {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // You can use 'auto' or 'instant' as well
+      behavior: "smooth",
     });
   };
 
   const handleScroll = () => {
     const currentScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
+      document.documentElement.scrollTop || document.body.scrollTop;
     setScrolled(currentScroll);
-    setShowScrollTop(window.scrollY >= window.innerHeight);
+    setShowScrollTop(currentScroll > 150);
     const totalScrollHeight =
       document.documentElement.scrollHeight -
       document.documentElement.clientHeight;
@@ -26,31 +27,30 @@ export default function ScrollTop() {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <div
-      className={`progress-wrap ${scrolled > 150 ? "active-progress" : ""}`}
-      onClick={() => scrollToTop()}
-    >
-      <svg
-        className="progress-circle svg-content"
-        width="100%"
-        height="100%"
-        viewBox="-1 -1 102 102"
+    <div className="button-container">
+      <div
+        className={`progress-wrap ${scrolled > 150 ? "active-progress" : ""}`}
+        onClick={scrollToTop}
       >
-        <path
-          d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
-          style={{
-            strokeDasharray: "307.919, 307.919",
-            strokeDashoffset: 307.919 - (scrolled / scrollHeight) * 307.919,
-          }}
-        />
-      </svg>
+        <svg
+          className="progress-circle svg-content"
+          width="100%"
+          height="100%"
+          viewBox="-1 -1 102 102"
+        >
+          <path
+            d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+            style={{
+              strokeDasharray: "307.919, 307.919",
+              strokeDashoffset: 307.919 - (scrolled / scrollHeight) * 307.919,
+            }}
+          />
+        </svg>
+      </div>
     </div>
   );
 }

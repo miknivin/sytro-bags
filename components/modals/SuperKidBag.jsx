@@ -1,5 +1,7 @@
+"use client";
 import { useRef } from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation"; // Add this import
 import DesignUpload from "../customizeBags/DesignUpload";
 import {
   setUploadedImage,
@@ -10,6 +12,7 @@ export default function SuperKidBag() {
   const productById = useSelector((state) => state.product.productById);
   const dispatch = useDispatch();
   const closeRef = useRef(null);
+  const router = useRouter(); // Add router
 
   const handleFileUpload = (blobUrl) => {
     if (blobUrl) {
@@ -17,6 +20,10 @@ export default function SuperKidBag() {
         setUploadedImage({ productId: productById._id, uploadedImage: blobUrl })
       );
       // dispatch(setSelectedDesign({ design: blobUrl }));
+
+      router.push(`${window.location.pathname}?isUploadImage=true`, {
+        scroll: false,
+      });
     } else {
       dispatch(setUploadedImage({ uploadedImage: null }));
       dispatch(setSelectedDesign({ design: null }));
@@ -38,7 +45,6 @@ export default function SuperKidBag() {
               ref={closeRef}
             />
           </div>
-
           <DesignUpload onFileUpload={handleFileUpload} />
         </div>
       </div>

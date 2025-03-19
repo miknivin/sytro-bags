@@ -11,7 +11,7 @@ const sendToken = (user, statusCode) => {
     maxAge: (process.env.COOKIE_EXPIRES_TIME || 7) * 24 * 60 * 60,
     path: "/",
   };
-  console.log(cookieOptions, "cookieOptions");
+  //console.log(cookieOptions, "cookieOptions");
 
   // Create the response
   const response = NextResponse.json(

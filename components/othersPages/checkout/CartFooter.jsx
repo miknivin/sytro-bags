@@ -239,7 +239,9 @@ const CartFooter = ({
                     </figure>
                     <div className="content">
                       <div className="info">
-                        <p className="name">{elm.name}</p>
+                        <p className="name" style={{ paddingRight: "10px" }}>
+                          {elm.name}
+                        </p>
                       </div>
                       <span className="price">
                         ₹{(elm.price * elm.quantity).toFixed(2)}
@@ -258,7 +260,9 @@ const CartFooter = ({
                     </figure>
                     <div className="content">
                       <div className="info">
-                        <p className="name">Uploaded image</p>
+                        <p className="name" style={{ paddingRight: "10px" }}>
+                          Uploaded image
+                        </p>
                       </div>
                     </div>
                   </div>

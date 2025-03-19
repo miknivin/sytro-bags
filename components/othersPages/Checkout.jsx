@@ -27,7 +27,7 @@ export default function Checkout() {
     firstName: "",
     lastName: "",
     address: "",
-    state:stateId==="19"?"Kerala":"",
+    state: stateId === "19" ? "Kerala" : "",
     city: "",
     phoneNo: "",
     zipCode: "",
@@ -80,7 +80,7 @@ export default function Checkout() {
       taxAmount: 0,
       shippingAmount: 0,
       totalAmount: subtotal,
-      orderNotes:formData.orderNotes||""
+      orderNotes: formData.orderNotes || "",
     };
 
     try {
@@ -150,6 +150,7 @@ export default function Checkout() {
                     value={formData.phoneNo}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    onInput={handleBlur}
                   />
                   {touched.phoneNo &&
                     !(
@@ -158,6 +159,9 @@ export default function Checkout() {
                     ) && (
                       <div className="text-danger">
                         Invalid phone number format
+                        {formData.phoneNo.trim().startsWith("0") && (
+                          <small> -It should NOT start with 0</small>
+                        )}
                       </div>
                     )}
                 </fieldset>
@@ -171,7 +175,6 @@ export default function Checkout() {
                     value={email}
                     onBlur={handleBlur}
                     onChange={handleEmailChange}
-                    autoComplete="abc@xyz.com"
                   />
                   {touched.email && !emailRegex.test(email) && (
                     <div className="text-danger">Invalid email format</div>
@@ -210,9 +213,14 @@ export default function Checkout() {
                     className="tf-select w-100"
                     value={stateId}
                     onChange={(e) => {
-                      const selectedState = filteredStates.find(state => state.id === e.target.value);
-                      setStateId(e.target.value); 
-                      setFormData({ ...formData, state: selectedState ? selectedState.name : "" }); // Also update formData.state with state name
+                      const selectedState = filteredStates.find(
+                        (state) => state.id === e.target.value
+                      );
+                      setStateId(e.target.value);
+                      setFormData({
+                        ...formData,
+                        state: selectedState ? selectedState.name : "",
+                      }); // Also update formData.state with state name
                     }}
                     onBlur={() => setTouched({ ...touched, state: true })}
                   >
