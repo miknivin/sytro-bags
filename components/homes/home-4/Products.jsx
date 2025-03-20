@@ -31,12 +31,12 @@ export default function Products() {
           (p) => !prev.some((existing) => existing._id === p._id)
         );
         const updatedProducts = [...prev, ...newProducts];
-        console.log(
-          "New Products Added:",
-          updatedProducts.length,
-          "Page:",
-          page
-        );
+        // console.log(
+        //   "New Products Added:",
+        //   updatedProducts.length,
+        //   "Page:",
+        //   page
+        // );
         dispatch(setProducts(updatedProducts));
         return updatedProducts;
       });
@@ -50,7 +50,7 @@ export default function Products() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !isFetching) {
-          console.log("Observer Triggered, Loading Page:", page + 1);
+          // console.log("Observer Triggered, Loading Page:", page + 1);
           setPage((prev) => prev + 1);
         }
       },
@@ -84,8 +84,8 @@ export default function Products() {
         {isLoading && page === 1 ? (
           <div className="text-center">
             <div class="spinner-border text-warning" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
+              <span class="visually-hidden">Loading...</span>
+            </div>
           </div>
         ) : error ? (
           <div className="text-center text-red-500">

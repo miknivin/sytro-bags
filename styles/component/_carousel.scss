@@ -369,14 +369,14 @@
 
 }
 
-.button-style-arrow {
-    width: 46px;
-    height: 46px;
+.button-style-arrow, .swiper-nav {
+    width: 46px !important;
+    height: 46px !important;
     background-color: var(--white);
     border-radius: 50%;
     @include transition3;
     &::after {
-        font-size: 11px;
+        font-size: 11px !important;
         color: var(--main);
         font-weight: 700;
         @include transition3;

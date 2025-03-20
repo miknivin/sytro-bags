@@ -25,16 +25,16 @@ export default function Productcard4({ product }) {
         <Link href={`/product-detail/${product._id}`} className="product-img">
           <Image
             className="lazyload img-product bg-light"
-            data-src={product.images[0].url}
-            src={product.images[0].url}
+            data-src={product.images[0].url || '/fallback.png'}
+            src={product.images[0].url || '/fallback.png'}
             alt="image-product"
             width="720"
             height="1005"
           />
           <Image
             className="lazyload img-hover"
-            data-src={product.images[1]?.url}
-            src={product.images[1]?.url}
+            data-src={product.images[1]?.url || '/fallback.png'}
+            src={product.images[1]?.url || '/fallback.png'}
             alt="image-product"
             width="720"
             height="1005"
