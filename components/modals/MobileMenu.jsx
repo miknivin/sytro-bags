@@ -9,24 +9,22 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useListProductsQuery } from "@/redux/api/productsApi";
 
-
 export default function MobileMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState({});
   const [shouldDismiss, setShouldDismiss] = useState(false);
   const productsFromStore = useSelector((state) => state.product.items) || [];
-  const user = useSelector((state) => state.auth.user); 
+  const user = useSelector((state) => state.auth.user);
   const closeRef = useRef();
-
 
   const shouldFetch = productsFromStore.length <= 30;
   const { data, isLoading, isError } = useListProductsQuery(undefined, {
-    skip: !shouldFetch, 
+    skip: !shouldFetch,
   });
 
-
-  const products = shouldFetch && data ? data.filteredProducts : productsFromStore;
+  const products =
+    shouldFetch && data ? data.filteredProducts : productsFromStore;
 
   const updatedNavItems = staticNavItems.map((item) => {
     if (item.label === "Products") {
@@ -83,11 +81,9 @@ export default function MobileMenu() {
     return active;
   };
 
-
   if (isLoading && shouldFetch) {
     return <div>Loading products...</div>;
   }
-
 
   if (isError && shouldFetch) {
     return <div>Error fetching products</div>;
@@ -194,15 +190,15 @@ export default function MobileMenu() {
                   <span>My Account</span>
                 </Link>
               ) : (
-                <Link
-                  href={"#login"}
+                <a
+                  href="#login"
                   data-bs-toggle="modal"
                   data-bs-dismiss="offcanvas"
                   onClick={() => closeRef?.current?.click()}
                   className="user-account"
                 >
                   <span>Login</span>
-                </Link>
+                </a>
               )}
             </li>
           </ul>

@@ -2,15 +2,14 @@ import React from "react";
 import Link from "next/link";
 import CartLength from "../common/CartLength";
 import WishlistLength from "../common/WishlistLength";
+import { useSelector } from "react-redux";
+
 export default function ToolbarBottom() {
+  const user = useSelector((state) => state.auth.user);
   return (
     <div className="tf-toolbar-bottom type-1150">
       <div className="toolbar-item active">
-        <a
-          href="#toolbarShopmb"
-          data-bs-toggle="offcanvas"
-          aria-controls="offcanvasLeft"
-        >
+        <a href="#" data-bs-toggle="offcanvas" aria-controls="offcanvasLeft">
           <div className="toolbar-icon">
             <i className="icon-shop" />
           </div>
@@ -30,12 +29,21 @@ export default function ToolbarBottom() {
         </a>
       </div>
       <div className="toolbar-item">
-        <a href="#login" data-bs-toggle="modal">
-          <div className="toolbar-icon">
-            <i className="icon-account" />
-          </div>
-          <div className="toolbar-label">Account</div>
-        </a>
+        {user ? (
+          <Link href="/my-account" >
+            <div className="toolbar-icon">
+              <i className="icon-account" />
+            </div>
+            <div className="toolbar-label">Account</div>
+          </Link>
+        ) : (
+          <a href="#login" data-bs-toggle="modal">
+            <div className="toolbar-icon">
+              <i className="icon-account" />
+            </div>
+            <div className="toolbar-label">Account</div>
+          </a>
+        )}
       </div>
       {/* <div className="toolbar-item">
         <Link href={`/wishlist`}>
