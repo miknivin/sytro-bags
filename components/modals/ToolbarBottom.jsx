@@ -1,14 +1,17 @@
-import React from "react";
+"use client";
+import { useSelector } from "react-redux";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import CartLength from "../common/CartLength";
 import WishlistLength from "../common/WishlistLength";
-import { useSelector } from "react-redux";
 
 export default function ToolbarBottom() {
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.isAuthenticated);
+  const pathname = usePathname(); // Get current route
+
   return (
     <div className="tf-toolbar-bottom type-1150">
-      <div className="toolbar-item active">
+      <div className={`toolbar-item ${pathname === "/" ? "active" : ""}`}>
         <Link href="/">
           <div className="toolbar-icon">
             <i className="icon-shop" />
@@ -16,7 +19,11 @@ export default function ToolbarBottom() {
           <div className="toolbar-label">Home</div>
         </Link>
       </div>
-      <div className="toolbar-item">
+      <div
+        className={`toolbar-item ${
+          pathname === "#canvasSearch" ? "active" : ""
+        }`}
+      >
         <a
           href="#canvasSearch"
           data-bs-toggle="offcanvas"
@@ -28,7 +35,9 @@ export default function ToolbarBottom() {
           <div className="toolbar-label">Search</div>
         </a>
       </div>
-      <div className="toolbar-item">
+      <div
+        className={`toolbar-item ${pathname === "/my-account" ? "active" : ""}`}
+      >
         {user ? (
           <Link href="/my-account">
             <div className="toolbar-icon">
@@ -41,12 +50,13 @@ export default function ToolbarBottom() {
             <div className="toolbar-icon">
               <i className="icon-account" />
             </div>
-            <div className="toolbar-label">Account</div>
+            <div className="toolbar-label">Login</div>
           </a>
         )}
       </div>
-      {/* <div className="toolbar-item">
-        <Link href={`/wishlist`}>
+      {/* Uncomment if you want Wishlist back */}
+      {/* <div className={`toolbar-item ${pathname === "/wishlist" ? "active" : ""}`}>
+        <Link href="/wishlist">
           <div className="toolbar-icon">
             <i className="icon-heart" />
             <div className="toolbar-count">
@@ -56,7 +66,11 @@ export default function ToolbarBottom() {
           <div className="toolbar-label">Wishlist</div>
         </Link>
       </div> */}
-      <div className="toolbar-item">
+      <div
+        className={`toolbar-item ${
+          pathname === "#shoppingCart" ? "active" : ""
+        }`}
+      >
         <a href="#shoppingCart" data-bs-toggle="modal">
           <div className="toolbar-icon">
             <i className="icon-bag" />

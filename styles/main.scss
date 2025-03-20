@@ -47,7 +47,7 @@
 @media (max-width: 768px) {
   .my-account-nav {
     display: flex;
-    flex-direction: row;
+    flex-direction: row !important;
     align-items: stretch;
     overflow-x: auto;
   }
@@ -162,5 +162,3 @@ label.non-mandatory:after {
     padding: 30px 5px !important;
   }
 }
-
-
