@@ -207,7 +207,6 @@ export default function DetailsOuterZoom({ product }) {
                               </div>
                             </div>
                           ) : (
-                            // Show Customize button if no design is selected
                             <a
                               ref={uploadModal}
                               href="#super_kidbag"
@@ -278,10 +277,10 @@ export default function DetailsOuterZoom({ product }) {
                           {isAddedToCartProducts(product._id)
                             ? "Already Added"
                             : "Add to cart"}{" "}
-                          -{" "}
+                          :{"  "}
                         </span>
                         <span className="tf-qty-price">
-                          ₹{(product.offer * quantity).toFixed(2)}
+                          {"   "}₹{(product.offer * quantity).toFixed(2)}
                         </span>
                       </a>
                       <div className="w-100"></div>

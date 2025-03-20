@@ -75,11 +75,11 @@ export const cartSlice = createSlice({
       const productId = action.payload;
       state.cartItems = state.cartItems.filter((i) => i.product !== productId);
       delete state.uploadedImages[productId];
-      delete state.selectedDesigns[productId];
+      // delete state.selectedDesigns[productId];
 
       saveToLocalStorage("cartItems", state.cartItems);
       saveToLocalStorage("uploadedImages", state.uploadedImages);
-      saveToLocalStorage("selectedDesigns", state.selectedDesigns);
+      //saveToLocalStorage("selectedDesigns", state.selectedDesigns);
     },
 
     saveShippingInfo: (state, action) => {
@@ -124,6 +124,15 @@ export const cartSlice = createSlice({
 
     resetUploadedImage: (state, action) => {
       const { productId } = action.payload;
+      const isInCart = state.cartItems.some(
+        (item) => item.product === productId
+      );
+      if (isInCart) {
+        state.cartItems = state.cartItems.filter(
+          (i) => i.product !== productId
+        );
+        saveToLocalStorage("cartItems", state.cartItems);
+      }
       delete state.uploadedImages[productId];
       saveToLocalStorage("uploadedImages", state.uploadedImages);
     },

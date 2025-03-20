@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation"; // Add this import
+import { useRouter, useSearchParams } from "next/navigation"; // Add this import
 import DesignUpload from "../customizeBags/DesignUpload";
 import {
   setUploadedImage,
@@ -12,8 +12,8 @@ export default function SuperKidBag() {
   const productById = useSelector((state) => state.product.productById);
   const dispatch = useDispatch();
   const closeRef = useRef(null);
-  const router = useRouter(); // Add router
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const handleFileUpload = (blobUrl) => {
     if (blobUrl) {
       dispatch(
@@ -21,9 +21,12 @@ export default function SuperKidBag() {
       );
       // dispatch(setSelectedDesign({ design: blobUrl }));
 
-      router.push(`${window.location.pathname}?isUploadImage=true`, {
-        scroll: false,
-      });
+      const isUploadImage = searchParams.get("isUploadImage");
+      if (isUploadImage === "proceeding") {
+        router.push(`${window.location.pathname}?isUploadImage=true`, {
+          scroll: false,
+        });
+      }
     } else {
       dispatch(setUploadedImage({ uploadedImage: null }));
       dispatch(setSelectedDesign({ design: null }));

@@ -26,9 +26,9 @@ export default function StickyItem({
             <div className="tf-sticky-atc-img">
               <Image
                 className="lazyloaded"
-                data-src={product.images[1].url}
+                data-src={product.images[0].url}
                 alt="image"
-                src={product.images[1].url}
+                src={product.images[0].url}
                 width={770}
                 height={1075}
               />
@@ -52,7 +52,7 @@ export default function StickyItem({
                   <a
                     onClick={() => {
                       if (!hasCustomDesign) {
-                        openUploadModal()
+                        openUploadModal();
                         toast.error("You need to upload the image");
                         return;
                       }

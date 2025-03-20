@@ -4,7 +4,7 @@ import ProductDetailsClient from "@/components/shopDetails/ProductDetailClient";
 import Link from "next/link";
 
 export default function Page({ params }) {
-  const { id } = params; // Extract product ID from params
+  const { id } = params; 
 
   return (
     <>
