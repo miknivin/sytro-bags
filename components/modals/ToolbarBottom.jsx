@@ -9,12 +9,12 @@ export default function ToolbarBottom() {
   return (
     <div className="tf-toolbar-bottom type-1150">
       <div className="toolbar-item active">
-        <a href="#" data-bs-toggle="offcanvas" aria-controls="offcanvasLeft">
+        <Link href="/">
           <div className="toolbar-icon">
             <i className="icon-shop" />
           </div>
-          <div className="toolbar-label">Shop</div>
-        </a>
+          <div className="toolbar-label">Home</div>
+        </Link>
       </div>
       <div className="toolbar-item">
         <a
@@ -30,7 +30,7 @@ export default function ToolbarBottom() {
       </div>
       <div className="toolbar-item">
         {user ? (
-          <Link href="/my-account" >
+          <Link href="/my-account">
             <div className="toolbar-icon">
               <i className="icon-account" />
             </div>

@@ -2,7 +2,7 @@
 import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Rupee from "@/utlis/Rupeesvg";
 import { removeCartItem, updateCartItem } from "@/redux/features/cartSlice";
@@ -10,12 +10,16 @@ import TruckIcon from "@/utlis/TruckSvg";
 import { resetSingleProduct } from "@/redux/features/productSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRupeeSign } from "@fortawesome/free-solid-svg-icons";
+import { useRouter,usePathname } from "next/navigation";
 export default function ShopCart() {
+  const modalRef = useRef(null);
   const dispatch = useDispatch();
   const { cartProducts, setCartProducts } = useContextElement();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [subtotal, setSubtotal] = useState(0);
-
+  const router = useRouter();
+  const pathname = usePathname();
+  const isShopCollectionSub = pathname?.includes("/shop-collection-sub");
   useEffect(() => {
     const newSubtotal = cartItems.reduce((total, item) => {
       const price = Number(item.price) || 0;
@@ -26,6 +30,15 @@ export default function ShopCart() {
     setSubtotal(newSubtotal);
   }, [cartItems]);
 
+  const handleNavigation = (e) => {
+    e.preventDefault(); // Prevent default Link behavior
+    const modalInstance = modalRef.current?.modalInstance;
+
+    if (modalInstance) {
+      modalInstance.hide(); // Close the modal
+      router.push("/shop-collection-sub"); // Navigate after closing
+    }
+  };
   const increaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) + 1;
     updateQuantity(cartItem, id, newQuantity);
@@ -63,7 +76,11 @@ export default function ShopCart() {
   };
 
   return (
-    <div className="modal fullRight fade modal-shopping-cart" id="shoppingCart">
+    <div
+      ref={modalRef}
+      className="modal fullRight fade modal-shopping-cart"
+      id="shoppingCart"
+    >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="header">
@@ -168,7 +185,8 @@ export default function ShopCart() {
                           </div>
                           <div className="col-12 mt-3">
                             <Link
-                              href={"/"}
+                              href="/shop-collection-sub"
+                              {...(isShopCollectionSub ? { "data-bs-dismiss": "modal" } : {})}
                               className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
                               style={{ width: "fit-content" }}
                             >
