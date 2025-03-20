@@ -4,6 +4,7 @@ import User from "@/models/User";
 import Order from "@/models/Order";
 import SessionStartedOrder from "@/models/SessionStartedOrder";
 import { isAuthenticatedUser } from "@/middlewares/auth";
+import { createShiprocketOrder } from "@/lib/shipRocket/createShipRocketOrder";
 
 export async function POST(req) {
   try {
@@ -40,12 +41,12 @@ export async function POST(req) {
       payment_capture: 1,
     };
 
-    const order = await razorpay.orders.create(options);
+    const razorpayOrder = await razorpay.orders.create(options);
 
     // Save order to MongoDB
     const newOrder = new SessionStartedOrder({
-      razorpayOrderId: order.id,
-      razorpayPaymentStatus: order.status,
+      razorpayOrderId: razorpayOrder.id,
+      razorpayPaymentStatus: razorpayOrder.status,
       user: user._id,
       orderItems,
       shippingInfo,
@@ -55,7 +56,72 @@ export async function POST(req) {
 
     await newOrder.save();
 
-    return new Response(JSON.stringify(order), { status: 200 });
+    // Prepare Shiprocket payload
+    const shiprocketPayload = {
+      pickup_address: {
+        address:
+          "Hifi bags, Panakkal Tower, North Basin Road, Ernakulam, Broadway",
+        city: "Kochi",
+        pincode: "682031",
+      },
+      delivery_details: {
+        name: shippingInfo.name || "Customer",
+        mobile: shippingInfo.phoneNo,
+        address: shippingInfo.address,
+        city: shippingInfo.city,
+        pincode: shippingInfo.pinCode,
+      },
+      product_details: orderItems.map((item) => ({
+        name: item.name,
+        unit_price: item.price,
+        quantity: item.quantity,
+        discount: 0,
+        tax_rate: 18,
+      })),
+      payment_method: "Prepaid", // Razorpay orders are prepaid
+      package_details: {
+        dead_weight: 1.5,
+        dimensions: {
+          length: 34,
+          height: 44,
+          width: 6.5,
+        },
+      },
+      other_details: {
+        order_channel: "Custom",
+        order_tag: "Standard",
+        order_id: newOrder._id.toString(),
+        notes: "Handle with care",
+      },
+    };
+
+    // Attempt Shiprocket integration but don't let it affect main response
+    let shiprocketResult = null;
+    try {
+      const shiprocketResponse = await createShiprocketOrder(shiprocketPayload);
+      if (shiprocketResponse.success) {
+        newOrder.shiprocketOrderId = shiprocketResponse.data.order_id;
+        await newOrder.save();
+        shiprocketResult = shiprocketResponse.data;
+      } else {
+        console.warn(
+          "Shiprocket integration failed:",
+          shiprocketResponse.error
+        );
+      }
+    } catch (shiprocketError) {
+      console.warn("Shiprocket integration error:", shiprocketError.message);
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        razorpayOrder,
+        localOrder: newOrder,
+        shiprocketOrder: shiprocketResult,
+      }),
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error:", error);
     return new Response(JSON.stringify({ error: "Failed to create order" }), {
