@@ -16,7 +16,6 @@ export default function Login() {
       import("bootstrap");
     }
   }, []);
-  
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -105,7 +104,7 @@ export default function Login() {
                 <a
                   href="#forgotPassword"
                   data-bs-toggle="modal"
-                  className="btn-link link"
+                  className="btn-link link mb-1"
                 >
                   Forgot your password?
                 </a>
@@ -119,7 +118,6 @@ export default function Login() {
                   >
                     {isLoading ? "Logging in..." : "Log in"}
                   </button>
-          
                 </div>
                 <div className="w-100">
                   <a
@@ -133,7 +131,7 @@ export default function Login() {
                 </div>
               </div>
             </form>
-            <GoogleSigninButton/>
+            <GoogleSigninButton />
             {error && (
               <p className="error-message text-danger">{error.data?.message}</p>
             )}

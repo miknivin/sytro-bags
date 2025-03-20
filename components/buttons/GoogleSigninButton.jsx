@@ -26,7 +26,7 @@ export default function GoogleSigninButton() {
         uid: result.user.uid,
         photoURL: result.user.photoURL,
       };
-     // console.log("User Data Sent:", result);
+      // console.log("User Data Sent:", result);
       await googleSignIn(userData).unwrap();
 
       if (typeof document !== "undefined") {
@@ -66,7 +66,7 @@ export default function GoogleSigninButton() {
     <button
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="sign-in-button mt-3 d-flex w-100 align-items-center justify-content-center gap-3 rounded-lg border border-stroke bg-gray p-4"
+      className="sign-in-button tf-btn btn-fill mt-2 d-flex w-100 align-items-center justify-content-center gap-3 rounded-lg border border-stroke bg-gray p-3"
     >
       <span>
         <svg
