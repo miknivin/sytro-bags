@@ -36,7 +36,13 @@ export default function ToolbarBottom() {
         </a>
       </div>
       <div
-        className={`toolbar-item ${pathname === "/my-account" ? "active" : ""}`}
+        className={`toolbar-item ${
+          ["my-account", "my-account-orders", "my-account-edit"].some((route) =>
+            pathname.includes(route)
+          )
+            ? "active"
+            : ""
+        }`}
       >
         {user ? (
           <Link href="/my-account">

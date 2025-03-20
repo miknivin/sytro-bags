@@ -4,6 +4,8 @@ import Order from "@/models/Order";
 import dbConnect from "@/lib/db/connection";
 import { isAuthenticatedUser } from "@/middlewares/auth";
 import User from "@/models/User";
+import { createShiprocketOrder } from "@/lib/shipRocket/createShipRocketOrder";
+
 export async function POST(req) {
   try {
     const user = await isAuthenticatedUser(req);
@@ -55,7 +57,7 @@ export async function POST(req) {
       shippingInfo,
       user: user._id,
       orderItems: cartItems,
-      paymentMethod: "Online",
+      paymentMethod: "Online", // Hardcoded since this is Razorpay
       paymentInfo: {
         id: razorpay_payment_id,
         status: "Paid",
@@ -67,10 +69,72 @@ export async function POST(req) {
       totalAmount: totalPrice,
     });
 
+    // Prepare Shiprocket payload
+    const shiprocketPayload = {
+      pickup_address: {
+        address:
+          "Hifi bags, Panakkal Tower, North Basin Road, Ernakulam, Broadway",
+        city: "Kochi",
+        pincode: "682031",
+      },
+      delivery_details: {
+        name: shippingInfo.name || "Customer",
+        mobile: shippingInfo.phoneNo,
+        address: shippingInfo.address,
+        city: shippingInfo.city,
+        pincode: shippingInfo.pinCode,
+      },
+      product_details: cartItems.map((item) => ({
+        name: item.name,
+        unit_price: item.price,
+        quantity: item.quantity,
+        discount: 0,
+        tax_rate: 18,
+      })),
+      payment_method: "Prepaid", // Razorpay payments are always Prepaid for Shiprocket
+      package_details: {
+        dead_weight: 1.5,
+        dimensions: {
+          length: 34,
+          height: 44,
+          width: 6.5,
+        },
+      },
+      other_details: {
+        order_channel: "Custom",
+        order_tag: "Standard",
+        order_id: order._id.toString(),
+        notes: orderNotes || "Handle with care",
+      },
+    };
+
+    // Attempt Shiprocket integration but don't let it affect main response
+    let shiprocketResult = null;
+    try {
+      const shiprocketResponse = await createShiprocketOrder(shiprocketPayload);
+      if (shiprocketResponse.success) {
+        console.log("success", shiprocketResponse);
+
+        order.shiprocketOrderId = shiprocketResponse.data.order_id;
+        await order.save();
+        shiprocketResult = shiprocketResponse.data;
+      } else {
+        console.warn(
+          "Shiprocket integration failed:",
+          shiprocketResponse.error
+        );
+      }
+    } catch (shiprocketError) {
+      console.warn("Shiprocket integration error:", shiprocketError.message);
+    }
+
     return NextResponse.json({
       success: true,
       message: "Order placed successfully",
-      order,
+      order: {
+        localOrder: order,
+        shiprocketOrder: shiprocketResult,
+      },
     });
   } catch (error) {
     console.error("Error handling webhook:", error);

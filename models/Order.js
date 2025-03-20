@@ -107,6 +107,10 @@ const orderSchema = new mongoose.Schema(
         message: "Please select valid order status",
       },
     },
+    shiprocketOrderId:{
+      type:String,
+      required:false,
+    },
     orderNotes: {
       type: String,
       required: false,

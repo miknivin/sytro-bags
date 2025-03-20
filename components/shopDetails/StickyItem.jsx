@@ -6,6 +6,7 @@ import Quantity from "./Quantity";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { openCartModal } from "@/utlis/openCartModal";
+import { useRouter } from "next/navigation";
 export default function StickyItem({
   soldOut = false,
   product,
@@ -16,6 +17,7 @@ export default function StickyItem({
   quantity,
 }) {
   const uploadedImages = useSelector((state) => state.cart.uploadedImages);
+  const router = useRouter();
   const hasCustomDesign = uploadedImages?.[product._id];
   // const { addProductToCart, isAddedToCartProducts } = useContextElement();
   return (
@@ -53,6 +55,12 @@ export default function StickyItem({
                     onClick={() => {
                       if (!hasCustomDesign) {
                         openUploadModal();
+                        router.push(
+                          `${window.location.pathname}?isUploadImage=proceeding`,
+                          {
+                            scroll: false,
+                          }
+                        );
                         toast.error("You need to upload the image");
                         return;
                       }
