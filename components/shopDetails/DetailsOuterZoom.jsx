@@ -145,18 +145,18 @@ export default function DetailsOuterZoom({ product }) {
                       )}
                     </h5>
                   </div>
-                  <div className="tf-product-info-price">
+                  <div className="tf-product-info-price flex align-items-center">
                     <div style={{ fontWeight: 600 }} className="price-on-sale">
-                      ₹{product.offer.toFixed(2)}
+                      ₹{product?.offer?.toFixed(2)}
                     </div>
-                    <div className="badges-on-sale">
-                      <span>
-                        {(
+                    <div>
+                      <span className=" fs-4 text-danger">
+                        {/* {(
                           (1 - product.offer / product.actualPrice) *
                           100
-                        ).toFixed(2)}
+                        ).toFixed(2)} */}
+                        <s>₹{product?.actualPrice?.toFixed(2) || 3000}</s>
                       </span>
-                      % OFF
                     </div>
                   </div>
                   <div className="tf-product-info-variant-picker">
