@@ -222,7 +222,7 @@ const CartFooter = ({
               {cartItems.map((elm, i) => (
                 <li
                   key={i}
-                  className="d-flex flex-column border-black border p-2 rounded-2"
+                  className="d-flex flex-column border-black border p-2 rounded-2 gap-1"
                 >
                   <div className="checkout-product-item">
                     <figure className="img-product">
@@ -276,7 +276,7 @@ const CartFooter = ({
                   <div className="col-12 fs-18">Your shop cart is empty</div>
                   <div className="col-12 mt-3">
                     <Link
-                      href={`/shop-default`}
+                      href={`/shop-collection-sub`}
                       className="tf-btn btn-fill animate-hover-btn radius-3 w-100"
                     >
                       Explore Products!
@@ -320,13 +320,18 @@ const CartFooter = ({
             </div>
 
             {!isAuthenticated ? (
-              <a
-                href="#login"
-                data-bs-toggle="modal"
-                className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center"
-              >
-                Please login to place order
-              </a>
+              <>
+                <small className="text-danger">
+                  You need to log in in order to purchase.
+                </small>
+                <a
+                  href="#login"
+                  data-bs-toggle="modal"
+                  className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center mt-0"
+                >
+                  Click here to login
+                </a>
+              </>
             ) : (
               <button
                 type="submit"
