@@ -69,9 +69,10 @@ export async function POST(req) {
       totalAmount: totalPrice,
     });
     const totalWeight = cartItems.reduce(
-      (total, item) => total + item.quantity,
+      (total, item) => total + item.quantity * 0.6,
       0
     );
+    console.log(totalWeight, "totalWeight");
     const currentDate = new Date().toISOString().replace("T", " ").slice(0, 16);
     const shiprocketPayload = {
       order_id: order._id.toString().slice(-6),
