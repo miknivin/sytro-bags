@@ -57,7 +57,7 @@ export async function POST(req) {
       shippingInfo,
       user: user._id,
       orderItems: cartItems,
-      paymentMethod: "Online", // Hardcoded since this is Razorpay
+      paymentMethod: "Online",
       paymentInfo: {
         id: razorpay_payment_id,
         status: "Paid",
@@ -68,53 +68,64 @@ export async function POST(req) {
       orderNotes: orderNotes,
       totalAmount: totalPrice,
     });
-
-    // Prepare Shiprocket payload
+    const totalWeight = cartItems.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
+    const currentDate = new Date().toISOString().replace("T", " ").slice(0, 16);
     const shiprocketPayload = {
-      pickup_address: {
-        address:
-          "Hifi bags, Panakkal Tower, North Basin Road, Ernakulam, Broadway",
-        city: "Kochi",
-        pincode: "682031",
-      },
-      delivery_details: {
-        name: shippingInfo.name || "Customer",
-        mobile: shippingInfo.phoneNo,
-        address: shippingInfo.address,
-        city: shippingInfo.city,
-        pincode: shippingInfo.pinCode,
-      },
-      product_details: cartItems.map((item) => ({
+      order_id: order._id.toString().slice(-6),
+      order_date: currentDate,
+      pickup_location: "HIFI BAG",
+      channel_id: "6458223",
+      comment: orderNotes || "Order via Razorpay",
+      billing_customer_name: shippingInfo.fullName || "Customer",
+      billing_last_name: shippingInfo.lastName || "lastname",
+      billing_address: shippingInfo.address || "",
+      billing_address_2: "",
+      billing_city: shippingInfo.city || "",
+      billing_pincode: shippingInfo.zipCode || "",
+      billing_state: "Kerala",
+      billing_country: "India",
+      billing_email: user.email || "",
+      billing_phone: shippingInfo.phoneNo || "",
+      shipping_is_billing: true,
+      shipping_customer_name: "",
+      shipping_last_name: "",
+      shipping_address: "",
+      shipping_address_2: "",
+      shipping_city: "",
+      shipping_pincode: "",
+      shipping_country: "",
+      shipping_state: "",
+      shipping_email: "",
+      shipping_phone: "",
+      order_items: cartItems.map((item) => ({
         name: item.name,
-        unit_price: item.price,
-        quantity: item.quantity,
-        discount: 0,
-        tax_rate: 18,
+        sku: item.sku || `sku_${item.name}_${Date.now()}`,
+        units: item.quantity,
+        selling_price: item.price.toString(),
+        discount: "0",
+        tax: "18",
+        hsn: "",
       })),
-      payment_method: "Prepaid", // Razorpay payments are always Prepaid for Shiprocket
-      package_details: {
-        dead_weight: 1.5,
-        dimensions: {
-          length: 34,
-          height: 44,
-          width: 6.5,
-        },
-      },
-      other_details: {
-        order_channel: "Custom",
-        order_tag: "Standard",
-        order_id: order._id.toString(),
-        notes: orderNotes || "Handle with care",
-      },
+      payment_method: "Prepaid",
+      shipping_charges: shippingPrice || 0,
+      giftwrap_charges: 0,
+      transaction_charges: 0,
+      total_discount: 0,
+      sub_total: totalPrice,
+      length: 34,
+      breadth: 6.5,
+      height: 44,
+      weight: totalWeight || 0.7,
     };
 
-    // Attempt Shiprocket integration but don't let it affect main response
     let shiprocketResult = null;
     try {
       const shiprocketResponse = await createShiprocketOrder(shiprocketPayload);
       if (shiprocketResponse.success) {
         console.log("success", shiprocketResponse);
-
         order.shiprocketOrderId = shiprocketResponse.data.order_id;
         await order.save();
         shiprocketResult = shiprocketResponse.data;
