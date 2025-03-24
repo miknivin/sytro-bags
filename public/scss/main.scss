@@ -8,35 +8,93 @@
 @import "./custom.scss";
 // @import "photoswipe/dist/photoswipe.css";
 // @import "rc-slider/assets/index.css";
-.border-none-b{
-    border: none !important;
-    width:100%;
-    background: transparent !important;
+.border-none-b {
+  border: none !important;
+  width: 100%;
+  background: transparent !important;
 }
 
 .rotate-180 {
-    transition: all ease 300ms; 
-    transform: rotate(180deg);
+  transition: all ease 300ms;
+  transform: rotate(180deg);
 }
 
 .image-container .border .rounded .p-2 .active {
-    border: 3px solid #fec007;
+  border: 3px solid #fec007;
+}
+
+@media (max-width: 768px) {
+  .my-account-nav {
+    display: flex;
+    flex-direction: row !important;
+    align-items: stretch;
+    overflow-x: auto;
   }
-  
-  @media (max-width: 768px) {
-    .my-account-nav {
-      display: flex;
-      flex-direction: row !important;
-      align-items: stretch;
-      overflow-x: auto;
-    }
-  
-    .my-account-nav-item {
-      align-items: center;
-      height: 100%;
-    }
-  
-    .my-account-nav .my-account-nav-item {
-      white-space: nowrap;
-    }
+
+  .my-account-nav-item {
+    align-items: center;
+    height: 100%;
   }
+
+  .my-account-nav .my-account-nav-item {
+    white-space: nowrap;
+  }
+}
+
+/* styles/globals.css */
+/* styles/globals.css */
+.popover-container {
+  position: relative;
+  display: inline-block;
+}
+
+.popover-button {
+  border: none;
+  padding: 0;
+  margin-top: 4px;
+  margin-bottom: 0;
+  background: none;
+  color: var(--primary); /* Changed from #007bff to CSS variable */
+  cursor: pointer;
+}
+
+.popover-button:hover {
+  text-decoration: underline;
+}
+
+.popover-content {
+  position: absolute;
+  top: calc(100% + 10px); /* Places popover below the button */
+  left: 0; /* Aligns with the left of the button */
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.popover-image {
+  display: block;
+  max-width: 100%;
+}
+
+/* Arrow styles for right placement */
+.popover-content[data-placement="right"]::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 8px solid transparent;
+  border-right-color: #e0e0e0;
+}
+
+.popover-content[data-placement="right"]::after {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(1px);
+  border: 7px solid transparent;
+  border-right-color: white;
+}

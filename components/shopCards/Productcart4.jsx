@@ -22,24 +22,27 @@ export default function Productcard4({ product }) {
   return (
     <div className="card-product style-4 fl-item p-2 border" key={product._id}>
       <div className="card-product-wrapper">
-        <Link href={`/product-detail/${product._id}`} className="product-img">
-          <Image
-            className="lazyload img-product bg-light"
-            data-src={product.images[0].url || '/fallback.png'}
-            src={product.images[0].url || '/fallback.png'}
-            alt="image-product"
-            width="720"
-            height="1005"
-          />
-          <Image
-            className="lazyload img-hover"
-            data-src={product.images[1]?.url || '/fallback.png'}
-            src={product.images[1]?.url || '/fallback.png'}
-            alt="image-product"
-            width="720"
-            height="1005"
-          />
-        </Link>
+        {product.images && product.images.length > 1 && (
+          <Link href={`/product-detail/${product._id}`} className="product-img">
+            <Image
+              className="lazyload img-product bg-light"
+              data-src={product.images[0].url || "/fallback.png"}
+              src={product.images[0].url || "/fallback.png"}
+              alt="image-product"
+              width="720"
+              height="1005"
+            />
+            <Image
+              className="lazyload img-hover"
+              data-src={product.images[1]?.url || "/fallback.png"}
+              src={product.images[1]?.url || "/fallback.png"}
+              alt="image-product"
+              width="720"
+              height="1005"
+            />
+          </Link>
+        )}
+
         <div className="list-product-btn column-right">
           {/* <a
             onClick={() => addToWishlist(product._id)}

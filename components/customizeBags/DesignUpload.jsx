@@ -51,8 +51,8 @@ export default function DesignUpload({ onFileUpload }) {
   return (
     <div className="d-flex flex-column align-items-center">
       <div
-        className="p-4 border border-2 border-secondary text-center bg-light shadow-lg rounded position-relative"
-        style={{ width: "450px" }}
+        className="p-2 border border-2 border-secondary text-center bg-light shadow-lg rounded position-relative"
+        // style={{ width: "450px" }}
       >
         {!previewUrl && (
           <label
@@ -71,15 +71,19 @@ export default function DesignUpload({ onFileUpload }) {
               <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
               <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
             </svg>
-            <p className="mb-1 fw-bold text-muted">
-              Click to upload or drag & drop
+            <h6 className="mb-1 fw-bold text-muted fs-3">
+              Click to upload or <br /> drag & drop
+            </h6>
+            <p className="mb-1 text-muted px-1">
+              Now, you can upload your child’s photo and watch them transform
+              into their favorite superhero.
             </p>
-            <p className="small text-muted">SVG, PNG, JPG</p>
+            <p className="small text-muted">SVG, PNG, JPG, JPEG</p>
             <input
               id="upload-file"
               type="file"
               className="d-none"
-              accept="image/png, image/jpeg, image/svg+xml"
+              accept="image/*"
               onChange={handleFileChange}
             />
           </label>

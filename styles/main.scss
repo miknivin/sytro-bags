@@ -162,3 +162,86 @@ label.non-mandatory:after {
     padding: 30px 5px !important;
   }
 }
+
+/* styles/globals.css */
+/* styles/globals.css */
+.popover-container {
+  position: relative;
+  display: inline-block;
+}
+
+.popover-button {
+  border: none;
+  padding: 0;
+  margin-top: 4px;
+  margin-bottom: 0;
+  background: none;
+  color: var(--primary); /* Changed from #007bff to CSS variable */
+  cursor: pointer;
+}
+
+.popover-button:hover {
+  text-decoration: underline;
+}
+
+.popover-content {
+  position: absolute;
+  top: calc(100% + 10px); /* Places popover below the button */
+  left: 0; /* Aligns with the left of the button */
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.popover-image {
+  display: block;
+  max-width: 100%;
+}
+
+/* Arrow styles for right placement */
+.popover-content[data-placement="bottom"]::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-bottom-color: #e0e0e0;
+}
+
+.popover-content[data-placement="bottom"]::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-1px);
+  border: 7px solid transparent;
+  border-bottom-color: white;
+}
+
+.popover-close-button {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  color: #666; /* Gray color, adjustable */
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.popover-close-button {
+  background: #f0f0f0;
+  border-radius: 50%;
+}
+.popover-close-button:hover {
+  color: #000; /* Darken on hover */
+}

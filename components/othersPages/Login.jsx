@@ -44,6 +44,11 @@ export default function Login() {
 
       // Reset form fields
       setFormData({ email: "", password: "" });
+      const queryParams = new URLSearchParams(window.location.search);
+      if (queryParams.get("toCheckout") === "proceeding") {
+        router.push("/checkout");
+        console.log("to checkout")
+      }
       // Navigation will be handled by useEffect when isAuthenticated updates
     } catch (err) {
       console.error(err);

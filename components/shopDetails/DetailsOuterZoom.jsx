@@ -11,6 +11,7 @@ import Slider1ZoomOuter from "./sliders/Slider1ZoomOuter";
 
 import { openCartModal } from "@/utlis/openCartModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import {
   faGooglePay,
   faCcVisa,
@@ -145,7 +146,7 @@ export default function DetailsOuterZoom({ product }) {
                       )}
                     </h5>
                   </div>
-                  <div className="tf-product-info-price flex align-items-center">
+                  <div className="tf-product-info-price flex align-items-center mb-3">
                     <div style={{ fontWeight: 600 }} className="price-on-sale">
                       ₹{product?.offer?.toFixed(2)}
                     </div>
@@ -159,7 +160,7 @@ export default function DetailsOuterZoom({ product }) {
                       </span>
                     </div>
                   </div>
-                  <div className="tf-product-info-variant-picker">
+                  <div className="tf-product-info-variant-picker mb-0">
                     <div className="variant-picker-item"></div>
                     {product.category === "Kids Bags" && (
                       <div className="variant-picker-item mb-3">
@@ -207,14 +208,43 @@ export default function DetailsOuterZoom({ product }) {
                               </div>
                             </div>
                           ) : (
-                            <a
-                              ref={uploadModal}
-                              href="#super_kidbag"
-                              data-bs-toggle="modal"
-                              className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
-                            >
-                              Upload your image
-                            </a>
+                            <>
+                              <div class="row">
+                                <div class="col-12">
+                                  <ul class="list-unstyled">
+                                    {[...(product?.details?.features || [])]
+                                      .reverse()
+                                      .map((feature, index) => (
+                                        <li className="mb-2" key={index}>
+                                          <div className="row align-items-center">
+                                            <div
+                                              className="col-auto"
+                                              style={{
+                                                color: "var(--primary)",
+                                              }}
+                                            >
+                                              <FontAwesomeIcon
+                                                icon={faCircleCheck}
+                                              />
+                                            </div>
+                                            <div className="col px-0">
+                                              {feature}
+                                            </div>
+                                          </div>
+                                        </li>
+                                      ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            </>
+                            // <a
+                            //   ref={uploadModal}
+                            //   href="#super_kidbag"
+                            //   data-bs-toggle="modal"
+                            //   className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
+                            // >
+                            //   Upload your image
+                            // </a>
                           )}
                         </div>
                       </div>
@@ -255,34 +285,52 @@ export default function DetailsOuterZoom({ product }) {
                   </div>
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="">
-                      <a
-                        onClick={() => {
-                          if (!hasCustomDesign) {
-                            uploadModal.current.click();
-                            router.push(
-                              `${window.location.pathname}?isUploadImage=proceeding`,
-                              {
-                                scroll: false,
-                              }
-                            );
-                            toast.error("You need to upload your image");
-                            return;
-                          }
-                          openCartModal();
-                          setItemToCart();
-                        }}
-                        className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
-                      >
-                        <span>
-                          {isAddedToCartProducts(product._id)
-                            ? "Already Added"
-                            : "Add to cart"}{" "}
-                          :{"  "}
-                        </span>
-                        <span className="tf-qty-price">
-                          {"   "}₹{(product.offer * quantity).toFixed(2)}
-                        </span>
-                      </a>
+                      {!hasCustomDesign ? (
+                        <>
+                          <a
+                            href="#super_kidbag"
+                            data-bs-toggle="modal"
+                            onClick={() => {
+                              router.push(
+                                `${window.location.pathname}?isUploadImage=proceeding`,
+                                {
+                                  scroll: false,
+                                }
+                              );
+                              //toast.error("You need to upload your image");
+                            }}
+                            className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn mb-2"
+                          >
+                            <span>
+                              {isAddedToCartProducts(product._id)
+                                ? "Already Added"
+                                : "Add to cart"}{" "}
+                              :{"  "}
+                            </span>
+                            <span className="tf-qty-price">
+                              {"   "}₹{(product.offer * quantity).toFixed(2)}
+                            </span>
+                          </a>
+                        </>
+                      ) : (
+                        <a
+                          onClick={() => {
+                            openCartModal();
+                            setItemToCart();
+                          }}
+                          className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                        >
+                          <span>
+                            {isAddedToCartProducts(product._id)
+                              ? "Already Added"
+                              : "Add to cart"}{" "}
+                            :{"  "}
+                          </span>
+                          <span className="tf-qty-price">
+                            {"   "}₹{(product.offer * quantity).toFixed(2)}
+                          </span>
+                        </a>
+                      )}
                       <div className="w-100"></div>
                     </form>
                   </div>

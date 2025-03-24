@@ -16,7 +16,7 @@ export default function Products() {
     page,
   });
 
-  console.log("API Response:", { data, error, isLoading, isFetching, page });
+  //console.log("API Response:", { data, error, isLoading, isFetching, page });
 
   const filteredProductsCount = data?.filteredProductsCount || 0;
   const totalPages = Math.ceil(filteredProductsCount / 8) || 1;

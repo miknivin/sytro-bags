@@ -51,30 +51,46 @@ export default function StickyItem({
                     <span>Sold out</span>
                   </a>
                 ) : (
-                  <a
-                    onClick={() => {
-                      if (!hasCustomDesign) {
-                        openUploadModal();
-                        router.push(
-                          `${window.location.pathname}?isUploadImage=proceeding`,
-                          {
-                            scroll: false,
-                          }
-                        );
-                        toast.error("You need to upload the image");
-                        return;
-                      }
-                      openCartModal();
-                      setItemsTocart();
-                    }}
-                    className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
-                  >
-                    <span>
-                      {isAddedToCartProducts(product._id)
-                        ? "Already Added"
-                        : "Add to cart"}
-                    </span>
-                  </a>
+                  <>
+                    {!hasCustomDesign ? (
+                      <>
+                        <a
+                          href="#super_kidbag"
+                          data-bs-toggle="modal"
+                          onClick={() => {
+                            router.push(
+                              `${window.location.pathname}?isUploadImage=proceeding`,
+                              {
+                                scroll: false,
+                              }
+                            );
+                            //toast.error("You need to upload your image");
+                          }}
+                          className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                        >
+                          <span>
+                            {isAddedToCartProducts(product._id)
+                              ? "Already Added"
+                              : "Add to cart"}{" "}
+                          </span>
+                        </a>
+                      </>
+                    ) : (
+                      <a
+                        onClick={() => {
+                          openCartModal();
+                          setItemsTocart();
+                        }}
+                        className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                      >
+                        <span>
+                          {isAddedToCartProducts(product._id)
+                            ? "Already Added"
+                            : "Add to cart"}{" "}
+                        </span>
+                      </a>
+                    )}
+                  </>
                 )}
               </div>
             </form>

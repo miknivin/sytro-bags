@@ -3,7 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useLoginMutation } from "@/redux/api/authApi";
 import Swal from "sweetalert2";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
+import { useRouter } from "next/navigation";
 export default function Login() {
+  const router = useRouter()
   const [login, { isLoading, error }] = useLoginMutation();
   const [formData, setFormData] = useState({
     email: "",
@@ -46,7 +48,11 @@ export default function Login() {
         text: "You have successfully logged in!",
         confirmButtonColor: "#3085d6",
       });
-
+      const queryParams = new URLSearchParams(window.location.search);
+      if (queryParams.get("toCheckout") === "proceeding") {
+        router.push("/checkout");
+        console.log("Navigating to checkout");
+      }
       // Reset form fields
       setFormData({ email: "", password: "" });
     } catch (err) {

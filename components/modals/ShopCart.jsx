@@ -10,8 +10,11 @@ import TruckIcon from "@/utlis/TruckSvg";
 import { resetSingleProduct } from "@/redux/features/productSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRupeeSign } from "@fortawesome/free-solid-svg-icons";
-import { useRouter,usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 export default function ShopCart() {
+  const [showPopover, setShowPopover] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [imageUrl, setImageUrl] = useState("");
   const modalRef = useRef(null);
   const dispatch = useDispatch();
   const { cartProducts, setCartProducts } = useContextElement();
@@ -19,6 +22,16 @@ export default function ShopCart() {
   const [subtotal, setSubtotal] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
+  const handleClose = () => {
+    setShowPopover(false); // Hide the popover
+  };
+
+  const handleClick = () => {
+    // Add query parameter and navigate
+    router.push(`${window.location.pathname}?toCheckout=proceeding`, {
+      scroll: false,
+    });
+  };
   const isShopCollectionSub = pathname?.includes("/shop-collection-sub");
   useEffect(() => {
     const newSubtotal = cartItems.reduce((total, item) => {
@@ -91,7 +104,7 @@ export default function ShopCart() {
             />
           </div>
           <div className="wrap">
-            <div className="tf-mini-cart-threshold">
+            {/* <div className="tf-mini-cart-threshold">
               <div className="tf-progress-bar">
                 <span style={{ width: "50%" }}>
                   <div className="progress-car">
@@ -100,8 +113,8 @@ export default function ShopCart() {
                 </span>
               </div>
               <div className="tf-progress-msg"></div>
-            </div>
-            <div className="tf-mini-cart-wrap">
+            </div> */}
+            <div className="tf-mini-cart-wrap mt-3">
               <div className="tf-mini-cart-main">
                 <div className="tf-mini-cart-sroll pb-5">
                   <div className="tf-mini-cart-items">
@@ -132,6 +145,42 @@ export default function ShopCart() {
                             ₹{" "}
                             {(Number(elm.price) * Number(elm.quantity)).toFixed(
                               2
+                            )}
+                          </div>
+                          <div className="popover-container">
+                            <button
+                              type="button"
+                              className="popover-button"
+                              onClick={() => {
+                                setImageUrl(elm.uploadedImage);
+                                setShowPopover(!showPopover);
+                              }}
+                              onBlur={() => setShowPopover(false)}
+                            >
+                              Uploaded image
+                            </button>
+
+                            {showPopover && imageUrl && (
+                              <div
+                                className="popover-content"
+                                data-placement="bottom"
+                              >
+                                <Image
+                                  src={imageUrl}
+                                  alt="Uploaded image"
+                                  width={200}
+                                  height={200}
+                                  className="popover-image"
+                                />
+                                <button
+                                  type="button"
+                                  className="popover-close-button"
+                                  onClick={handleClose}
+                                >
+                                  ×{" "}
+                                  {/* Unicode for close symbol (×), or use "Close" */}
+                                </button>
+                              </div>
                             )}
                           </div>
                           <div className="tf-mini-cart-btns">
@@ -186,7 +235,9 @@ export default function ShopCart() {
                           <div className="col-12 mt-3">
                             <Link
                               href="/shop-collection-sub"
-                              {...(isShopCollectionSub ? { "data-bs-dismiss": "modal" } : {})}
+                              {...(isShopCollectionSub
+                                ? { "data-bs-dismiss": "modal" }
+                                : {})}
                               className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
                               style={{ width: "fit-content" }}
                             >
@@ -213,12 +264,26 @@ export default function ShopCart() {
                     data-bs-dismiss="modal"
                     className="tf-mini-cart-view-checkout"
                   >
-                    <Link
-                      href={"/checkout"}
-                      className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                    >
-                      <span>Check out</span>
-                    </Link>
+                    {isAuthenticated ? (
+                      <Link
+                        href={"/checkout"}
+                        className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                      >
+                        <span>Check out</span>
+                      </Link>
+                    ) : (
+                      <a
+                        href="#login"
+                        data-bs-toggle="modal"
+                        className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center mt-0 w-100"
+                        onClick={(e) => {
+                          e.preventDefault(); // Prevent default behavior if needed
+                          handleClick();
+                        }}
+                      >
+                        Check out
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

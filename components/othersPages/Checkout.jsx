@@ -21,15 +21,17 @@ export default function Checkout() {
   const [countryId, setCountryId] = useState("101");
   const [stateId, setStateId] = useState(countryId === "101" && "19");
   const [filteredStates, setFilteredStates] = useState([]);
-  const [email, setEmail] = useState("");
+ 
   const [touched, setTouched] = useState({});
+  const user = useSelector((state) => state.auth.user);
+  const [email, setEmail] = useState(user.email || "");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     address: "",
     state: stateId === "19" ? "Kerala" : "",
     city: "",
-    phoneNo: "",
+    phoneNo: user.phone || "",
     zipCode: "",
     country: "India",
     orderNotes: "",
