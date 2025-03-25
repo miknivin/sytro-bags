@@ -43,8 +43,7 @@ const CartFooter = ({
       formData.city &&
       formData.phoneNo &&
       formData.zipCode &&
-      email &&
-      emailRegex.test(email) &&
+      emailRegex.test(formData.email) &&
       (uaePhoneRegex.test(formData.phoneNo) ||
         indiaPhoneRegex.test(formData.phoneNo))
     );
@@ -57,7 +56,7 @@ const CartFooter = ({
       shippingInfo: {
         ...formData,
         fullName,
-        email,
+        // email,
       },
       totalPrice: subtotal + 0,
       currency: "INR",
@@ -87,7 +86,7 @@ const CartFooter = ({
           shippingInfo: {
             ...formData,
             fullName,
-            email,
+           // email,
           },
           cartItems,
           itemsPrice: subtotal,
@@ -178,9 +177,9 @@ const CartFooter = ({
         }
       },
       prefill: {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: email,
-        contact: formData.phoneNo,
+        name: `${formData?.firstName} ${formData?.lastName}`,
+        email: formData?.email,
+        contact: formData?.phoneNo,
       },
       theme: {
         color: "#fbb52b",

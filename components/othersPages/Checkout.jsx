@@ -21,17 +21,18 @@ export default function Checkout() {
   const [countryId, setCountryId] = useState("101");
   const [stateId, setStateId] = useState(countryId === "101" && "19");
   const [filteredStates, setFilteredStates] = useState([]);
- 
+
   const [touched, setTouched] = useState({});
   const user = useSelector((state) => state.auth.user);
-  const [email, setEmail] = useState(user.email || "");
+  // const [email, setEmail] = useState(user.email || "");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    email: user?.email || "",
     address: "",
     state: stateId === "19" ? "Kerala" : "",
     city: "",
-    phoneNo: user.phone || "",
+    phoneNo: user?.phone || "",
     zipCode: "",
     country: "India",
     orderNotes: "",
@@ -74,7 +75,7 @@ export default function Checkout() {
       shippingInfo: {
         ...formData,
         fullName,
-        email,
+        // email,
       },
       orderItems: cartItems,
       paymentMethod: paymentMode,
@@ -149,19 +150,19 @@ export default function Checkout() {
                     required
                     type="text"
                     id="phoneNo"
-                    value={formData.phoneNo}
+                    value={formData?.phoneNo}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     onInput={handleBlur}
                   />
-                  {touched.phoneNo &&
+                  {touched?.phoneNo &&
                     !(
-                      indiaPhoneRegex.test(formData.phoneNo.trim()) ||
-                      uaePhoneRegex.test(formData.phoneNo.trim())
+                      indiaPhoneRegex.test(formData?.phoneNo.trim()) ||
+                      uaePhoneRegex.test(formData?.phoneNo.trim())
                     ) && (
                       <div className="text-danger">
                         Invalid phone number format
-                        {formData.phoneNo.trim().startsWith("0") && (
+                        {formData?.phoneNo.trim().startsWith("0") && (
                           <small> -It should NOT start with 0</small>
                         )}
                       </div>
@@ -174,11 +175,11 @@ export default function Checkout() {
                     required
                     type="email"
                     id="email"
-                    value={email}
+                    value={formData?.email}
                     onBlur={handleBlur}
-                    onChange={handleEmailChange}
+                    onChange={handleChange}
                   />
-                  {touched.email && !emailRegex.test(email) && (
+                  {touched?.email && !emailRegex.test(formData?.email) && (
                     <div className="text-danger">Invalid email format</div>
                   )}
                 </fieldset>
@@ -300,7 +301,7 @@ export default function Checkout() {
             cartItems={cartItems}
             subtotal={subtotal}
             formData={formData}
-            email={email}
+            // email={email}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
           />
