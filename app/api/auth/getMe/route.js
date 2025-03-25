@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/db/connection";
 import { isAuthenticatedUser } from "@/middlewares/auth";
 import { NextResponse } from "next/server";
-
+import SessionStartedOrder from "@/models/SessionStartedOrder";
 
 export async function GET(req) {
   try {

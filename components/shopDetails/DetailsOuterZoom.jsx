@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
-import CountdownComponent from "../common/Countdown";
 import { colors } from "@/data/singleProductOptions";
 import StickyItem from "./StickyItem";
 import Quantity from "./Quantity";
