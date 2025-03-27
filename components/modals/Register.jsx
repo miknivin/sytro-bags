@@ -108,7 +108,10 @@ export default function Register() {
       className="modal modalCentered fade form-sign-in modal-part-content"
       id="register"
     >
-      <div className="modal-dialog modal-dialog-centered">
+      <div
+        className="modal-dialog modal-dialog-centered"
+        style={{ display: "flex", alignItems: "center" }}
+      >
         <div className="modal-content">
           <div className="header">
             <div className="demo-title">Register</div>
@@ -190,7 +193,7 @@ export default function Register() {
                 </div>
               </div>
             </form>
-            <GoogleSigninButton/>
+            <GoogleSigninButton />
             {error && (
               <p className="error-message text-danger">{error.data?.message}</p>
             )}

@@ -3,10 +3,11 @@ import dbConnect from "@/lib/db/connection";
 import User from "@/models/User";
 import sendToken from "@/utlis/sendToken";
 import SessionStartedOrder from "@/models/SessionStartedOrder";
+import Order from "@/models/Order";
 export async function POST(request) {
   try {
     await dbConnect();
-    
+
     const { idToken, email, displayName, uid, photoURL } = await request.json();
     //console.log("Received Data:", { idToken, email, displayName, uid, photoURL });
 
@@ -32,10 +33,19 @@ export async function POST(request) {
         user.avatar = { url: photoURL };
       }
       if (user.signupMethod !== "OAuth") {
-        user.signupMethod = "OAuth"; 
+        user.signupMethod = "OAuth";
       }
       await user.save();
     }
+
+    const fetchOrdersPromise = Order.find({ user: user._id })
+      .then((orders) => {
+        console.log(`Found ${orders.length} orders for user ${user._id}`);
+      })
+      .catch((err) => {
+        console.error(`Error fetching orders for user ${user._id}:`, err);
+      });
+    //console.log(fetchOrdersPromise, "fetchOrdersPromise");
 
     return sendToken(user, 200);
   } catch (error) {

@@ -121,7 +121,7 @@ const CartFooter = ({
 
             const backupPaymentData = {
               ...paymentData,
-              userId: user._id,
+              userId: user?._id,
             };
 
             const apiResponse = await fetch(

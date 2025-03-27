@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 import { useRouter } from "next/navigation";
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const [login, { isLoading, error }] = useLoginMutation();
   const [formData, setFormData] = useState({
     email: "",
@@ -66,7 +66,10 @@ export default function Login() {
       className="modal modalCentered fade form-sign-in modal-part-content"
       id="login"
     >
-      <div className="modal-dialog modal-dialog-centered">
+      <div
+        className="modal-dialog modal-dialog-centered"
+        style={{ display: "flex", alignItems: "center" }}
+      >
         <div className="modal-content">
           <div className="header">
             <div className="demo-title">Log in</div>
@@ -125,19 +128,22 @@ export default function Login() {
                     {isLoading ? "Logging in..." : "Log in"}
                   </button>
                 </div>
+
                 <div className="w-100">
                   <a
                     href="#register"
                     data-bs-toggle="modal"
-                    className="btn-link fw-6 w-100 link"
+                    className="tf-btn btn-fill border-black bg-transparent border text-black animate-hover-btn radius-3 w-100 justify-content-center"
                   >
-                    New customer? Create your account
+                    Sign up for new customers
                     <i className="icon icon-arrow1-top-left" />
                   </a>
                 </div>
               </div>
+              <p className="text-center">OR</p>
+              <GoogleSigninButton />
             </form>
-            <GoogleSigninButton />
+
             {error && (
               <p className="error-message text-danger">{error.data?.message}</p>
             )}

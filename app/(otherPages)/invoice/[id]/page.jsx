@@ -1,13 +1,15 @@
+
 import InvoiceSection from "@/components/invoice/InvoiceSection";
 import React from "react";
 
-export default function page() {
+export default function Page({ params }) {
+  const { id } = params;
+
   return (
     <>
       <div className="wrapper-invoice">
-        <InvoiceSection />
+        <InvoiceSection orderId={id} />
       </div>
-      {/* Javascript */}
     </>
   );
 }

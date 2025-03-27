@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-
+import Order from "@/models/Order";
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {

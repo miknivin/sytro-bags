@@ -341,7 +341,7 @@ export default function DetailsOuterZoom({ product }) {
                             <i className="icon-delivery-time" />
                           </div>
                           <p>
-                            Estimate delivery times:
+                            Estimate delivery time:
                             <span className="fw-7">4-6 days</span>
                             {/* (International),
                             <span className="fw-7">3-6 days</span> (United

@@ -68,12 +68,20 @@ export default function Orders() {
                     ₹{order?.totalAmount} for {order?.orderItems.length} items
                   </td>
                   <td>
-                    <Link
-                      href={`/my-account-orders-details?orderId=${order._id}`}
-                      className="tf-btn btn-fill animate-hover-btn rounded-0 justify-content-center"
-                    >
-                      <span>View</span>
-                    </Link>
+                    <div className="d-flex gap-3">
+                      <Link
+                        href={`/my-account-orders-details?orderId=${order._id}`}
+                        className="tf-btn btn-fill animate-hover-btn rounded-0 justify-content-center"
+                      >
+                        <span>View</span>
+                      </Link>
+                      <Link
+                        href={`/invoice/${order._id}`}
+                        className="tf-btn border-black animate-hover-btn rounded-0 justify-content-center"
+                      >
+                        <span>Invoice</span>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))

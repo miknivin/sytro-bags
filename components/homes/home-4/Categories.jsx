@@ -39,10 +39,10 @@ export default function Categories() {
                   </div>
                   <div className="collection-content">
                     <div className="top wow fadeInUp" data-wow-delay="0s">
-                      <h5 className="heading">{slide.title}</h5>
+                      {/* <h5 className="heading">{slide.title}</h5>
                       <p className="subheading">
                         Start from <span className="fw-6">{slide.price}</span>
-                      </p>
+                      </p> */}
                     </div>
                     <div className="bottom wow fadeInUp" data-wow-delay="0s">
                       <button className="tf-btn btn-line collection-other-link fw-6">

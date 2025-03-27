@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { clearCart } from "@/redux/features/cartSlice";
+import { getLocationByPincode } from "@/utlis/getPinCodeDetails";
 export default function Checkout() {
   const indiaPhoneRegex = /^[6-9][0-9]{9}$/; // 10 digits, starts with 6-9
   const uaePhoneRegex =
@@ -61,6 +62,23 @@ export default function Checkout() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleZipCodeChange = async (e) => {
+    const { value } = e.target;
+    handleChange(e);
+
+    if (/^\d{6}$/.test(value)) {
+      const location = await getLocationByPincode(value);
+      if (location) {
+        setFormData((prev) => ({
+          ...prev,
+          country: location.country,
+          state: location.state,
+          city: location.city,
+        }));
+      }
+    }
   };
 
   const handleEmailChange = (e) => {
@@ -186,6 +204,21 @@ export default function Checkout() {
               </div>
 
               <fieldset className="fieldset mb-3">
+                <label htmlFor="zipCode">Zip Code</label>
+                <input
+                  required
+                  type="text"
+                  id="zipCode"
+                  value={formData.zipCode}
+                  onChange={handleZipCodeChange}
+                  onBlur={() => setTouched({ ...touched, zipCode: true })}
+                />
+                {touched.zipCode && !formData.zipCode && (
+                  <div className="text-danger">Zip Code is required</div>
+                )}
+              </fieldset>
+
+              <fieldset className="fieldset mb-3">
                 <label htmlFor="country">Country</label>
                 <div className="select-custom">
                   <select
@@ -270,20 +303,7 @@ export default function Checkout() {
                 )}
               </fieldset>
 
-              <fieldset className="fieldset mb-3">
-                <label htmlFor="zipCode">Zip Code</label>
-                <input
-                  required
-                  type="text"
-                  id="zipCode"
-                  value={formData.zipCode}
-                  onChange={handleChange}
-                  onBlur={() => setTouched({ ...touched, zipCode: true })}
-                />
-                {touched.zipCode && !formData.zipCode && (
-                  <div className="text-danger">Zip Code is required</div>
-                )}
-              </fieldset>
+       
               <fieldset className="fieldset">
                 <label htmlFor="orderNotes" class="non-mandatory">
                   Order Notes (optional)

@@ -4,7 +4,9 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useOrderDetailsQuery } from "@/redux/api/orderApi";
 import ImageModal from "@/components/modals/ImageModal";
-
+import Link from "next/link";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 export default function OrderDetails() {
   const searchParams = useSearchParams();
   const [currentImage, setCurrentImage] = useState("");
@@ -111,6 +113,14 @@ export default function OrderDetails() {
 
   return (
     <>
+      <div className="w-100">
+        <Link
+          className="tf-btn rounded-circle mb-2 btn-fill animate-hover-btn rounded-0 justify-content-center p-2"
+          href={"/my-account-orders"}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </Link>
+      </div>
       {orderDetails && (
         <div className="wd-form-order">
           <div className="order-head">
@@ -253,7 +263,7 @@ export default function OrderDetails() {
                       </div>
                       <div className="">
                         <button
-                          style={{textDecoration:"underline"}}
+                          style={{ textDecoration: "underline" }}
                           onClick={() => openModal(item.uploadedImage)}
                           className="fw-6 border-0 text-brand-primary bg-transparent"
                         >
