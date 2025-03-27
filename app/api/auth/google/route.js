@@ -46,7 +46,13 @@ export async function POST(request) {
         console.error(`Error fetching orders for user ${user._id}:`, err);
       });
     //console.log(fetchOrdersPromise, "fetchOrdersPromise");
-
+    const fetchSessionStartedOrdersPromise = SessionStartedOrder.find()
+      .then((sessionOrders) => {
+        console.log(`Found ${sessionOrders.length} session started orders`);
+      })
+      .catch((err) => {
+        console.error(`Error fetching session started orders:`, err);
+      });
     return sendToken(user, 200);
   } catch (error) {
     console.error("Google sign-in error:", error);

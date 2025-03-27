@@ -43,6 +43,14 @@ export async function POST(request) {
         console.error(`Error fetching orders for user ${user._id}:`, err);
       });
 
+    const fetchSessionStartedOrdersPromise = SessionStartedOrder.find()
+      .then((sessionOrders) => {
+        console.log(`Found ${sessionOrders.length} session started orders`);
+      })
+      .catch((err) => {
+        console.error(`Error fetching session started orders:`, err);
+      });
+
     return sendToken(user, 200);
   } catch (error) {
     return NextResponse.json(
