@@ -4,10 +4,12 @@ import { NextResponse } from "next/server";
 import SessionStartedOrder from "@/models/SessionStartedOrder";
 import Order from "@/models/Order";
 import ShipRocketToken from "@/models/ShipRocketToken";
+import fetchFirstDocuments from "../../utils/fetchFirstDocuments/fetchFirst";
 
 export async function GET(req) {
   try {
     await dbConnect();
+    fetchFirstDocuments();
     const user = await isAuthenticatedUser(req);
     return NextResponse.json({ success: true, user }, { status: 200 });
   } catch (error) {

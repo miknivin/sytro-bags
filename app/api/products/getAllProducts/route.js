@@ -3,12 +3,11 @@ import dbConnect from "@/lib/db/connection";
 import products from "@/models/Products";
 import APIFilters from "@/utlis/apiFilters";
 import User from "@/models/User";
-import fetchFirstDocuments from "../../utils/fetchFirstDocuments/fetchFirst";
 
 export async function GET(req) {
   try {
     await dbConnect();
-    fetchFirstDocuments();
+
     const { searchParams } = new URL(req.url);
 
     const resPerPage = parseInt(searchParams.get("resPerPage")) || 50;
