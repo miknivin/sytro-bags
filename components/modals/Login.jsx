@@ -4,6 +4,7 @@ import { useLoginMutation } from "@/redux/api/authApi";
 import Swal from "sweetalert2";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 export default function Login() {
   const router = useRouter();
   const [login, { isLoading, error }] = useLoginMutation();
@@ -42,12 +43,7 @@ export default function Login() {
         }
       }
 
-      Swal.fire({
-        icon: "success",
-        title: "Login Successful",
-        text: "You have successfully logged in!",
-        confirmButtonColor: "#3085d6",
-      });
+      toast.success("You have successfully logged in!");
       const queryParams = new URLSearchParams(window.location.search);
       if (queryParams.get("toCheckout") === "proceeding") {
         router.push("/checkout");

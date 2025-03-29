@@ -5,6 +5,8 @@ import { useRegisterMutation } from "@/redux/api/authApi";
 import Swal from "sweetalert2";
 import dynamic from "next/dynamic";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 // Dynamically import Bootstrap with no SSR
 const BootstrapClient = dynamic(
   () => import("bootstrap/dist/js/bootstrap.bundle.min.js"),
@@ -23,7 +25,7 @@ export default function Register() {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [modalInstance, setModalInstance] = useState(null);
-
+  const router = useRouter();
   useEffect(() => {
     // Load Bootstrap
     BootstrapClient;
@@ -82,13 +84,18 @@ export default function Register() {
         modalInstance.hide();
       }
 
-      Swal.fire({
-        icon: "success",
-        title: "Registration Successful",
-        text: "You have been registered successfully!",
-        confirmButtonColor: "#3085d6",
-      });
-
+      // Swal.fire({
+      //   icon: "success",
+      //   title: "Registration Successful",
+      //   text: "You have been registered successfully!",
+      //   confirmButtonColor: "#3085d6",
+      // });
+      toast.success("You have been registered successfully!")
+      const queryParams = new URLSearchParams(window.location.search);
+      if (queryParams.get("toCheckout") === "proceeding") {
+        router.push("/checkout");
+        console.log("Navigating to checkout");
+      }
       setFormData({ firstName: "", lastName: "", email: "", password: "" });
     } catch (err) {
       console.error(err);

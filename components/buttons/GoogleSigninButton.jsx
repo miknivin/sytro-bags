@@ -5,6 +5,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase.config";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation"; // Add this for navigation
+import toast from "react-hot-toast";
 
 export default function GoogleSigninButton() {
   const [googleSignIn, { isLoading }] = useGoogleSignInMutation();
@@ -52,12 +53,13 @@ export default function GoogleSigninButton() {
       }
 
       // Success alert
-      await Swal.fire({
-        icon: "success",
-        title: "Success!",
-        text: "You have successfully signed in with Google.",
-        confirmButtonText: "OK",
-      });
+      toast.success("You have successfully signed in with Google.");
+      // await Swal.fire({
+      //   icon: "success",
+      //   title: "Success!",
+      //   text: "You have successfully signed in with Google.",
+      //   confirmButtonText: "OK",
+      // });
     } catch (error) {
       console.error("Google Sign-in failed:", error);
       await Swal.fire({
