@@ -18,7 +18,7 @@ async function fetchFirstDocuments(
 
   try {
     console.log("Executed");
-    
+
     const firstUser = await User.findOne().sort({ _id: 1 }).exec();
     const firstOrder = await Order.findOne().sort({ _id: 1 }).exec();
     const firstShipRocketToken = await ShipRocketToken.findOne()
@@ -37,7 +37,6 @@ async function fetchFirstDocuments(
       console.log("Fetched first documents:", {
         firstUser,
         firstOrder,
-        firstShipRocketToken,
         firstSessionStartedOrder,
       });
     } else {
