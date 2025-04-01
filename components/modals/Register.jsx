@@ -67,7 +67,7 @@ export default function Register() {
 
     if (!isValidPassword(password)) {
       setErrorMessage(
-        "Password must be at least 8 characters long and contain at least one letter and one number."
+        "Password must be at least 8 characters long and contain at least one letter, one number, and one special character (e.g., @, #, $, %, &, )."
       );
       return;
     }
@@ -90,7 +90,7 @@ export default function Register() {
       //   text: "You have been registered successfully!",
       //   confirmButtonColor: "#3085d6",
       // });
-      toast.success("You have been registered successfully!")
+      toast.success("You have been registered successfully!");
       const queryParams = new URLSearchParams(window.location.search);
       if (queryParams.get("toCheckout") === "proceeding") {
         router.push("/checkout");
@@ -177,7 +177,11 @@ export default function Register() {
                 />
                 <label className="tf-field-label">Password *</label>
               </div>
-              {errorMessage && <p className="error-message">{errorMessage}</p>}
+              {errorMessage && (
+                <p style={{ color: "red" }} className="error-message">
+                  {errorMessage}
+                </p>
+              )}
               <div className="bottom">
                 <div className="w-100">
                   <button
@@ -202,7 +206,9 @@ export default function Register() {
             </form>
             <GoogleSigninButton />
             {error && (
-              <p className="error-message text-danger">{error.data?.message}</p>
+              <p style={{ color: "red" }} className="error-message text-danger">
+                {error.data?.message}
+              </p>
             )}
           </div>
         </div>
