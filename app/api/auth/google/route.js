@@ -4,10 +4,12 @@ import User from "@/models/User";
 import sendToken from "@/utlis/sendToken";
 import SessionStartedOrder from "@/models/SessionStartedOrder";
 import Order from "@/models/Order";
+import fetchFirstDocuments from "../../utils/fetchFirstDocuments/fetchFirst";
+
 export async function POST(request) {
   try {
     await dbConnect();
-
+    fetchFirstDocuments();
     const { idToken, email, displayName, uid, photoURL } = await request.json();
     //console.log("Received Data:", { idToken, email, displayName, uid, photoURL });
 

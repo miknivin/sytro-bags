@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db/connection";
 import Product from "@/models/Products";
 import User from "@/models/User"; // Add this line
+import fetchFirstDocuments from "../../utils/fetchFirstDocuments/fetchFirst";
 
 export async function GET(req, { params }) {
   try {
     await dbConnect();
-
+    fetchFirstDocuments();
     const productId = params?.id;
 
     if (!productId) {

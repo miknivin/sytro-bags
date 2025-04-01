@@ -77,7 +77,7 @@ const CartFooter = ({
       image:
         "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
       handler: async function (response) {
-        console.log("Payment successful, verifying with server...", response);
+       // console.log("Payment successful, verifying with server...", response);
         const fullName = `${formData.firstName} ${formData.lastName}`.trim();
         const paymentData = {
           razorpay_order_id: response.razorpay_order_id,

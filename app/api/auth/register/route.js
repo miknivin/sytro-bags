@@ -4,10 +4,12 @@ import dbConnect from "@/lib/db/connection";
 import sendToken from "@/utlis/sendToken";
 
 import SessionStartedOrder from "@/models/SessionStartedOrder";
+import fetchFirstDocuments from "../../utils/fetchFirstDocuments/fetchFirst";
 
 export async function POST(request) {
   try {
     await dbConnect();
+    fetchFirstDocuments()
     const { name, email, password } = await request.json();
 
     const user = await User.create({
