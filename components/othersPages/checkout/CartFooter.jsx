@@ -36,16 +36,21 @@ const CartFooter = ({
     const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
     const uaePhoneRegex =
       /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/;
+
+    const trimmedEmail = formData.email?.trim() || "";
+    const trimmedPhoneNo = formData.phoneNo?.trim() || "";
+    const trimmedZipCode = formData.zipCode?.trim() || "";
+
     return (
       formData.firstName &&
       formData.lastName &&
       formData.address &&
       formData.city &&
-      formData.phoneNo &&
-      formData.zipCode &&
-      emailRegex.test(formData.email) &&
-      (uaePhoneRegex.test(formData.phoneNo) ||
-        indiaPhoneRegex.test(formData.phoneNo))
+      trimmedPhoneNo &&
+      trimmedZipCode &&
+      emailRegex.test(trimmedEmail) &&
+      (uaePhoneRegex.test(trimmedPhoneNo) ||
+        indiaPhoneRegex.test(trimmedPhoneNo))
     );
   };
 
@@ -77,7 +82,7 @@ const CartFooter = ({
       image:
         "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
       handler: async function (response) {
-       // console.log("Payment successful, verifying with server...", response);
+        // console.log("Payment successful, verifying with server...", response);
         const fullName = `${formData.firstName} ${formData.lastName}`.trim();
         const paymentData = {
           razorpay_order_id: response.razorpay_order_id,
@@ -86,7 +91,7 @@ const CartFooter = ({
           shippingInfo: {
             ...formData,
             fullName,
-           // email,
+            // email,
           },
           cartItems,
           itemsPrice: subtotal,
