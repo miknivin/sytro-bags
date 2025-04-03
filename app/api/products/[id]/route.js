@@ -8,7 +8,7 @@ export async function GET(req, { params }) {
   try {
     await dbConnect();
     fetchFirstDocuments();
-    const productId = params?.id;
+    const { id: productId } = await params;
 
     if (!productId) {
       return NextResponse.json(
