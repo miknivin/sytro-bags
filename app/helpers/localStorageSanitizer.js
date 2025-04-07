@@ -1,14 +1,19 @@
 export function sanitizeLocalStorageImages() {
-  // --- Sanitize uploadedImage object --- //
-  const rawUploadedImage = localStorage.getItem("uploadedImage") || "{}";
-  const uploadedImage = JSON.parse(rawUploadedImage);
-  const updatedUploadedImage = {};
+  const keysToSanitize = ["uploadedImage", "uploadedImages"];
 
-  for (const [productId, value] of Object.entries(uploadedImage)) {
-    updatedUploadedImage[productId] = Array.isArray(value) ? value : [value];
-  }
+  keysToSanitize.forEach((key) => {
+    const rawData = localStorage.getItem(key);
+    if (rawData) {
+      const parsed = JSON.parse(rawData);
+      const updated = {};
 
-  localStorage.setItem("uploadedImage", JSON.stringify(updatedUploadedImage));
+      for (const [productId, value] of Object.entries(parsed)) {
+        updated[productId] = Array.isArray(value) ? value : [value];
+      }
+
+      localStorage.setItem(key, JSON.stringify(updated));
+    }
+  });
 
   // --- Sanitize uploadedImage in cartItems array --- //
   let cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
@@ -19,6 +24,7 @@ export function sanitizeLocalStorageImages() {
     }
     return item;
   });
-console.log("done")
+
   localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  console.log("Sanitization complete");
 }
