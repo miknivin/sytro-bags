@@ -80,7 +80,7 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  z-index: 999;
+  z-index: 800;
   height: auto;
   border: none;
   font-size: small;
@@ -248,4 +248,28 @@ label.non-mandatory:after {
 
 .tf-field-input {
   border-color: #ccc;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 40%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  z-index: 10;
+  color: #000000; /* Optional: adjust based on your theme */
+}
+
+.prev-btn {
+  left: 0px;
+}
+
+.next-btn {
+  right: 0px;
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
 }

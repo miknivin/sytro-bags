@@ -1,4 +1,5 @@
-"use client;";
+"use client";
+import { useEffect } from "react";
 
 import React from "react";
 import Nav from "./Nav";
@@ -8,7 +9,11 @@ import CartLength from "../common/CartLength";
 import WishlistLength from "../common/WishlistLength";
 
 import UserIcon from "../common/UserIcon";
+import { sanitizeLocalStorageImages } from "@/app/helpers/localStorageSanitizer";
 export default function Header4() {
+  useEffect(() => {
+    sanitizeLocalStorageImages(); // Call once when header mounts
+  }, []);
   return (
     <header id="header" className="header-default header-style-2">
       <div className="main-header line">
@@ -138,7 +143,6 @@ export default function Header4() {
             <nav className="box-navigation text-center">
               <ul className="box-nav-ul d-flex align-items-center justify-content-center gap-30">
                 <Nav />
-                
               </ul>
             </nav>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter, useSearchParams } from "next/navigation"; // Add this import
+import { useRouter, useSearchParams } from "next/navigation";
 import DesignUpload from "../customizeBags/DesignUpload";
 import {
   setUploadedImage,
@@ -14,12 +14,17 @@ export default function SuperKidBag() {
   const closeRef = useRef(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const handleFileUpload = (blobUrl) => {
-    if (blobUrl) {
+
+  const handleFileUpload = (uploadedUrls) => {
+    if (uploadedUrls && uploadedUrls.length > 0) {
+      // Dispatch array of uploaded URLs
       dispatch(
-        setUploadedImage({ productId: productById._id, uploadedImage: blobUrl })
+        setUploadedImage({
+          productId: productById._id,
+          uploadedImage: uploadedUrls,
+        })
       );
-      // dispatch(setSelectedDesign({ design: blobUrl }));
+
 
       const isUploadImage = searchParams.get("isUploadImage");
       if (isUploadImage === "proceeding") {
@@ -28,8 +33,19 @@ export default function SuperKidBag() {
         });
       }
     } else {
-      dispatch(setUploadedImage({ uploadedImage: null }));
-      dispatch(setSelectedDesign({ design: null }));
+      // Reset if no URLs are provided
+      dispatch(
+        setUploadedImage({
+          productId: productById._id,
+          uploadedImage: [],
+        })
+      );
+      dispatch(
+        setSelectedDesign({
+          productId: productById._id,
+          design: null,
+        })
+      );
     }
     closeRef.current.click();
   };

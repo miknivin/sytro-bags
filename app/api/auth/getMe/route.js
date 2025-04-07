@@ -9,7 +9,7 @@ import User from "@/models/User";
 export async function GET(req) {
   try {
     await dbConnect();
-    fetchFirstDocuments();
+    //fetchFirstDocuments();
     const user = await isAuthenticatedUser(req);
     return NextResponse.json({ success: true, user }, { status: 200 });
   } catch (error) {

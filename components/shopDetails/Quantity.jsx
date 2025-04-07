@@ -1,12 +1,18 @@
 "use client";
-
+import { setQuantityChange } from "@/redux/features/cartSlice";
+import { useDispatch } from "react-redux";
 
 export default function Quantity({ quantity, setQuantity }) {
+  const dispatch = useDispatch();
+
   return (
     <div className="wg-quantity">
       <span
         className="btn-quantity minus-btn"
-        onClick={() => setQuantity((prev) => (prev === 1 ? 1 : prev - 1))}
+        onClick={() => {
+          setQuantity((prev) => (prev === 1 ? 1 : prev - 1));
+          dispatch(setQuantityChange({ isIncreasing: false }));
+        }}
       >
         -
       </span>
@@ -19,7 +25,10 @@ export default function Quantity({ quantity, setQuantity }) {
       />
       <span
         className="btn-quantity plus-btn"
-        onClick={() => setQuantity((prev) => prev + 1)}
+        onClick={() => {
+          setQuantity((prev) => prev + 1);
+          dispatch(setQuantityChange({ isIncreasing: true }));
+        }}
       >
         +
       </span>

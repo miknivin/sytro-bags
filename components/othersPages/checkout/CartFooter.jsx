@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,15 @@ import Swal from "sweetalert2";
 import { clearCart } from "@/redux/features/cartSlice";
 import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import { Tooltip } from "react-tooltip";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleChevronLeft,
+  faCircleChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { validateCartItems } from "@/app/helpers/Cartvalidator";
+
 const CartFooter = ({
   cartItems,
   subtotal,
@@ -21,6 +30,8 @@ const CartFooter = ({
   handleSubmit,
   isLoading,
 }) => {
+  const prevRefs = useRef([]);
+  const nextRefs = useRef([]);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
@@ -56,6 +67,9 @@ const CartFooter = ({
 
   const handleRazorpayPayment = async () => {
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    if (!validateCartItems(cartItems)) {
+      return; 
+    }
     const orderData = {
       orderItems: cartItems,
       shippingInfo: {
@@ -223,55 +237,123 @@ const CartFooter = ({
             className="tf-page-cart-checkout widget-wrap-checkout"
           >
             <ul className="wrap-checkout-product">
-              {cartItems.map((elm, i) => (
-                <li
-                  key={i}
-                  className="d-flex flex-column border-black border p-2 rounded-2 gap-1"
-                >
-                  <div className="checkout-product-item">
-                    <figure className="img-product">
-                      <Image
-                        style={{ borderRadius: "10px" }}
-                        alt="product"
-                        src={elm.image}
-                        width={720}
-                        height={1005}
-                      />
-                      <span className="quantity bg-warning">
-                        {elm.quantity}
-                      </span>
-                    </figure>
-                    <div className="content">
-                      <div className="info">
-                        <p className="name" style={{ paddingRight: "10px" }}>
-                          {elm.name}
-                        </p>
-                      </div>
-                      <span className="price">
-                        ₹{(elm.price * elm.quantity).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="checkout-product-item">
-                    <figure className="img-product">
-                      <Image
-                        style={{ borderRadius: "10px" }}
-                        alt="product"
-                        src={elm.uploadedImage}
-                        width={720}
-                        height={1005}
-                      />
-                    </figure>
-                    <div className="content">
-                      <div className="info">
-                        <p className="name" style={{ paddingRight: "10px" }}>
-                          Uploaded image
-                        </p>
+              {cartItems.map((elm, i) => {
+                prevRefs.current[i] = prevRefs.current[i] || React.createRef();
+                nextRefs.current[i] = nextRefs.current[i] || React.createRef();
+                return (
+                  <li
+                    key={i}
+                    className="d-flex flex-column border-black border p-2 rounded-2 gap-1 mb-2"
+                  >
+                    <div className="checkout-product-item">
+                      <figure className="img-product">
+                        <Image
+                          style={{ borderRadius: "10px" }}
+                          alt="product"
+                          src={elm.image}
+                          width={720}
+                          height={1005}
+                        />
+                        <span className="quantity bg-warning">
+                          {elm.quantity}
+                        </span>
+                      </figure>
+                      <div className="content">
+                        <div className="info">
+                          <p className="name" style={{ paddingRight: "10px" }}>
+                            {elm.name}
+                          </p>
+                        </div>
+                        <span className="price">
+                          ₹{(elm.price * elm.quantity).toFixed(2)}
+                        </span>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                    <div
+                      style={{ width: "fit-content", gap: "0" }}
+                      className="checkout-product-item flex-column justify-content-start"
+                    >
+                      <Swiper
+                        modules={[Navigation, Pagination]}
+                        spaceBetween={10}
+                        slidesPerView={1}
+                        navigation={{
+                          prevEl: prevRefs.current[i].current,
+                          nextEl: nextRefs.current[i].current,
+                        }}
+                        onBeforeInit={(swiper) => {
+                          swiper.params.navigation.prevEl =
+                            prevRefs.current[i].current;
+                          swiper.params.navigation.nextEl =
+                            nextRefs.current[i].current;
+                        }}
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                        }}
+                      >
+                        {elm.uploadedImage.map((url, index) => (
+                          <SwiperSlide
+                            key={index}
+                            className="position-relative border p-1"
+                          >
+                            <Image
+                              src={url}
+                              alt={`Uploaded image ${index + 1} for ${
+                                elm.name
+                              }`}
+                              width={100}
+                              height={100}
+                              className="popover-image"
+                              style={{
+                                objectFit: "contain",
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            />
+                            <div
+                              style={{
+                                fontSize: "10px",
+                                height: "fit-content",
+                              }}
+                              className="position-absolute text-white p-1  rounded-circle top-0 left-0 bg-black bg-opacity-75"
+                            >
+                              {index + 1}/{elm.uploadedImage?.length}
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                        <button
+                          ref={prevRefs.current[i]}
+                          type="button"
+                          role="button"
+                          className="nav-btn prev-btn"
+                        >
+                          <FontAwesomeIcon
+                            icon={faCircleChevronLeft}
+                            size="sm"
+                          />
+                        </button>
+                        <button
+                          ref={nextRefs.current[i]}
+                          type="button"
+                          role="button"
+                          className="nav-btn next-btn"
+                        >
+                          <FontAwesomeIcon
+                            icon={faCircleChevronRight}
+                            size="sm"
+                          />
+                        </button>
+                      </Swiper>
+                      <div className="content">
+                        <div className="info">
+                          <p className="name ps-2">Uploaded image</p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
 
             {!cartItems.length && (

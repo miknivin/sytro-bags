@@ -6,6 +6,7 @@ const initialState = {
   shippingInfo: {},
   uploadedImages: {},
   selectedDesigns: {},
+  quantityChange: { isIncreasing: false, timestamp: 0 },
 };
 
 if (typeof window !== "undefined") {
@@ -79,7 +80,7 @@ export const cartSlice = createSlice({
 
       saveToLocalStorage("cartItems", state.cartItems);
       saveToLocalStorage("uploadedImages", state.uploadedImages);
-      //saveToLocalStorage("selectedDesigns", state.selectedDesigns);
+      // saveToLocalStorage("selectedDesigns", state.selectedDesigns);
     },
 
     saveShippingInfo: (state, action) => {
@@ -101,12 +102,10 @@ export const cartSlice = createSlice({
       const { productId, design } = action.payload;
 
       if (!state.selectedDesigns) {
-        state.selectedDesigns = {}; // Ensure the object exists
+        state.selectedDesigns = {};
       }
 
       state.selectedDesigns[productId] = design;
-
-      // Fix the typo: Save state.selectedDesigns instead of state.design
       saveToLocalStorage("selectedDesigns", state.selectedDesigns);
     },
 
@@ -118,7 +117,20 @@ export const cartSlice = createSlice({
 
     setUploadedImage: (state, action) => {
       const { productId, uploadedImage } = action.payload;
-      state.uploadedImages[productId] = uploadedImage;
+
+      if (!state.uploadedImages[productId]) {
+        state.uploadedImages[productId] = [];
+      }
+
+      if (Array.isArray(uploadedImage)) {
+        state.uploadedImages[productId] = [
+          ...state.uploadedImages[productId],
+          ...uploadedImage,
+        ];
+      } else {
+        state.uploadedImages[productId].push(uploadedImage);
+      }
+
       saveToLocalStorage("uploadedImages", state.uploadedImages);
     },
 
@@ -137,14 +149,53 @@ export const cartSlice = createSlice({
       saveToLocalStorage("uploadedImages", state.uploadedImages);
     },
 
+    // New reducer to remove a specific image from the array
+    removeUploadedImage: (state, action) => {
+      const { productId, imageIndex } = action.payload;
+      if (state.uploadedImages[productId]) {
+        state.uploadedImages[productId] = state.uploadedImages[
+          productId
+        ].filter((_, index) => index !== imageIndex);
+        // Clean up if array becomes empty
+        if (state.uploadedImages[productId].length === 0) {
+          delete state.uploadedImages[productId];
+        }
+        saveToLocalStorage("uploadedImages", state.uploadedImages);
+      }
+    },
+
     mergeCartData: (state) => {
       state.cartItems = state.cartItems.map((item) => ({
         ...item,
         selectedDesign: state.selectedDesigns[item.product] || null,
-        uploadedImage: state.uploadedImages[item.product] || null,
+        uploadedImages: state.uploadedImages[item.product] || [],
       }));
 
       saveToLocalStorage("cartItems", state.cartItems);
+    },
+    setQuantityChange: (state, action) => {
+      const { isIncreasing } = action.payload;
+      state.quantityChange = {
+        isIncreasing,
+        timestamp: Date.now(),
+      };
+      saveToLocalStorage("quantityChange", state.quantityChange);
+    },
+    removeCartItemUploadedImage: (state, action) => {
+      const { productId, imageIndex } = action.payload;
+      const cartItem = state.cartItems.find(
+        (item) => item.product === productId
+      );
+
+      if (cartItem && Array.isArray(cartItem.uploadedImage)) {
+        if (cartItem.uploadedImage.length > 1) {
+          cartItem.uploadedImage = cartItem.uploadedImage.filter(
+            (_, index) => index !== imageIndex
+          );
+        }
+
+        saveToLocalStorage("cartItems", state.cartItems);
+      }
     },
   },
 });
@@ -161,5 +212,8 @@ export const {
   resetSelectedDesign,
   setUploadedImage,
   resetUploadedImage,
+  removeUploadedImage,
   mergeCartData,
+  setQuantityChange,
+  removeCartItemUploadedImage
 } = cartSlice.actions;

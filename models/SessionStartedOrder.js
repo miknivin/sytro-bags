@@ -28,7 +28,10 @@ const sessionStartedOrderSchema = new mongoose.Schema(
     orderItems: [
       {
         name: { type: String, required: true },
-        uploadedImage: { type: String, required: true },
+        uploadedImage: {
+          type: [String],
+          required: true,
+        },
         quantity: { type: Number, required: true },
         image: { type: String, required: true },
         price: { type: String, required: true },

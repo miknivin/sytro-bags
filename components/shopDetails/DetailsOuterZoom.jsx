@@ -5,47 +5,39 @@ import Image from "next/image";
 import { colors } from "@/data/singleProductOptions";
 import StickyItem from "./StickyItem";
 import Quantity from "./Quantity";
-
 import Slider1ZoomOuter from "./sliders/Slider1ZoomOuter";
-
 import { openCartModal } from "@/utlis/openCartModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import {
-  faGooglePay,
-  faCcVisa,
-  faCcMastercard,
-  faApplePay,
-} from "@fortawesome/free-brands-svg-icons";
+
 import { useDispatch, useSelector } from "react-redux";
-import { resetUploadedImage, setCartItem } from "@/redux/features/cartSlice.js";
+import {
+  removeUploadedImage,
+  resetUploadedImage,
+  setCartItem,
+  setUploadedImage,
+} from "@/redux/features/cartSlice.js";
 import toast from "react-hot-toast";
 import { setProductById } from "@/redux/features/productSlice";
 import { useRouter, useSearchParams } from "next/navigation";
+import DetailsStatic from "./DetailsStatic";
+
 export default function DetailsOuterZoom({ product }) {
   //const kidsBagId = "67a70ca93f464380b64b05a6";
   const [currentColor, setCurrentColor] = useState(colors[0]);
   const router = useRouter();
-  const [quantity, setQuantity] = useState(1);
+  const uploadModalRef = useRef(null);
+  const handleColor = () => {};
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [currentSize, setCurrentSize] = useState("Small");
   const selectedDesigns = useSelector((state) => state.cart.selectedDesigns);
   const uploadedImages = useSelector((state) => state.cart.uploadedImages);
-  const searchParams = useSearchParams();
-  const uploadModal = useRef();
-  const selectedTemplate = useSelector(
-    (state) => state.product.selectedTemplate
+  const [quantity, setQuantity] = useState(
+    uploadedImages?.[product._id]?.length || 1
   );
-  const handleColor = (color) => {
-    // const updatedColor = colors.filter(
-    //   (elm) => elm.value.toLowerCase() == color.toLowerCase()
-    // )[0];
-    // if (updatedColor) {
-    //   setCurrentColor(updatedColor);
-    // }
-  };
-  const sizeOptions = [{ value: "Small" }, { value: "Large" }];
-
+  const searchParams = useSearchParams();
+  const uploadModal = useRef(null);
+  const quantityChange = useSelector((state) => state.cart.quantityChange);
   const isAddedToCartProducts = (id) => {
     return (
       Array.isArray(cartItems) && cartItems.some((item) => item.product === id)
@@ -92,6 +84,76 @@ export default function DetailsOuterZoom({ product }) {
       openCartModal();
     }
   }, [searchParams]);
+
+  const handleQuantityChange = (newQuantity) => {
+    // console.log(newQuantity, "newQuantity");
+    if (newQuantity < 1) {
+      setQuantity(1);
+      return;
+    }
+    const currentImageCount = uploadedImages?.[product._id]?.length || 0;
+    //console.log(currentImageCount, "currentImageCount");
+    if (newQuantity < currentImageCount) {
+      const imagesToKeep = uploadedImages[product._id].slice(0, newQuantity);
+      dispatch(
+        setUploadedImage({
+          productId: product._id,
+          uploadedImage: imagesToKeep,
+        })
+      );
+      setQuantity(newQuantity);
+    } else if (newQuantity > currentImageCount) {
+      const currentPath = window.location.pathname;
+      const query = new URLSearchParams({
+        isUploadImage: "proceeding",
+        quantity: (
+          newQuantity - (uploadedImages?.[product._id]?.length || 0)
+        ).toString(),
+      }).toString();
+      router.push(`${currentPath}?${query}`, { scroll: false });
+      uploadModalRef.current?.click();
+    } else {
+      setQuantity(newQuantity);
+    }
+  };
+
+  useEffect(() => {
+    setQuantity(uploadedImages?.[product._id]?.length || 1);
+  }, [uploadedImages, product._id]);
+
+  
+
+  useEffect(() => {
+    // console.log(quantityChange);
+    const currentImageCount = uploadedImages?.[product._id]?.length || 0;
+
+    if (quantityChange.isIncreasing && quantity > currentImageCount) {
+      const imagesToUploadCount = quantity - currentImageCount;
+      const currentPath = window.location.pathname;
+      const query = new URLSearchParams({
+        isUploadImage: "proceeding",
+        quantity: imagesToUploadCount.toString(),
+      }).toString();
+      router.push(`${currentPath}?${query}`, { scroll: false });
+      const isProductInCart = cartItems.some(
+        (item) => item.product === product._id
+      );
+      if (isProductInCart) {
+        uploadModalRef.current?.click();
+        setQuantity(currentImageCount > 0 ? currentImageCount : 1);
+      }
+    } else if (!quantityChange.isIncreasing && quantity < currentImageCount) {
+      const lastImageIndex = currentImageCount - 1;
+      if (lastImageIndex >= 0) {
+        dispatch(
+          removeUploadedImage({
+            productId: product?._id,
+            imageIndex: lastImageIndex,
+          })
+        );
+      }
+    }
+  }, [quantityChange, product._id, router]);
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -114,17 +176,17 @@ export default function DetailsOuterZoom({ product }) {
                         ? [
                             {
                               url:
-                                currentSize?.value === "Large"
+                                currentSize?.valueOf === "Large"
                                   ? selectedDesigns[product._id]?.largeBagImage
                                   : selectedDesigns[product._id]?.smallBagImage,
                               _id: selectedDesigns?._id,
                             },
-                            ...(currentSize?.value === "Large"
+                            ...(currentSize?.valueOf === "Large"
                               ? product?.extraImages?.slice(1) || []
                               : product?.images?.slice(1) || []),
                           ]
                         : [
-                            ...(currentSize?.value === "Large"
+                            ...(currentSize?.valueOf === "Large"
                               ? product?.extraImages || []
                               : product?.images || []),
                           ]
@@ -169,41 +231,49 @@ export default function DetailsOuterZoom({ product }) {
                         >
                           {hasCustomDesign ? (
                             <div className="d-flex gap-2 flex-column">
-                              <div
-                                style={{ width: "fit-content" }}
-                                className="position-relative border border-black rounded-2"
-                              >
-                                <button
-                                  onClick={() =>
-                                    dispatch(
-                                      resetUploadedImage({
-                                        productId: product._id,
-                                      })
-                                    )
-                                  }
-                                  className="remove-button badge"
-                                >
-                                  X
-                                </button>
-                                <img
-                                  src={uploadedImages?.[product._id]}
-                                  alt="Uploaded Image"
-                                  style={{
-                                    width: "125px",
-                                    height: "125px",
-                                    objectFit: "contain",
-                                    borderRadius: "5px",
-                                  }}
-                                />
-                              </div>
-                              <div style={{ opacity: 0.7 }} className=" w-100">
-                                <small title="" className="line-clamp">
-                                  {uploadedImages?.[product._id]
-                                    ? uploadedImages[product._id]
-                                        .split("/")
-                                        .pop()
-                                    : ""}
-                                </small>
+                              <div className="d-flex gap-2 flex-wrap">
+                                {uploadedImages[product._id].map(
+                                  (image, index) => (
+                                    <div
+                                      key={index}
+                                      style={{
+                                        width: "fit-content",
+                                        maxWidth: "130px",
+                                      }}
+                                      className="position-relative border border-black rounded-2 d-flex flex-column"
+                                    >
+                                      <button
+                                        onClick={() =>
+                                          dispatch(
+                                            removeUploadedImage({
+                                              productId: product._id,
+                                              imageIndex: index,
+                                            })
+                                          )
+                                        }
+                                        className="remove-button badge"
+                                      >
+                                        X
+                                      </button>
+                                      <img
+                                        src={image}
+                                        alt={`Uploaded Image ${index + 1}`}
+                                        style={{
+                                          width: "125px",
+                                          height: "125px",
+                                          objectFit: "contain",
+                                          borderRadius: "5px",
+                                        }}
+                                      />
+                                      <small
+                                        title={image.split("/").pop()}
+                                        className="line-clamp px-1"
+                                      >
+                                        {image.split("/").pop()}
+                                      </small>
+                                    </div>
+                                  )
+                                )}
                               </div>
                             </div>
                           ) : (
@@ -236,14 +306,6 @@ export default function DetailsOuterZoom({ product }) {
                                 </div>
                               </div>
                             </>
-                            // <a
-                            //   ref={uploadModal}
-                            //   href="#super_kidbag"
-                            //   data-bs-toggle="modal"
-                            //   className="tf-btn btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
-                            // >
-                            //   Upload your image
-                            // </a>
                           )}
                         </div>
                       </div>
@@ -251,36 +313,16 @@ export default function DetailsOuterZoom({ product }) {
                   </div>
                   <div className="tf-product-info-quantity">
                     <div className="quantity-title fw-6">Quantity</div>
-                    <Quantity setQuantity={setQuantity} quantity={quantity} />
+                    <Quantity
+                      setQuantity={setQuantity}
+                      quantity={quantity}
+                      // handleQuantityChange={handleQuantityChange}
+                      imagesLength={uploadedImages?.[product._id]?.length || 0}
+                    />
                   </div>
                   {/* size */}
                   <div className="variant-picker-item">
                     <div className="d-flex justify-content-between align-items-center"></div>
-                    {/* <form className="variant-picker-values">
-                      {sizeOptions.map((size, index) => (
-                        <React.Fragment key={index}>
-                          <input
-                            type="radio"
-                            name="size1"
-                            id={size?.value}
-                            readOnly
-                            checked={currentSize == size?.value}
-                          />
-                          <label
-                            onClick={() => setCurrentSize(size)}
-                            className={`style-text ${
-                              currentSize?.value === size?.value
-                                ? "border-black bg-black text-white"
-                                : ""
-                            }`}
-                            htmlFor={size.value}
-                            data-value={size.value}
-                          >
-                            <p>{size.value}</p>
-                          </label>
-                        </React.Fragment>
-                      ))}
-                    </form> */}
                   </div>
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="">
@@ -290,12 +332,14 @@ export default function DetailsOuterZoom({ product }) {
                             href="#super_kidbag"
                             data-bs-toggle="modal"
                             onClick={() => {
-                              router.push(
-                                `${window.location.pathname}?isUploadImage=proceeding`,
-                                {
-                                  scroll: false,
-                                }
-                              );
+                              const currentPath = window.location.pathname;
+                              const query = new URLSearchParams({
+                                isUploadImage: "proceeding",
+                                quantity: quantity.toString(),
+                              }).toString();
+                              router.push(`${currentPath}?${query}`, {
+                                scroll: false,
+                              });
                               //toast.error("You need to upload your image");
                             }}
                             className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn mb-2"
@@ -315,6 +359,7 @@ export default function DetailsOuterZoom({ product }) {
                         <a
                           onClick={() => {
                             openCartModal();
+
                             setItemToCart();
                           }}
                           className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
@@ -333,41 +378,9 @@ export default function DetailsOuterZoom({ product }) {
                       <div className="w-100"></div>
                     </form>
                   </div>
-                  <div className="tf-product-info-delivery-return">
-                    <div className="row">
-                      <div className="col-xl-6 col-12">
-                        <div className="tf-product-delivery">
-                          <div className="icon">
-                            <i className="icon-delivery-time" />
-                          </div>
-                          <p>
-                            Estimate delivery time:
-                            <span className="fw-7">4-6 days</span>
-                            {/* (International),
-                            <span className="fw-7">3-6 days</span> (United
-                            States). */}
-                          </p>
-                        </div>
-                      </div>
-                      {/* <div className="col-xl-6 col-12">
-                        <div className="tf-product-delivery mb-0">
-                          <div className="icon">
-                            <i className="icon-return-order" />
-                          </div>
-                          <p>
-                            Return within <span className="fw-7">30 days</span>{" "}
-                            of purchase. Duties &amp; taxes are non-refundable.
-                          </p>
-                        </div>
-                      </div> */}
-                    </div>
-                  </div>
-                  <div className="tf-product-info-trust-seal">
-                    <div className="tf-product-trust-mess">
-                      <i className="icon-safe" />
-                      <p className="fw-6">Guarantee Safe Checkout</p>
-                    </div>
-                  </div>
+                  <>
+                    <DetailsStatic />
+                  </>
                 </div>
               </div>
             </div>
@@ -384,6 +397,14 @@ export default function DetailsOuterZoom({ product }) {
           setQuantity={setQuantity}
         />
       </div>
+      <a
+        href="#super_kidbag"
+        ref={uploadModalRef}
+        data-bs-toggle="modal"
+        style={{ display: "none" }}
+      >
+        {" "}
+      </a>
     </section>
   );
 }

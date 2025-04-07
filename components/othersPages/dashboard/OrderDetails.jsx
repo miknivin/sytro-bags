@@ -5,11 +5,11 @@ import { useSearchParams } from "next/navigation";
 import { useOrderDetailsQuery } from "@/redux/api/orderApi";
 import ImageModal from "@/components/modals/ImageModal";
 import Link from "next/link";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 export default function OrderDetails() {
   const searchParams = useSearchParams();
-  const [currentImage, setCurrentImage] = useState("");
+  const [currentImage, setCurrentImage] = useState([]);
   const orderId = searchParams.get("orderId");
   const { data, isLoading, error } = useOrderDetailsQuery(orderId, {
     skip: !orderId,
@@ -18,7 +18,8 @@ export default function OrderDetails() {
   const [activeTab, setActiveTab] = useState("Order History"); // State to track active tab
   const [isOpen, setIsOpen] = useState(false);
   const openModal = (imageurl) => {
-    setCurrentImage(imageurl);
+    const urls = Array.isArray(imageurl) ? imageurl : [imageurl];
+    setCurrentImage(urls);
     setIsOpen(true);
   };
   const closeModal = () => setIsOpen(false);
@@ -264,7 +265,13 @@ export default function OrderDetails() {
                       <div className="">
                         <button
                           style={{ textDecoration: "underline" }}
-                          onClick={() => openModal(item.uploadedImage)}
+                          onClick={() =>
+                            openModal(
+                              Array.isArray(item.uploadedImage)
+                                ? item.uploadedImage
+                                : [item.uploadedImage]
+                            )
+                          }
                           className="fw-6 border-0 text-brand-primary bg-transparent"
                         >
                           Uploaded image
@@ -293,7 +300,7 @@ export default function OrderDetails() {
           </div>
           <ImageModal
             isOpen={isOpen}
-            imageUrl={currentImage}
+            imageUrls={currentImage}
             onClose={closeModal}
           />
         </div>

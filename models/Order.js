@@ -49,8 +49,8 @@ const orderSchema = new mongoose.Schema(
           required: true,
         },
         uploadedImage: {
-          type: String,
-          required: true,
+          type: [String], 
+          required: true, 
         },
         quantity: {
           type: Number,
@@ -107,9 +107,9 @@ const orderSchema = new mongoose.Schema(
         message: "Please select valid order status",
       },
     },
-    shiprocketOrderId:{
-      type:String,
-      required:false,
+    shiprocketOrderId: {
+      type: String,
+      required: false,
     },
     orderNotes: {
       type: String,
