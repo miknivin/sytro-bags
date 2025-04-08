@@ -157,7 +157,7 @@ const CartFooter = ({
           const serverResponse = await razorpayWebhook(paymentData).unwrap();
 
           if (serverResponse.success) {
-            // console.log("Payment verified. Order placed:", serverResponse);
+             console.log("Payment verified. Order placed");
 
             Swal.fire({
               icon: "success",
