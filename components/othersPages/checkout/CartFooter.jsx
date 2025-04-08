@@ -157,7 +157,7 @@ const CartFooter = ({
           const serverResponse = await razorpayWebhook(paymentData).unwrap();
 
           if (serverResponse.success) {
-             console.log("Payment verified. Order placed");
+            console.log("Payment verified. Order placed");
 
             Swal.fire({
               icon: "success",
@@ -427,7 +427,6 @@ const CartFooter = ({
                     placeholder="Discount code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    required={!couponApplied}
                   />
                   <a
                     href="#"

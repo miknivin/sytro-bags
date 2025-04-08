@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import { setProductById } from "@/redux/features/productSlice";
 import { useRouter, useSearchParams } from "next/navigation";
 import DetailsStatic from "./DetailsStatic";
+import { sanitizeLocalStorageImages } from "@/app/helpers/localStorageSanitizer";
 
 export default function DetailsOuterZoom({ product }) {
   //const kidsBagId = "67a70ca93f464380b64b05a6";
@@ -153,6 +154,9 @@ export default function DetailsOuterZoom({ product }) {
       }
     }
   }, [quantityChange, product._id, router]);
+  useEffect(() => {
+    sanitizeLocalStorageImages();
+  }, []);
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -282,7 +286,7 @@ export default function DetailsOuterZoom({ product }) {
                                   <ul class="list-unstyled">
                                     {[...(product?.details?.features || [])]
                                       .reverse()
-                                      .map((feature, index) => (
+                                      ?.map((feature, index) => (
                                         <li className="mb-2" key={index}>
                                           <div className="row align-items-center">
                                             <div
