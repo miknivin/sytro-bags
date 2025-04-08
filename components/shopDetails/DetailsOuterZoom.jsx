@@ -47,7 +47,7 @@ export default function DetailsOuterZoom({ product }) {
   const hasCustomDesign = uploadedImages?.[product._id];
 
   const dispatch = useDispatch();
-  
+
   const setItemToCart = () => {
     const cartItem = {
       product: product?._id,
@@ -121,8 +121,6 @@ export default function DetailsOuterZoom({ product }) {
   useEffect(() => {
     setQuantity(uploadedImages?.[product._id]?.length || 1);
   }, [uploadedImages, product._id]);
-
-  
 
   useEffect(() => {
     // console.log(quantityChange);
@@ -233,7 +231,7 @@ export default function DetailsOuterZoom({ product }) {
                           {hasCustomDesign ? (
                             <div className="d-flex gap-2 flex-column">
                               <div className="d-flex gap-2 flex-wrap">
-                                {uploadedImages[product._id].map(
+                                {uploadedImages[product?._id]?.map(
                                   (image, index) => (
                                     <div
                                       key={index}

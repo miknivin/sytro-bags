@@ -543,7 +543,7 @@ export default function ShopCart() {
                   <div className="tf-cart-checkbox"></div>
                   <div
                     data-bs-dismiss="modal"
-                    className="tf-mini-cart-view-checkout"
+                    className="tf-mini-cart-view-checkout flex-column"
                   >
                     {isQuantityValid() ? (
                       isAuthenticated ? (
