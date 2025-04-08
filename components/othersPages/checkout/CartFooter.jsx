@@ -21,7 +21,7 @@ import {
   faCircleChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { validateCartItems } from "@/app/helpers/Cartvalidator";
-
+import toast from "react-hot-toast";
 const CartFooter = ({
   cartItems,
   subtotal,
@@ -32,10 +32,17 @@ const CartFooter = ({
 }) => {
   const prevRefs = useRef([]);
   const nextRefs = useRef([]);
+  const cartModalref = useRef(null);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
   const [retryLoading, setRetryLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [discount, setDiscount] = useState(0); // 0 or 0.1 (10%)
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountedTotal, setDiscountedTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("BANK");
   const [razorpayWebhook, { isLoading: webhookLoading }] =
     useRazorpayWebhookMutation();
@@ -64,11 +71,41 @@ const CartFooter = ({
         indiaPhoneRegex.test(trimmedPhoneNo))
     );
   };
+  const handleApplyCoupon = (e) => {
+    e.preventDefault();
+
+    setCouponError("");
+
+    if (couponCode.trim().toUpperCase() !== "MIRI2") {
+      setCouponError("Invalid coupon code");
+      return;
+    }
+
+    const totalQuantity = cartItems.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+    if (totalQuantity <= 1) {
+      setCouponError(
+        "Total quantity of items must be greater than 1 to apply this coupon"
+      );
+      toast.error(
+        "Total quantity of items must be greater than 1 to apply this coupon"
+      );
+      setTimeout(() => {
+        cartModalref.current?.click();
+      }, 400);
+      return;
+    }
+
+    setCouponApplied(true);
+  };
 
   const handleRazorpayPayment = async () => {
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+
     if (!validateCartItems(cartItems)) {
-      return; 
+      return;
     }
     const orderData = {
       orderItems: cartItems,
@@ -77,7 +114,7 @@ const CartFooter = ({
         fullName,
         // email,
       },
-      totalPrice: subtotal + 0,
+      totalPrice: discountedTotal,
       currency: "INR",
       itemsPrice: Math.trunc(subtotal),
     };
@@ -108,6 +145,7 @@ const CartFooter = ({
             // email,
           },
           cartItems,
+          couponApplied: couponApplied ? "Yes" : "No",
           itemsPrice: subtotal,
           shippingPrice: 0,
           totalPrice: subtotal + 0,
@@ -219,6 +257,16 @@ const CartFooter = ({
       document.body.removeChild(script);
     };
   }, []);
+
+  useEffect(() => {
+    const newDiscount = couponApplied ? 0.1 : 0;
+    const newDiscountAmount = subtotal * newDiscount;
+    const newDiscountedTotal = subtotal - newDiscountAmount;
+
+    setDiscount(newDiscount);
+    setDiscountAmount(newDiscountAmount);
+    setDiscountedTotal(newDiscountedTotal);
+  }, [couponApplied, subtotal]);
   const isAnyLoading =
     isLoading || sessionLoading || webhookLoading || retryLoading;
   return (
@@ -371,10 +419,52 @@ const CartFooter = ({
                 </div>
               </div>
             )}
+            <div className="d-flex flex-column">
+              {!couponApplied && (
+                <div className="coupon-box">
+                  <input
+                    type="text"
+                    placeholder="Discount code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    required={!couponApplied}
+                  />
+                  <a
+                    href="#"
+                    className="tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn"
+                    onClick={handleApplyCoupon}
+                  >
+                    Apply
+                  </a>
+                </div>
+              )}
+              {couponError && (
+                <p className="error" style={{ color: "red" }}>
+                  {couponError}
+                </p>
+              )}
+              {couponApplied && (
+                <p className="success" style={{ color: "green" }}>
+                  Coupon MAQTP applied successfully! (10% discount)
+                </p>
+              )}
+            </div>
 
-            <div className="d-flex justify-content-between line pb_20">
-              <h6 className="fw-5">Total</h6>
-              <h6 className="total fw-5">₹{subtotal}</h6>
+            <div className="order-summary">
+              <div className="d-flex justify-content-between line  py-4">
+                <h6 className="fw-5">Subtotal</h6>
+                <h6 className="fw-5">₹{subtotal.toFixed(2)}</h6>
+              </div>
+              {couponApplied && (
+                <div className="d-flex justify-content-between line py-4">
+                  <h6 className="fw-5">Discount (10%)</h6>
+                  <h6 className="fw-5">-₹{discountAmount.toFixed(2)}</h6>
+                </div>
+              )}
+              <div className="d-flex justify-content-between line py-4">
+                <h6 className="fw-5">Total</h6>
+                <h6 className="total fw-5">₹{discountedTotal.toFixed(2)}</h6>
+              </div>
             </div>
 
             <div className="wd-check-payment">
@@ -447,6 +537,14 @@ const CartFooter = ({
             )}
             <Tooltip id="cart-tooltip" place="top" />
           </form>
+          <a
+            ref={cartModalref}
+            href="#shoppingCart"
+            style={{ display: "none" }}
+            data-bs-toggle="modal"
+          >
+            <span className="sr-only">cart modal</span>
+          </a>
         </div>
       </div>
     </>

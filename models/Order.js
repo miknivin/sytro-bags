@@ -49,8 +49,8 @@ const orderSchema = new mongoose.Schema(
           required: true,
         },
         uploadedImage: {
-          type: [String], 
-          required: true, 
+          type: [String],
+          required: true,
         },
         quantity: {
           type: Number,
@@ -114,6 +114,15 @@ const orderSchema = new mongoose.Schema(
     orderNotes: {
       type: String,
       required: false,
+    },
+    couponApplied: {
+      type: String,
+      required: false,
+      enum: {
+        values: ["Yes", "No"],
+        message: "Please select Yes or No for coupon applied",
+      },
+      default: "No",
     },
     deliveredAt: Date,
   },

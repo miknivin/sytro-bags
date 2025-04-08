@@ -28,6 +28,7 @@ export async function POST(req) {
       totalPrice,
       taxPrice,
       orderNotes,
+      couponApplied
     } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -67,6 +68,7 @@ export async function POST(req) {
       taxAmount: taxPrice,
       orderNotes: orderNotes,
       totalAmount: totalPrice,
+      couponApplied
     });
     const totalWeight = cartItems.reduce(
       (total, item) => total + item.quantity * 0.6,

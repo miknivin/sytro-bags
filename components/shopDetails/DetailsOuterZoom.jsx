@@ -47,6 +47,7 @@ export default function DetailsOuterZoom({ product }) {
   const hasCustomDesign = uploadedImages?.[product._id];
 
   const dispatch = useDispatch();
+  
   const setItemToCart = () => {
     const cartItem = {
       product: product?._id,

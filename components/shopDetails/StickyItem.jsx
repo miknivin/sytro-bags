@@ -58,12 +58,14 @@ export default function StickyItem({
                           href="#super_kidbag"
                           data-bs-toggle="modal"
                           onClick={() => {
-                            router.push(
-                              `${window.location.pathname}?isUploadImage=proceeding`,
-                              {
-                                scroll: false,
-                              }
-                            );
+                            const currentPath = window.location.pathname;
+                            const query = new URLSearchParams({
+                              isUploadImage: "proceeding",
+                              quantity: quantity.toString(),
+                            }).toString();
+                            router.push(`${currentPath}?${query}`, {
+                              scroll: false,
+                            });
                             //toast.error("You need to upload your image");
                           }}
                           className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"

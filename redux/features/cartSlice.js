@@ -60,11 +60,17 @@ export const cartSlice = createSlice({
       );
 
       if (isItemExist) {
-        state.cartItems = state.cartItems.map((i) =>
-          i.product === isItemExist.product
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
-        );
+        const uploadedImageCount = Array.isArray(isItemExist.uploadedImage)
+          ? isItemExist.uploadedImage.length
+          : isItemExist.uploadedImage
+          ? 1
+          : 0;
+
+        if (isItemExist.quantity === uploadedImageCount) {
+          state.cartItems = state.cartItems.map((i) =>
+            i.product === isItemExist.product ? item : i
+          );
+        }
       } else {
         state.cartItems.push(item);
       }
@@ -215,5 +221,5 @@ export const {
   removeUploadedImage,
   mergeCartData,
   setQuantityChange,
-  removeCartItemUploadedImage
+  removeCartItemUploadedImage,
 } = cartSlice.actions;
