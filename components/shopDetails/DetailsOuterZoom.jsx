@@ -235,48 +235,49 @@ export default function DetailsOuterZoom({ product }) {
                           {hasCustomDesign ? (
                             <div className="d-flex gap-2 flex-column">
                               <div className="d-flex gap-2 flex-wrap">
-                                {uploadedImages[product?._id]?.map(
-                                  (image, index) => (
-                                    <div
-                                      key={index}
-                                      style={{
-                                        width: "fit-content",
-                                        maxWidth: "130px",
-                                      }}
-                                      className="position-relative border border-black rounded-2 d-flex flex-column"
-                                    >
-                                      <button
-                                        onClick={() =>
-                                          dispatch(
-                                            removeUploadedImage({
-                                              productId: product._id,
-                                              imageIndex: index,
-                                            })
-                                          )
-                                        }
-                                        className="remove-button badge"
-                                      >
-                                        X
-                                      </button>
-                                      <img
-                                        src={image}
-                                        alt={`Uploaded Image ${index + 1}`}
+                                {Array.isArray(uploadedImages[product?._id]) &&
+                                  uploadedImages[product._id].map(
+                                    (image, index) => (
+                                      <div
+                                        key={index}
                                         style={{
-                                          width: "125px",
-                                          height: "125px",
-                                          objectFit: "contain",
-                                          borderRadius: "5px",
+                                          width: "fit-content",
+                                          maxWidth: "130px",
                                         }}
-                                      />
-                                      <small
-                                        title={image.split("/").pop()}
-                                        className="line-clamp px-1"
+                                        className="position-relative border border-black rounded-2 d-flex flex-column"
                                       >
-                                        {image.split("/").pop()}
-                                      </small>
-                                    </div>
-                                  )
-                                )}
+                                        <button
+                                          onClick={() =>
+                                            dispatch(
+                                              removeUploadedImage({
+                                                productId: product._id,
+                                                imageIndex: index,
+                                              })
+                                            )
+                                          }
+                                          className="remove-button badge"
+                                        >
+                                          X
+                                        </button>
+                                        <img
+                                          src={image}
+                                          alt={`Uploaded Image ${index + 1}`}
+                                          style={{
+                                            width: "125px",
+                                            height: "125px",
+                                            objectFit: "contain",
+                                            borderRadius: "5px",
+                                          }}
+                                        />
+                                        <small
+                                          title={image.split("/").pop()}
+                                          className="line-clamp px-1"
+                                        >
+                                          {image.split("/").pop()}
+                                        </small>
+                                      </div>
+                                    )
+                                  )}
                               </div>
                             </div>
                           ) : (
