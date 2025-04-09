@@ -284,16 +284,20 @@ export default function OrderDetails() {
                 <ul>
                   <li className="d-flex justify-content-between text-2">
                     <span>Total Price</span>
-                    <span className="fw-6">₹{orderDetails.totalAmount}</span>
+                    <span className="fw-6">₹{orderDetails?.itemsPrice}</span>
                   </li>
-                  {/* <li className="d-flex justify-content-between text-2 mt_4 pb_8 line">
-                    <span>Total Discounts</span>
-                    <span className="fw-6">$10</span>
-                  </li>
+                  {orderDetails?.couponApplied === "Yes" && (
+                    <li className="d-flex justify-content-between text-2 mt_4 pb_8 line">
+                      <span>Total Discounts</span>
+                      <span className="fw-6">
+                       - ₹{(orderDetails?.itemsPrice * 0.1).toFixed(2)}
+                      </span>
+                    </li>
+                  )}
                   <li className="d-flex justify-content-between text-2 mt_8">
                     <span>Order Total</span>
-                    <span className="fw-6">$18.95</span>
-                  </li> */}
+                    <span className="fw-6">₹{orderDetails?.totalAmount}</span>
+                  </li>
                 </ul>
               </div>
             </div>

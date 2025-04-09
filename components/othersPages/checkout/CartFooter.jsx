@@ -103,20 +103,21 @@ const CartFooter = ({
 
   const handleRazorpayPayment = async () => {
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    const finalTotal = discountedTotal || subtotal;
 
     if (!validateCartItems(cartItems)) {
       return;
     }
+
     const orderData = {
       orderItems: cartItems,
       shippingInfo: {
         ...formData,
         fullName,
-        // email,
       },
-      totalPrice: discountedTotal,
+      totalPrice: Number(finalTotal.toFixed(2)),
       currency: "INR",
-      itemsPrice: Math.trunc(subtotal),
+      itemsPrice: Number(finalTotal.toFixed(2)),
     };
     const checkoutData = await checkoutSession({
       orderData,
@@ -125,7 +126,7 @@ const CartFooter = ({
 
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
-      amount: subtotal * 100,
+      amount: Number(finalTotal.toFixed(2)) * 100,
       currency: "INR",
       name: "Sytro",
       order_id: checkoutData.id,
@@ -148,7 +149,7 @@ const CartFooter = ({
           couponApplied: couponApplied ? "Yes" : "No",
           itemsPrice: subtotal,
           shippingPrice: 0,
-          totalPrice: subtotal + 0,
+          totalPrice: Number(finalTotal.toFixed(2)),
           taxPrice: 0,
           orderNotes: formData.orderNotes || "",
         };
