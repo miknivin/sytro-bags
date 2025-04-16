@@ -284,9 +284,9 @@ export default function OrderDetails() {
                 <ul>
                   <li className="d-flex justify-content-between text-2">
                     <span>Total Price</span>
-                    <span className="fw-6">₹{orderDetails?.itemsPrice}</span>
+                    <span className="fw-6">₹{orderDetails?.itemsPrice.toFixed(2)}</span>
                   </li>
-                  {orderDetails?.couponApplied === "Yes" && (
+                  {orderDetails?.couponApplied !== "No" && (
                     <li className="d-flex justify-content-between text-2 mt_4 pb_8 line">
                       <span>Total Discounts</span>
                       <span className="fw-6">
@@ -296,7 +296,7 @@ export default function OrderDetails() {
                   )}
                   <li className="d-flex justify-content-between text-2 mt_8">
                     <span>Order Total</span>
-                    <span className="fw-6">₹{orderDetails?.totalAmount}</span>
+                    <span className="fw-6">₹{orderDetails?.totalAmount.toFixed(2)}</span>
                   </li>
                 </ul>
               </div>

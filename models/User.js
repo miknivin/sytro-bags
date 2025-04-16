@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       public_id: String,
-      url: String, // Provide a default value (e.g., "user.jpg") for the avatar
+      url: String, 
     },
     role: {
       type: String,

@@ -25,6 +25,7 @@ import { useGetMeQuery } from "@/redux/api/userApi.js";
 import { useSelector } from "react-redux";
 import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import SuperKidBag from "@/components/modals/SuperKidBag";
+import VideoPlayer from "@/components/common/DraggableVideo";
 
 export function ReduxConsumer({ children }) {
   const { isLoading } = useGetMeQuery();
@@ -40,6 +41,7 @@ export function ReduxConsumer({ children }) {
       <HomesModal />
       {/* <QuickView /> */}
       <QuickAdd />
+      <VideoPlayer />
       <ProductSidebar />
       <ShopCart />
       <AskQuestion />
@@ -58,7 +60,8 @@ export function ReduxConsumer({ children }) {
       <SearchModal />
       <ToolbarBottom />
       <ToolbarShop />
-      <SuperKidBag/>
+      <SuperKidBag />
+
       {/* <NewsletterModal /> */}
       <ShareModal />
     </div>

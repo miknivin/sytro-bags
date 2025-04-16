@@ -118,10 +118,6 @@ const orderSchema = new mongoose.Schema(
     couponApplied: {
       type: String,
       required: false,
-      enum: {
-        values: ["Yes", "No"],
-        message: "Please select Yes or No for coupon applied",
-      },
       default: "No",
     },
     deliveredAt: Date,

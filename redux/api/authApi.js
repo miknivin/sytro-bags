@@ -65,7 +65,6 @@ export const authApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          // ✅ Re-fetch user data to update state after logout
           const { data } = await dispatch(userApi.endpoints.getMe.initiate(null)).unwrap();
 
         } catch (error) {

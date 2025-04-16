@@ -77,8 +77,16 @@ export const testimonialsData = [
       "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/testimonial-5.webp",
     alt: "image-product",
     name: "Dhwani",
-    item: "Entrepreneur",
+    item: "Student",
     quote: `"This school bag with my photo is the best gift from my mom! 🎒❤️ I feel so special carrying it to school, and everyone loved it. My friends and teachers complimented it, making me even happier. It’s more than just a bag—it’s a symbol of love, and I’ll cherish it forever!"`,
+  },
+  {
+    imgSrc: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/janvi.webp",
+    alt: "image-product",
+    name: "Janvi Praveen",
+    item: "Student",
+    quote: `"I wanted to thank my Mamma for the wonderful school bag,I absolutely love it, especially with my picture on it—it’s such a thoughtful and unique touch! It’s not only stylish but also a constant reminder of your love.
+I’m truly grateful for this lovely gift, and it’s something I’ll cherish and use every day. Thank you a for making my day brighter with such a special and meaningful present. I love you Mamma"`,
   },
   {
     imgSrc:
@@ -114,6 +122,12 @@ export const imagesData = [
     height: 851,
   },
   {
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/janvi.webp",
+    alt: "image-testimonial",
+    width: 750,
+    height: 851,
+  },
+  {
     src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/WhatsApp+Image+2025-03-11+at+4.26.52+PM.jpeg",
     alt: "image-testimonial",
     width: 750,
@@ -131,7 +145,6 @@ export const imagesData = [
     width: 750,
     height: 851,
   },
- 
 ];
 
 export const testimonials3 = [

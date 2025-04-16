@@ -27,7 +27,7 @@ export default function Testimonials() {
               pagination={{ clickable: true, el: ".spd122" }}
             >
               {testimonialsData.map((testimonial, index) => (
-                <SwiperSlide key={index}>
+                <SwiperSlide key={index + 989}>
                   <div className="testimonial-item lg lg-2">
                     <div className="icon">
                       <Image

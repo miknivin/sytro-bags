@@ -146,7 +146,7 @@ const CartFooter = ({
             // email,
           },
           cartItems,
-          couponApplied: couponApplied ? "Yes" : "No",
+          couponApplied: couponCode || "No",
           itemsPrice: subtotal,
           shippingPrice: 0,
           totalPrice: Number(finalTotal.toFixed(2)),
