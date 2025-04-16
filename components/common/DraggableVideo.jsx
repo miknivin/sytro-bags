@@ -82,7 +82,9 @@ export default function VideoPlayer() {
         muted
         loop
         className="card-img-top w-100 h-100"
-        style={{ objectFit: "cover" }}
+        style={{
+          objectFit: isFullscreen ? "contain" : "cover",
+        }}
       />
       <button
         onClick={toggleFullscreen}
