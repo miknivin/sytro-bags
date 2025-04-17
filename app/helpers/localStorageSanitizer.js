@@ -4,14 +4,31 @@ export function sanitizeLocalStorageImages() {
   keysToSanitize.forEach((key) => {
     const rawData = localStorage.getItem(key);
     if (rawData) {
-      const parsed = JSON.parse(rawData);
-      const updated = {};
+      try {
+        const parsed = JSON.parse(rawData);
 
-      for (const [productId, value] of Object.entries(parsed)) {
-        updated[productId] = Array.isArray(value) ? value : [value];
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          const updated = {};
+
+          for (const [productId, value] of Object.entries(parsed)) {
+            updated[productId] = Array.isArray(value) ? value : [value];
+          }
+
+          localStorage.setItem(key, JSON.stringify(updated));
+        } else {
+          console.warn(`Skipping ${key}: Parsed data is not a valid object`, {
+            parsed,
+          });
+        }
+      } catch (error) {
+        console.error(
+          `Failed to parse localStorage key "${key}":`,
+          error.message,
+          { rawData }
+        );
+        // Optionally, remove invalid data
+        // localStorage.removeItem(key);
       }
-
-      localStorage.setItem(key, JSON.stringify(updated));
     }
   });
 

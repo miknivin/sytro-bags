@@ -22,6 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { validateCartItems } from "@/app/helpers/Cartvalidator";
 import toast from "react-hot-toast";
+import handleCheckoutSession from "@/utlis/checkoutSession";
 const CartFooter = ({
   cartItems,
   subtotal,
@@ -119,10 +120,16 @@ const CartFooter = ({
       currency: "INR",
       itemsPrice: Number(finalTotal.toFixed(2)),
     };
-    const checkoutData = await checkoutSession({
-      orderData,
-    }).unwrap();
     if (!isFormValid() || !cartItems.length) return;
+    let checkoutData;
+    try {
+      // Pass checkoutSession to handleCheckoutSession
+      checkoutData = await handleCheckoutSession(orderData, checkoutSession);
+      console.log(checkoutData);
+    } catch (error) {
+      // Error is already handled in handleCheckoutSession (Swal alert + API call)
+      return; // Exit if checkout fails
+    }
 
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
