@@ -16,7 +16,7 @@ const handleCheckoutSession = async (orderData, checkoutSession) => {
           orderData,
         },
         {
-          withCredentials: true, // Include credentials (cookies, authorization headers)
+          withCredentials: true,
         }
       );
       if (response.data) {

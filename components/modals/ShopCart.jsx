@@ -566,7 +566,7 @@ export default function ShopCart() {
                           Check out
                         </a>
                       )
-                    ) : (
+                    ) : cartItems.length > 0 ? (
                       <>
                         <span className="text-danger">
                           These products have mismatched image with quantity:
@@ -595,6 +595,16 @@ export default function ShopCart() {
                           <span>Check out</span>
                         </button>
                       </>
+                    ) : (
+                      <button
+                        disabled
+                        className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                        onClick={(e) => {
+                          e.preventDefault();
+                        }}
+                      >
+                        <span>Check out</span>
+                      </button>
                     )}
                   </div>
                 </div>

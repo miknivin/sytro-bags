@@ -125,7 +125,7 @@ const CartFooter = ({
     try {
       // Pass checkoutSession to handleCheckoutSession
       checkoutData = await handleCheckoutSession(orderData, checkoutSession);
-      console.log(checkoutData);
+      console.log(checkoutData, "checkoutData");
     } catch (error) {
       // Error is already handled in handleCheckoutSession (Swal alert + API call)
       return; // Exit if checkout fails
@@ -452,7 +452,7 @@ const CartFooter = ({
               )}
               {couponApplied && (
                 <p className="success" style={{ color: "green" }}>
-                  Coupon MAQTP applied successfully! (10% discount)
+                  Coupon {couponCode} applied successfully! (10% discount)
                 </p>
               )}
             </div>
