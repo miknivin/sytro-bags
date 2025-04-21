@@ -188,7 +188,9 @@ export default function DesignUpload({ onFileUpload }) {
         <p className="text-danger mt-2">
           Upload failed. Try again.
           <br />
-          {error}
+          <pre className="text-danger mt-2">
+            {JSON.stringify(error, null, 2)}
+          </pre>
         </p>
       )}
       {errorMessage && <p className="text-danger mt-2">{errorMessage}</p>}
