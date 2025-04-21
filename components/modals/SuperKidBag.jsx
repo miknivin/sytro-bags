@@ -7,7 +7,8 @@ import {
   setUploadedImage,
   setSelectedDesign,
 } from "@/redux/features/cartSlice";
-import { getPresignedUrls } from "@/lib/actions/presign";
+import { getPresignedUrls } from "@/functions/action";
+
 
 export default function SuperKidBag() {
   const productById = useSelector((state) => state.product.productById);
