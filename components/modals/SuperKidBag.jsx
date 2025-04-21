@@ -7,6 +7,7 @@ import {
   setUploadedImage,
   setSelectedDesign,
 } from "@/redux/features/cartSlice";
+import { getPresignedUrls } from "@/lib/actions/presign";
 
 export default function SuperKidBag() {
   const productById = useSelector((state) => state.product.productById);
@@ -24,7 +25,6 @@ export default function SuperKidBag() {
           uploadedImage: uploadedUrls,
         })
       );
-
 
       const isUploadImage = searchParams.get("isUploadImage");
       if (isUploadImage === "proceeding") {
@@ -64,7 +64,10 @@ export default function SuperKidBag() {
               ref={closeRef}
             />
           </div>
-          <DesignUpload onFileUpload={handleFileUpload} />
+          <DesignUpload
+            onFileUpload={handleFileUpload}
+            getPresignedUrls={getPresignedUrls}
+          />
         </div>
       </div>
     </div>
