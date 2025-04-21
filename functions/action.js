@@ -13,22 +13,22 @@ const s3 = new S3Client({
 
 export async function getPresignedUrls(formData) {
   try {
-    const files = formData.getAll("file");
+    const filesMetadata = JSON.parse(formData.get("files")); // Parse metadata array
     const quantity = parseInt(formData.get("quantity") || "1");
 
-    if (!files || files.length === 0) {
-      throw new Error("No files provided");
+    if (!filesMetadata || filesMetadata.length === 0) {
+      throw new Error("No files metadata provided");
     }
 
-    if (files.length > quantity) {
+    if (filesMetadata.length > quantity) {
       throw new Error(`Cannot upload more than ${quantity} files`);
     }
 
     const presignedUrls = await Promise.all(
-      files.map(async (file) => {
+      filesMetadata.map(async (meta) => {
         const uniqueId = randomUUID().replace(/-/g, "").slice(0, 6);
-        const fileExtension = file.name.split(".").pop().toLowerCase();
-        const newFileName = `${file.name.replace(
+        const fileExtension = meta.name.split(".").pop().toLowerCase();
+        const newFileName = `${meta.name.replace(
           `.${fileExtension}`,
           ""
         )}_${uniqueId}.${fileExtension}`;
@@ -36,11 +36,12 @@ export async function getPresignedUrls(formData) {
         const uploadParams = {
           Bucket: process.env.AWS_BUCKET_NAME,
           Key: `user-uploads/${newFileName}`,
-          ContentType: file.type,
+          ContentType: meta.type,
         };
 
         const command = new PutObjectCommand(uploadParams);
         const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        console.log("Generated presigned URL:", url);
 
         return {
           name: newFileName,
@@ -49,11 +50,14 @@ export async function getPresignedUrls(formData) {
         };
       })
     );
-    //console.log(presignedUrls, "presignedUrls");
 
     return { success: true, presignedUrls };
   } catch (error) {
-    console.error("Error generating presigned URLs:", error);
-    return { error: error.message };
+    console.error(
+      "Error generating presigned URLs:",
+      error.message,
+      error.stack
+    );
+    return { error: error.message, details: error.stack };
   }
 }

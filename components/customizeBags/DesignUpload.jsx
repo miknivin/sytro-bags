@@ -75,8 +75,12 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
 
     setIsSubmitting(true);
     try {
+      const fileMetadata = files.map((file) => ({
+        name: file.name,
+        type: file.type,
+      }));
       const formData = new FormData();
-      files.forEach((file) => formData.append("file", file));
+      formData.append("files", JSON.stringify(fileMetadata)); // Send metadata as JSON
       formData.append("quantity", quantity.toString());
 
       const result = await getPresignedUrls(formData);
@@ -86,23 +90,29 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
 
       const { presignedUrls } = result;
 
-      const uploadPromises = presignedUrls.map(async (item, index) => {
-        setUploadingIndices((prev) => [...prev, index]);
-        const file = files[index];
-        const uploadResponse = await fetch(item.presignedUrl, {
-          method: "PUT",
-          body: file,
-          headers: { "Content-Type": file.type },
-        });
-        //console.log(uploadResponse);
+      const uploadPromises = [];
+      for (let i = 0; i < presignedUrls.length; i++) {
+        setUploadingIndices((prev) => [...prev, i]);
+        const file = files[i];
+        uploadPromises.push(
+          (async () => {
+            const uploadResponse = await fetch(presignedUrls[i].presignedUrl, {
+              method: "PUT",
+              body: file,
+              headers: { "Content-Type": file.type },
+            });
 
-        if (!uploadResponse.ok) {
-          throw new Error(`Failed to upload ${file.name}`);
-        }
+            if (!uploadResponse.ok) {
+              throw new Error(
+                `Failed to upload ${file.name}: ${uploadResponse.statusText}`
+              );
+            }
 
-        setUploadingIndices((prev) => prev.filter((i) => i !== index));
-        return item.publicUrl;
-      });
+            setUploadingIndices((prev) => prev.filter((idx) => idx !== i));
+            return presignedUrls[i].publicUrl;
+          })()
+        );
+      }
 
       const uploadedUrls = await Promise.all(uploadPromises);
       onFileUpload(uploadedUrls);
