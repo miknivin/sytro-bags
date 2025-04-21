@@ -3,6 +3,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    serverComponentsExternalPackages: ["@smithy", "util-stream"],
+  },
   sassOptions: {
     includePaths: ["./styles"], // Add the path to your SCSS files
   },
