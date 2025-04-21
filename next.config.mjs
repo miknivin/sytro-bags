@@ -4,6 +4,7 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
+    serverActions: true,
     serverComponentsExternalPackages: ["@smithy", "util-stream"],
   },
   sassOptions: {
