@@ -81,6 +81,7 @@ export default function VideoPlayer() {
         autoPlay
         muted
         loop
+        playsInline
         className="card-img-top w-100 h-100"
         style={{
           objectFit: isFullscreen ? "contain" : "cover",
