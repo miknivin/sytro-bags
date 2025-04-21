@@ -184,7 +184,13 @@ export default function DesignUpload({ onFileUpload }) {
         )}
       </div>
 
-      {error && <p className="text-danger mt-2">Upload failed. Try again.</p>}
+      {error && (
+        <p className="text-danger mt-2">
+          Upload failed. Try again.
+          <br />
+          {error}
+        </p>
+      )}
       {errorMessage && <p className="text-danger mt-2">{errorMessage}</p>}
     </div>
   );
