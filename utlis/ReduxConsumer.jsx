@@ -64,7 +64,7 @@ export function ReduxConsumer({ children }) {
       <ToolbarShop />
       <SuperKidBag />
 
-      {/* <NewsletterModal /> */}
+      <NewsletterModal />
       <ShareModal />
     </div>
   );

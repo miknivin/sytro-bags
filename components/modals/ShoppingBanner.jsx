@@ -35,7 +35,7 @@ export default function ShoppingBanner() {
       <div className="container d-flex justify-content-between align-items-center p-3">
         <div className="d-flex align-items-center mx-auto text-white">
           <p className="d-flex align-items-center mb-0 text-muted fs-6">
-            <span
+            {/* <span
               className="d-inline-flex align-items-center justify-content-center bg-secondary-subtle rounded-circle me-3"
               style={{ width: "1.5rem", height: "1.5rem", padding: "10px" }}
             >
@@ -45,7 +45,7 @@ export default function ShoppingBanner() {
                 style={{ fontSize: "0.75rem" }}
               />
               <span className="visually-hidden">Light bulb</span>
-            </span>
+            </span> */}
             <span className="text-white">
               Get 15% off your order! Use coupon code{" "}
               <span className="fw-medium text-warning">SYTRO15</span>{" "}
