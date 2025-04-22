@@ -83,11 +83,11 @@ export default function NewsletterModal() {
           <div className="modal-top">
             <Image
               className="lazyload"
-              data-src="https://ik.imagekit.io/c1jhxlxiy/banner-newleter.webp?updatedAt=1745327910250"
+              data-src="https://ik.imagekit.io/c1jhxlxiy/banner%20coupon.jpg?updatedAt=1745328730124"
               alt="Newsletter banner"
               width={938}
               height={538}
-              src="https://ik.imagekit.io/c1jhxlxiy/banner-newleter.webp?updatedAt=1745327910250"
+              src="https://ik.imagekit.io/c1jhxlxiy/banner%20coupon.jpg?updatedAt=1745328730124"
             />
             <span
               className="icon icon-close btn-hide-popup"
