@@ -41,7 +41,7 @@ export async function getPresignedUrls(formData) {
 
         const command = new PutObjectCommand(uploadParams);
         const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-        console.log("Generated presigned URL:", url);
+        //console.log("Generated presigned URL:", url);
 
         return {
           name: newFileName,

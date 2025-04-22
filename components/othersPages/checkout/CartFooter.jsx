@@ -77,26 +77,31 @@ const CartFooter = ({
 
     setCouponError("");
 
-    if (couponCode.trim().toUpperCase() !== "MIRI2") {
+    if (
+      couponCode.trim().toUpperCase() !== "MIRI2" &&
+      couponCode.trim().toUpperCase() !== "SYTRO15"
+    ) {
       setCouponError("Invalid coupon code");
       return;
     }
 
-    const totalQuantity = cartItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
-    if (totalQuantity <= 1) {
-      setCouponError(
-        "Total quantity of items must be greater than 1 to apply this coupon"
+    if (couponCode.trim().toUpperCase() === "MIRI2") {
+      const totalQuantity = cartItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
       );
-      toast.error(
-        "Total quantity of items must be greater than 1 to apply this coupon"
-      );
-      setTimeout(() => {
-        cartModalref.current?.click();
-      }, 400);
-      return;
+      if (totalQuantity <= 1) {
+        setCouponError(
+          "Total quantity of items must be greater than 1 to apply this coupon"
+        );
+        toast.error(
+          "Total quantity of items must be greater than 1 to apply this coupon"
+        );
+        setTimeout(() => {
+          cartModalref.current?.click();
+        }, 400);
+        return;
+      }
     }
 
     setCouponApplied(true);
@@ -267,14 +272,18 @@ const CartFooter = ({
   }, []);
 
   useEffect(() => {
-    const newDiscount = couponApplied ? 0.1 : 0;
+    let newDiscount = 0;
+    if (couponApplied) {
+      newDiscount = couponCode.trim().toUpperCase() === "SYTRO15" ? 0.15 : 0.1;
+    }
     const newDiscountAmount = subtotal * newDiscount;
     const newDiscountedTotal = subtotal - newDiscountAmount;
 
     setDiscount(newDiscount);
     setDiscountAmount(newDiscountAmount);
     setDiscountedTotal(newDiscountedTotal);
-  }, [couponApplied, subtotal]);
+  }, [couponApplied, subtotal, couponCode]);
+
   const isAnyLoading =
     isLoading || sessionLoading || webhookLoading || retryLoading;
   return (
@@ -452,7 +461,7 @@ const CartFooter = ({
               )}
               {couponApplied && (
                 <p className="success" style={{ color: "green" }}>
-                  Coupon {couponCode} applied successfully! (10% discount)
+                  Coupon {couponCode} applied successfully!
                 </p>
               )}
             </div>
@@ -464,7 +473,9 @@ const CartFooter = ({
               </div>
               {couponApplied && (
                 <div className="d-flex justify-content-between line py-4">
-                  <h6 className="fw-5">Discount (10%)</h6>
+                  <h6 className="fw-5">
+                    Discount ({couponCode === "SYTRO15" ? "15%" : "10%"})
+                  </h6>
                   <h6 className="fw-5">-₹{discountAmount.toFixed(2)}</h6>
                 </div>
               )}

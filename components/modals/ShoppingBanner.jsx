@@ -1,12 +1,25 @@
+"use client";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLightbulb, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faLightbulb,
+  faTimes,
+  faCopy,
+  faSquareCheck,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function ShoppingBanner() {
   const [isVisible, setIsVisible] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   const handleClose = () => {
     setIsVisible(false);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("SYTRO15");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 5000);
   };
 
   if (!isVisible) return null;
@@ -24,7 +37,7 @@ export default function ShoppingBanner() {
           <p className="d-flex align-items-center mb-0 text-muted fs-6">
             <span
               className="d-inline-flex align-items-center justify-content-center bg-secondary-subtle rounded-circle me-3"
-              style={{ width: "1.5rem", height: "1.5rem", padding:"10px" }}
+              style={{ width: "1.5rem", height: "1.5rem", padding: "10px" }}
             >
               <FontAwesomeIcon
                 icon={faLightbulb}
@@ -34,13 +47,17 @@ export default function ShoppingBanner() {
               <span className="visually-hidden">Light bulb</span>
             </span>
             <span className="text-white">
-              New brand identity has been launched for the
-              <a
-                href="https://flowbite.com"
-                className="fw-medium text-primary text-decoration-underline"
+              Get 15% off your order! Use coupon code{" "}
+              <span className="fw-medium text-warning">SYTRO15</span>{" "}
+              <button
+                type="button"
+                className="btn btn-sm text-white px-2 py-0"
+                onClick={handleCopy}
+                aria-label="Copy coupon code"
               >
-                Flowbite Library
-              </a>
+                <FontAwesomeIcon icon={copied ? faSquareCheck : faCopy} />
+              </button>
+              at checkout. Offer expires on 26<sup>th</sup>April 2025.
             </span>
           </p>
         </div>
