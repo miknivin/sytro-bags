@@ -321,6 +321,18 @@ export default function InvoiceSection({ orderId }) {
                     </td>
                   </tr>
                   <tr className="content">
+                    <td className="total" style={{ padding: "10px" }}>
+                      Discount
+                    </td>
+                    <td style={{ padding: "10px" }}></td>
+                    <td style={{ padding: "10px" }}></td>
+                    <td style={{ padding: "10px" }}>
+                      ₹
+                      {(order.itemsPrice - order.totalAmount)?.toFixed() ||
+                        "0.00"}
+                    </td>
+                  </tr>
+                  <tr className="content">
                     <td
                       className="total"
                       style={{ padding: "10px", fontWeight: "bold" }}
