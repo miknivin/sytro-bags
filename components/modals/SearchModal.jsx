@@ -105,15 +105,15 @@ export default function SearchModal() {
                             {product.offer ? (
                               <>
                                 <div className="compare-at-price">
-                                  ${product.actualPrice.toFixed(2)}
+                                  ₹{product?.actualPrice?.toFixed(2)}
                                 </div>
                                 <div className="price-on-sale fw-6">
-                                  ${product.offer.toFixed(2)}
+                                  ₹{product?.offer?.toFixed(2)}
                                 </div>
                               </>
                             ) : (
                               <div className="price fw-6">
-                                ${product.actualPrice.toFixed(2)}
+                                ₹{product?.actualPrice?.toFixed(2)}
                               </div>
                             )}
                           </div>
