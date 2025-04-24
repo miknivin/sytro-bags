@@ -59,6 +59,7 @@ const CartFooter = ({
     const trimmedEmail = formData.email?.trim() || "";
     const trimmedPhoneNo = formData.phoneNo?.trim() || "";
     const trimmedZipCode = formData.zipCode?.trim() || "";
+    const zipCodeRegex = /^\d+$/;
 
     return (
       formData.firstName &&
@@ -69,7 +70,8 @@ const CartFooter = ({
       trimmedZipCode &&
       emailRegex.test(trimmedEmail) &&
       (uaePhoneRegex.test(trimmedPhoneNo) ||
-        indiaPhoneRegex.test(trimmedPhoneNo))
+        indiaPhoneRegex.test(trimmedPhoneNo)) &&
+      zipCodeRegex.test(trimmedZipCode)
     );
   };
   const handleApplyCoupon = (e) => {

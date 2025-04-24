@@ -25,6 +25,7 @@ export default function Checkout() {
 
   const [touched, setTouched] = useState({});
   const user = useSelector((state) => state.auth.user);
+  const zipCodeRegex = /^\d+$/;
   // const [email, setEmail] = useState(user.email || "");
   const [formData, setFormData] = useState({
     firstName: "",
@@ -204,7 +205,7 @@ export default function Checkout() {
               </div>
 
               <fieldset className="fieldset mb-3">
-                <label htmlFor="zipCode">Zip Code</label>
+                <label htmlFor="zipCode">Pin Code</label>
                 <input
                   required
                   type="text"
@@ -214,8 +215,15 @@ export default function Checkout() {
                   onBlur={() => setTouched({ ...touched, zipCode: true })}
                 />
                 {touched.zipCode && !formData.zipCode && (
-                  <div className="text-danger">Zip Code is required</div>
+                  <div className="text-danger">Pin Code is required</div>
                 )}
+                {touched.zipCode &&
+                  formData.zipCode &&
+                  !zipCodeRegex.test(formData.zipCode.trim()) && (
+                    <div className="text-danger">
+                      Pin Code must contain only numbers
+                    </div>
+                  )}
               </fieldset>
 
               <fieldset className="fieldset mb-3">
@@ -303,7 +311,6 @@ export default function Checkout() {
                 )}
               </fieldset>
 
-       
               <fieldset className="fieldset">
                 <label htmlFor="orderNotes" class="non-mandatory">
                   Order Notes (optional)
