@@ -68,7 +68,7 @@ export default function NewsletterModal() {
   }, [pathname]);
 
   // Check if coupon is expired
-  const expirationDate = new Date("2025-04-26");
+  const expirationDate = new Date("2025-04-27");
   if (new Date() > expirationDate) return null;
 
   return (

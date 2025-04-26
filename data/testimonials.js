@@ -81,6 +81,27 @@ export const testimonialsData = [
     quote: `"This school bag with my photo is the best gift from my mom! 🎒❤️ I feel so special carrying it to school, and everyone loved it. My friends and teachers complimented it, making me even happier. It’s more than just a bag—it’s a symbol of love, and I’ll cherish it forever!"`,
   },
   {
+    imgSrc: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/nmra.webp",
+    alt: "image-product",
+    name: "Naimithra",
+    item: "Student",
+    quote: `"We gifted Naimithra a customized bag from Sytro, and we couldn't be happier! The quality is top-notch, and the stitching is flawless. It's the perfect blend of style and durability—just like our little star deserves!"`,
+  },
+  {
+    imgSrc: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Elwa.webp",
+    alt: "image-product",
+    name: "Elwa",
+    item: "Student",
+    quote: `"We surprised Elwa with a personalized bag from Sytro, and she absolutely loved it! The craftsmanship is impressive, and every detail feels thoughtfully made. It’s a gift that truly stands out!"`,
+  },
+  {
+    imgSrc: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Ayra.webp",
+    alt: "image-product",
+    name: "Ayra",
+    item: "Student",
+    quote: `"Ayra’s face lit up when she saw her custom Sytro bag! The design is beautiful, and the quality speaks for itself—strong, neat stitching and a perfect finish. A gift she'll treasure for years!"`,
+  },
+  {
     imgSrc: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/janvi.webp",
     alt: "image-product",
     name: "Janvi Praveen",
@@ -117,6 +138,24 @@ I’m truly grateful for this lovely gift, and it’s something I’ll cherish a
 export const imagesData = [
   {
     src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/testimonial-5.webp",
+    alt: "image-testimonial",
+    width: 750,
+    height: 851,
+  },
+  {
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/nmra.webp",
+    alt: "image-testimonial",
+    width: 750,
+    height: 851,
+  },
+  {
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Elwa.webp",
+    alt: "image-testimonial",
+    width: 750,
+    height: 851,
+  },
+  {
+    src: "https://sytro-testimonials.s3.eu-north-1.amazonaws.com/Ayra.webp",
     alt: "image-testimonial",
     width: 750,
     height: 851,
