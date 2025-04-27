@@ -57,7 +57,7 @@ export default function ShoppingBanner() {
               >
                 <FontAwesomeIcon icon={copied ? faSquareCheck : faCopy} />
               </button>
-              at checkout. Offer expires on 26<sup>th</sup>April 2025.
+              at checkout. Offer expires on 28<sup>th</sup>April 2025.
             </span>
           </p>
         </div>

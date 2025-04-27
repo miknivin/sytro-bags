@@ -68,7 +68,7 @@ export default function NewsletterModal() {
   }, [pathname]);
 
   // Check if coupon is expired
-  const expirationDate = new Date("2025-04-27");
+  const expirationDate = new Date("2025-04-28");
   if (new Date() > expirationDate) return null;
 
   return (
@@ -100,7 +100,7 @@ export default function NewsletterModal() {
             <h6 className="text-center">
               Get 15% off your order! Use coupon code{" "}
               <span className="fw-medium text-warning">SYTRO15</span> at
-              checkout. Offer expires on 26<sup>th</sup> April 2025.
+              checkout. Offer expires on 28<sup>th</sup> April 2025.
             </h6>
             <div className="w-100 mx-auto mt-4" style={{ maxWidth: "16rem" }}>
               <div className="position-relative">
