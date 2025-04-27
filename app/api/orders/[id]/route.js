@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Order from "@/models/Order";
 import { authorizeRoles, isAuthenticatedUser } from "@/middlewares/auth";
 import dbConnect from "@/lib/db/connection";
-
+import User from "@/models/User";
 export async function GET(req, { params }) {
   try {
     await dbConnect();

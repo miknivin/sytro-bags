@@ -40,7 +40,7 @@ export function ReduxConsumer({ children }) {
     <div id="wrapper">
       {children}
       <HomesModal />
-      <ShoppingBanner />
+      {/* <ShoppingBanner /> */}
       {/* <QuickView /> */}
       <QuickAdd />
       <VideoPlayer />
@@ -64,7 +64,7 @@ export function ReduxConsumer({ children }) {
       <ToolbarShop />
       <SuperKidBag />
 
-      <NewsletterModal />
+      {/* <NewsletterModal /> */}
       <ShareModal />
     </div>
   );
