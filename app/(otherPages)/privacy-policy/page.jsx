@@ -59,6 +59,17 @@ export default function page() {
                     Payment information (credit/debit card details, UPI, etc.)
                   </li>
                   <li>Order history</li>
+                  <li>
+                    Sytro bags collects Instagram direct messages via a webhook
+                    (https://sytro-admin.vercel.app/api/orders/webhook/instagram)
+                    to provide customer support for our e-commerce platform
+                    selling custom bags. Messages are stored securely in a
+                    MongoDB database with fields like sender ID, message text,
+                    timestamp, and echo status. We use encryption at rest to
+                    protect data and retain messages for 30 days to assist with
+                    customer inquiries, after which they are automatically
+                    deleted
+                  </li>
                 </ul>
                 <h4
                   style={{
