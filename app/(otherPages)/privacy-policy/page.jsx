@@ -60,15 +60,7 @@ export default function page() {
                   </li>
                   <li>Order history</li>
                   <li>
-                    Sytro bags collects Instagram direct messages via a webhook
-                    (https://sytro-admin.vercel.app/api/orders/webhook/instagram)
-                    to provide customer support for our e-commerce platform
-                    selling custom bags. Messages are stored securely in a
-                    MongoDB database with fields like sender ID, message text,
-                    timestamp, and echo status. We use encryption at rest to
-                    protect data and retain messages for 30 days to assist with
-                    customer inquiries, after which they are automatically
-                    deleted
+                  Sytro Bags collects Instagram direct messages sent to @sytro_bags via a webhook at https://webhook.sytrobags.com/api/webhook for customer support on our e-commerce platform selling custom bags. We collect sender ID, message text, timestamp, and echo status to extract phone numbers and send automated WhatsApp responses via AiSensy, using the Sytro Bags WhatsApp Business Cloud API. We do not store or share this data after processing, except to send WhatsApp messages, and comply with Meta's data policies.
                   </li>
                 </ul>
                 <h4
