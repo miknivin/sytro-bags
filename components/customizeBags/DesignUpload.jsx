@@ -34,6 +34,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     for (const file of selectedFiles) {
       if (file.size > MAX_FILE_SIZE) {
         setErrorMessage(`File ${file.name} exceeds 10 MB limit.`);
+        toast.error(`File ${file.name} exceeds 10 MB limit.`);
         fileInputRef.current.value = null;
         return;
       }
@@ -122,7 +123,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
       setFiles([]);
       fileInputRef.current.value = null;
     } catch (err) {
-      toast.error(err.message || "Upload failed. Try again.");
+      toast.error(err?.message || "Upload failed. Contact support.");
       console.error("Upload failed:", err);
     } finally {
       setIsSubmitting(false);

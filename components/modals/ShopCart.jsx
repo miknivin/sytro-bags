@@ -23,6 +23,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { useUploadKidsImageMutation } from "@/redux/api/orderApi";
+import { getPresignedUrls } from "@/functions/action";
+
 export default function ShopCart() {
   const [showPopover, setShowPopover] = useState(false);
   const [uploadKidsImage, { isLoading, error }] = useUploadKidsImageMutation();
@@ -148,64 +150,122 @@ export default function ShopCart() {
 
   const handleFileUpload = async (event, productId, quantity, imageCount) => {
     const files = Array.from(event.target.files); // Get all selected files
-    if (files.length > 0) {
-      try {
-        const formData = new FormData();
-        // Calculate the maximum number of files to process
-        const remainingSlots = quantity - imageCount;
-        const filesToUpload =
-          remainingSlots >= files.length
-            ? files
-            : files.slice(0, remainingSlots);
+    if (files.length === 0) return;
 
-        if (filesToUpload.length === 0) {
-          toast.error(
-            `No more images can be uploaded. Current image count (${imageCount}) matches or exceeds quantity (${quantity}).`
-          );
-          return;
-        }
+    // Calculate the maximum number of files to process
+    const remainingSlots = quantity - imageCount;
+    const filesToUpload =
+      remainingSlots >= files.length ? files : files.slice(0, remainingSlots);
 
-        filesToUpload.forEach((file) => formData.append("file", file));
-        formData.append("productId", productId);
-
-        const response = await uploadKidsImage(formData).unwrap();
-
-        const urls = (Array.isArray(response) ? response : [response]).map(
-          (item) => item.url
-        );
-
-        const currentImages = imageUrls[productId] || [];
-        const updatedImages = [...currentImages, ...urls].slice(0, quantity);
-
-        const newImageCount = updatedImages.length;
-
-        if (newImageCount > quantity) {
-          toast.warn(
-            `Warning: Uploaded image count (${newImageCount}) exceeds quantity (${quantity}).`
-          );
-        } else if (newImageCount < quantity) {
-          toast.info(
-            `Still need ${
-              quantity - newImageCount
-            } more images for product ${productId}.`
-          );
-        } else {
-          toast.success("Uploaded image(s) successfully");
-        }
-
-        // Update Redux store with the merged and limited array
-        dispatch(
-          updateCartItem({
-            product: productId,
-            uploadedImage: updatedImages,
-          })
-        );
-
-        event.target.value = ""; // Clear file input after upload
-      } catch (err) {
-        console.error("Upload failed:", error || err);
-      }
+    if (filesToUpload.length === 0) {
+      toast.error(
+        `No more images can be uploaded. Current image count (${imageCount}) matches or exceeds quantity (${quantity}).`
+      );
+      return;
     }
+
+    // Define the upload promise
+    const uploadPromise = async () => {
+      // Prepare file metadata for presigned URLs
+      const fileMetadata = filesToUpload.map((file) => ({
+        name: file.name,
+        type: file.type,
+      }));
+      const formData = new FormData();
+      formData.append("files", JSON.stringify(fileMetadata));
+      formData.append("quantity", filesToUpload.length.toString());
+      formData.append("productId", productId);
+      //console.log(fileMetadata);
+
+      // Get presigned URLs
+      const result = await getPresignedUrls(formData);
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      const { presignedUrls } = result;
+
+      // Upload files using presigned URLs
+      const uploadPromises = [];
+      for (let i = 0; i < presignedUrls.length; i++) {
+        const file = filesToUpload[i];
+        uploadPromises.push(
+          (async () => {
+            const uploadResponse = await fetch(presignedUrls[i].presignedUrl, {
+              method: "PUT",
+              body: file,
+              headers: { "Content-Type": file.type },
+            });
+
+            if (!uploadResponse.ok) {
+              throw new Error(
+                `Failed to upload ${file.name}: ${uploadResponse.statusText}`
+              );
+            }
+
+            return presignedUrls[i].publicUrl;
+          })()
+        );
+      }
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+
+      // Update image URLs
+      const currentImages = imageUrls[productId] || [];
+      const updatedImages = [...currentImages, ...uploadedUrls].slice(
+        0,
+        quantity
+      );
+      const newImageCount = updatedImages.length;
+
+      // Update Redux store
+      dispatch(
+        updateCartItem({
+          product: productId,
+          uploadedImage: updatedImages,
+        })
+      );
+
+      return { newImageCount, updatedImages };
+    };
+
+    // Use toast.promise to handle loading, success, and error states
+    toast
+      .promise(
+        uploadPromise(),
+        {
+          loading: `Uploading ${filesToUpload.length} image${
+            filesToUpload.length > 1 ? "s" : ""
+          }...`,
+          success: ({ newImageCount }) => {
+            if (newImageCount > quantity) {
+              return `Warning: Uploaded image count (${newImageCount}) exceeds quantity (${quantity}).`;
+            } else if (newImageCount < quantity) {
+              return `Still need ${
+                quantity - newImageCount
+              } more images for product ${productId}.`;
+            }
+            return "Uploaded image(s) successfully";
+          },
+          error: (err) => err.message || "Upload failed. Try again.",
+        },
+        {
+          success: {
+            icon: (newImageCount) =>
+              newImageCount > quantity
+                ? "⚠️"
+                : newImageCount < quantity
+                ? "ℹ️"
+                : undefined,
+          },
+        }
+      )
+      .then(() => {
+        event.target.value = ""; // Clear file input after upload
+      })
+      .catch((err) => {
+        console.error("Upload failed:", err);
+      });
   };
 
   const decreaseQuantity = (cartItem, id) => {
@@ -513,7 +573,7 @@ export default function ShopCart() {
                           <div className="col-12 fs-18">
                             Your shop cart is empty
                           </div>
-                          <div className="col-12 mt-3">
+                          {/* <div className="col-12 mt-3">
                             <Link
                               href="/shop-collection-sub"
                               {...(isShopCollectionSub
@@ -524,7 +584,7 @@ export default function ShopCart() {
                             >
                               Explore Products!
                             </Link>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     )}
