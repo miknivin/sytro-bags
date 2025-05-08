@@ -19,7 +19,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     const selectedFiles = Array.from(event.target.files);
     const totalFiles = files.length + selectedFiles.length;
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    const MAX_FILE_SIZE = 15 * 1024 * 1024; // 10 MB
     const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
 
     if (totalFiles > quantity) {
@@ -33,8 +33,8 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     let totalSize = files.reduce((sum, file) => sum + file.size, 0);
     for (const file of selectedFiles) {
       if (file.size > MAX_FILE_SIZE) {
-        setErrorMessage(`File ${file.name} exceeds 10 MB limit.`);
-        toast.error(`File ${file.name} exceeds 10 MB limit.`);
+        setErrorMessage(`File ${file.name} exceeds 15 MB limit.`);
+        toast.error(`File ${file.name} exceeds 15 MB limit.`);
         fileInputRef.current.value = null;
         return;
       }

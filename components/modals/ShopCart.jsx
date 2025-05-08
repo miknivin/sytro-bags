@@ -149,10 +149,25 @@ export default function ShopCart() {
   };
 
   const handleFileUpload = async (event, productId, quantity, imageCount) => {
-    const files = Array.from(event.target.files); // Get all selected files
+    const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
-    // Calculate the maximum number of files to process
+    const maxTotalSize = 50 * 1024 * 1024;
+    const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+    if (totalSize > maxTotalSize) {
+      toast.error("Total file size exceeds 50MB limit.");
+      event.target.value = "";
+      return;
+    }
+
+    const maxIndividualSize = 15 * 1024 * 1024;
+    const oversizedFile = files.find((file) => file.size > maxIndividualSize);
+    if (oversizedFile) {
+      toast.error(`File "${oversizedFile.name}" exceeds 15MB limit.`);
+      event.target.value = "";
+      return;
+    }
+
     const remainingSlots = quantity - imageCount;
     const filesToUpload =
       remainingSlots >= files.length ? files : files.slice(0, remainingSlots);
@@ -164,9 +179,7 @@ export default function ShopCart() {
       return;
     }
 
-    // Define the upload promise
     const uploadPromise = async () => {
-      // Prepare file metadata for presigned URLs
       const fileMetadata = filesToUpload.map((file) => ({
         name: file.name,
         type: file.type,
@@ -175,9 +188,7 @@ export default function ShopCart() {
       formData.append("files", JSON.stringify(fileMetadata));
       formData.append("quantity", filesToUpload.length.toString());
       formData.append("productId", productId);
-      //console.log(fileMetadata);
 
-      // Get presigned URLs
       const result = await getPresignedUrls(formData);
       if (result.error) {
         throw new Error(result.error);
@@ -185,7 +196,6 @@ export default function ShopCart() {
 
       const { presignedUrls } = result;
 
-      // Upload files using presigned URLs
       const uploadPromises = [];
       for (let i = 0; i < presignedUrls.length; i++) {
         const file = filesToUpload[i];
@@ -210,7 +220,6 @@ export default function ShopCart() {
 
       const uploadedUrls = await Promise.all(uploadPromises);
 
-      // Update image URLs
       const currentImages = imageUrls[productId] || [];
       const updatedImages = [...currentImages, ...uploadedUrls].slice(
         0,
@@ -218,7 +227,6 @@ export default function ShopCart() {
       );
       const newImageCount = updatedImages.length;
 
-      // Update Redux store
       dispatch(
         updateCartItem({
           product: productId,
@@ -229,7 +237,6 @@ export default function ShopCart() {
       return { newImageCount, updatedImages };
     };
 
-    // Use toast.promise to handle loading, success, and error states
     toast
       .promise(
         uploadPromise(),
@@ -247,11 +254,11 @@ export default function ShopCart() {
             }
             return "Uploaded image(s) successfully";
           },
-          error: (err) => err.message || "Upload failed. Try again.",
+          error: (err) => err?.message || "Upload failed. Try again.",
         },
         {
           success: {
-            icon: (newImageCount) =>
+            icon: ({ newImageCount }) =>
               newImageCount > quantity
                 ? "⚠️"
                 : newImageCount < quantity
@@ -261,7 +268,7 @@ export default function ShopCart() {
         }
       )
       .then(() => {
-        event.target.value = ""; // Clear file input after upload
+        event.target.value = "";
       })
       .catch((err) => {
         console.error("Upload failed:", err);
