@@ -19,7 +19,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     const selectedFiles = Array.from(event.target.files);
     const totalFiles = files.length + selectedFiles.length;
 
-    const MAX_FILE_SIZE = 15 * 1024 * 1024; // 10 MB
+    const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 MB
     const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
 
     if (totalFiles > quantity) {
@@ -140,7 +140,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     const droppedFiles = Array.from(event.dataTransfer.files);
     const totalFiles = files.length + droppedFiles.length;
 
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const MAX_FILE_SIZE = 15 * 1024 * 1024;
     const MAX_TOTAL_SIZE = 50 * 1024 * 1024;
 
     if (totalFiles > quantity) {
@@ -153,7 +153,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     let totalSize = files.reduce((sum, file) => sum + file.size, 0);
     for (const file of droppedFiles) {
       if (file.size > MAX_FILE_SIZE) {
-        setErrorMessage(`File ${file.name} exceeds 10 MB limit.`);
+        setErrorMessage(`File ${file.name} exceeds 15 MB limit.`);
         return;
       }
       totalSize += file.size;
@@ -214,7 +214,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
               <p className="small text-muted">{uploadMessage}</p>
               <p className="small text-muted">SVG, PNG, JPG, JPEG</p>
               <p className="small text-warning">
-                (Max 10MB each, Max 50MB total)
+                (Max 15MB each, Max 50MB total)
               </p>
             </label>
           )}
