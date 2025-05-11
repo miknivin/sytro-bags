@@ -9,9 +9,8 @@ import Link from "next/link";
 import SliderWithGalleryPopup from "@/components/shopDetails/sliders/SliderWithGalleryPopup";
 import DetailsPopup from "@/components/shopDetails/DetailsPopup";
 export const metadata = {
-  title:
-    "Product Photoswipe Popup || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Product Photoswipe Popup || Ecomus - ",
+  description: "Ecomus - ",
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";

@@ -5,8 +5,8 @@ import ShopSidebarleft from "@/components/shop/ShopSidebarleft";
 import React from "react";
 
 export const metadata = {
-  title: "Shop Left Sidebar || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Shop Left Sidebar || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (

@@ -8,9 +8,8 @@ import React from "react";
 import Link from "next/link";
 import DetailsMagnifierZoom from "@/components/shopDetails/DetailsMagnifierZoom";
 export const metadata = {
-  title:
-    "Product Zoom Magnifier || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Product Zoom Magnifier || Ecomus - ",
+  description: "Ecomus - ",
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";

@@ -9,8 +9,8 @@ import Tabs5 from "@/components/shopDetails/Tabs5";
 import React from "react";
 import Link from "next/link";
 export const metadata = {
-  title: "Shop Gift Card || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Shop Gift Card || Ecomus - ",
+  description: "Ecomus - ",
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";

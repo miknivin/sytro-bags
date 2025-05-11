@@ -7,8 +7,8 @@ import React from "react";
 import Link from "next/link";
 import Header4 from "@/components/headers/Header4";
 export const metadata = {
-  title: "Faq 2 || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Faq 2 || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (

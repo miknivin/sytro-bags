@@ -4,8 +4,8 @@ import PaymentConfirmation from "@/components/othersPages/PaymentConfirmation";
 import React from "react";
 
 export const metadata = {
-  title: "Payment Confirmation || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Payment Confirmation || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (

@@ -11,8 +11,8 @@ import ProductSidebar from "@/components/modals/ProductSidebar";
 import SidebarToggler from "@/components/shopDetails/SidebarToggler";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
 export const metadata = {
-  title: "Shop Drawer Sidebar || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Shop Drawer Sidebar || Ecomus - ",
+  description: "Ecomus - ",
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";

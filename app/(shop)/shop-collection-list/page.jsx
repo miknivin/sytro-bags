@@ -6,9 +6,8 @@ import ShopCollections from "@/components/shop/ShopCollections";
 import React from "react";
 
 export const metadata = {
-  title:
-    "Product Collection List || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Product Collection List || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (

@@ -3,8 +3,8 @@ import Header1 from "@/components/headers/Header1";
 import Link from "next/link";
 import React from "react";
 export const metadata = {
-  title: "Page Not Found || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Page Not Found || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function notFound() {
   return (

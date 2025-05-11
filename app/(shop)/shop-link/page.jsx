@@ -4,8 +4,8 @@ import ShopDefault from "@/components/shop/ShopDefault";
 import React from "react";
 
 export const metadata = {
-  title: "Shop Link || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Shop Link || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (

@@ -8,9 +8,8 @@ import React from "react";
 import Link from "next/link";
 import ShopDetailsImageGrouped from "@/components/shopDetails/ShopDetailsImageGrouped";
 export const metadata = {
-  title:
-    "Product Images Grouped || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Product Images Grouped || Ecomus - ",
+  description: "Ecomus - ",
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";

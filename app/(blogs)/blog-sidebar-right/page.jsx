@@ -4,8 +4,8 @@ import Header2 from "@/components/headers/Header2";
 import React from "react";
 import Link from "next/link";
 export const metadata = {
-  title: "Blog Sidebar Right || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Blog Sidebar Right || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (

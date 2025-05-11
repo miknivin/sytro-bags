@@ -8,8 +8,8 @@ import React from "react";
 import Link from "next/link";
 import DetailsInnerZoom from "@/components/shopDetails/DetailsInnerZoom";
 export const metadata = {
-  title: "Product Inner Zoom || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Product Inner Zoom || Ecomus - ",
+  description: "Ecomus - ",
 };
 import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";

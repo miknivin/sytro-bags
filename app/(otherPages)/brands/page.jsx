@@ -4,8 +4,8 @@ import Brands from "@/components/othersPages/brands/Brands";
 import React from "react";
 
 export const metadata = {
-  title: "Brands || Ecomus - Ultimate Nextjs Ecommerce Template",
-  description: "Ecomus - Ultimate Nextjs Ecommerce Template",
+  title: "Brands || Ecomus - ",
+  description: "Ecomus - ",
 };
 export default function page() {
   return (
