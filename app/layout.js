@@ -5,7 +5,7 @@ import "@/styles/main.scss";
 import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 import PixelTracker from "@/components/common/PixelTracker";
-
+import { Analytics } from "@vercel/analytics/next";
 export const metadata = {
   title: "Sytro",
   description: "Sytro bags",
@@ -64,6 +64,7 @@ export default function RootLayout({ children }) {
           <ClientWrapper>
             <PixelTracker />
             {children}
+            <Analytics />
           </ClientWrapper>
         </ReduxProvider>
       </body>

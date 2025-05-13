@@ -7,7 +7,7 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata = {
-  title: "Blog Details ||  ",
+  title: "Blog Details",
   description: " ",
 };
 export default function page({ params }) {
