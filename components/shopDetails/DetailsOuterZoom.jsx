@@ -247,6 +247,7 @@ export default function DetailsOuterZoom({ product }) {
                                         className="position-relative border border-black rounded-2 d-flex flex-column"
                                       >
                                         <button
+                                          style={{ zIndex: 69 }}
                                           onClick={() =>
                                             dispatch(
                                               removeUploadedImage({
