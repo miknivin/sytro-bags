@@ -80,8 +80,8 @@ const CartFooter = ({
     setCouponError("");
 
     if (
-      couponCode.trim().toUpperCase() !== "MIRI2" &&
-      couponCode.trim().toUpperCase() !== "SYTRO15"
+      couponCode.trim().toUpperCase() !== "frwet5342423Myre2" &&
+      couponCode.trim().toUpperCase() !== "254235246SiTRrO15"
     ) {
       setCouponError("Invalid coupon code");
       return;

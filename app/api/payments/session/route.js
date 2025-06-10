@@ -8,6 +8,7 @@ import { isAuthenticatedUser } from "@/middlewares/auth";
 export async function POST(req) {
   try {
     const body = await req.json();
+    User
     await dbConnect();
     console.log("DB connected");
 

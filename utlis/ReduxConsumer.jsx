@@ -39,12 +39,12 @@ export function ReduxConsumer({ children }) {
   return (
     <div id="wrapper">
       {children}
-      <HomesModal />
-      <ShoppingBanner />
+      {/* <HomesModal />
+      <ShoppingBanner /> */}
       {/* <QuickView /> */}
       <QuickAdd />
       <VideoPlayer />
-      <ProductSidebar />
+      {/* <ProductSidebar /> */}
       <ShopCart />
       <AskQuestion />
       {/* <BlogSidebar /> */}
@@ -64,7 +64,7 @@ export function ReduxConsumer({ children }) {
       <ToolbarShop />
       <SuperKidBag />
 
-      <NewsletterModal />
+      {/* <NewsletterModal /> */}
       <ShareModal />
     </div>
   );
