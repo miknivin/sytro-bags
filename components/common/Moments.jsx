@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/free-mode";
 import { useGetMomentsQuery } from "@/redux/api/websiteSettings";
 
+export const dynamic = "force-dynamic";
 export default function Moments() {
   const { data, error, isLoading } = useGetMomentsQuery();
   const [playingVideos, setPlayingVideos] = useState({});

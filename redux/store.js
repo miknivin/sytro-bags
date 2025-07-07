@@ -10,6 +10,7 @@ import { orderApi } from "./api/orderApi";
 import productsReducer from "./features/productSlice.js";
 import customBagReducer from "./features/customBagSlice";
 import { websiteSettingsApi } from "./api/websiteSettings";
+import { multipartApi } from "./api/multipartApi";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [websiteSettingsApi.reducerPath]: websiteSettingsApi.reducer,
+    [multipartApi.reducerPath]: multipartApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([
@@ -30,5 +32,6 @@ export const store = configureStore({
       userApi.middleware,
       orderApi.middleware,
       websiteSettingsApi.middleware,
+      multipartApi.middleware
     ]),
 });
