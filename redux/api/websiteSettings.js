@@ -6,7 +6,7 @@ export const websiteSettingsApi = createApi({
   endpoints: (builder) => ({
     getMoments: builder.query({
       query: () => ({
-        url: "settings/moments",
+        url: `settings/moments?t=${Date.now()}`,
         method: "GET",
       }),
     }),
