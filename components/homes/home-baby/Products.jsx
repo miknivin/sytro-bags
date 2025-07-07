@@ -198,7 +198,7 @@ export default function Products() {
                     >
                       {isAddedToCartProducts(product.id)
                         ? "Already Added"
-                        : "ADD TO CART"}
+                        : "ADD T"}
                     </a>
                   </div>
                 </div>

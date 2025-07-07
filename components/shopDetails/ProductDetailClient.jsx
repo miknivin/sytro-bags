@@ -4,6 +4,9 @@ import { useGetProductDetailsQuery } from "@/redux/api/productsApi";
 import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
 import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
+import Moments from "../common/Moments";
+import Features from "../common/Features";
+import GoogleReviews from "../common/GoogleReviews";
 
 export default function ProductDetailsClient({ productId }) {
   const { data, error, isLoading } = useGetProductDetailsQuery(productId);
@@ -26,7 +29,10 @@ export default function ProductDetailsClient({ productId }) {
   return (
     <>
       <DetailsOuterZoom product={product} />
+      <Moments />
+      <GoogleReviews />
       <ShopDetailsTab details={product?.details} />
+      <Features />
     </>
   );
 }

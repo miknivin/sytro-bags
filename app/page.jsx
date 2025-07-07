@@ -15,6 +15,8 @@ import Products from "@/components/homes/home-4/Products";
 import Categories2 from "@/components/homes/home-4/Categories2";
 import Topbar2 from "@/components/headers/Topbar2";
 import Header4 from "@/components/headers/Header4";
+import Moments from "@/components/common/Moments";
+import GoogleReviews from "@/components/common/GoogleReviews";
 export const metadata = {
   title: "Home || Sytro",
   description: "Sytro",
@@ -28,12 +30,14 @@ export default function Home() {
       {/* <Marquee /> */}
       <Categories />
       <Products />
-
+      <Moments />
+      <GoogleReviews />
       <Testimonials />
       {/* <Lookbook /> */}
       {/* <Categories2 /> */}
       {/* <Brands /> */}
       {/* <ShopGram /> */}
+
       <Features />
       <Footer1 />
     </>

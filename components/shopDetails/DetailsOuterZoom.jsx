@@ -22,10 +22,13 @@ import { setProductById } from "@/redux/features/productSlice";
 import { useRouter, useSearchParams } from "next/navigation";
 import DetailsStatic from "./DetailsStatic";
 import { sanitizeLocalStorageImages } from "@/app/helpers/localStorageSanitizer";
+import OfferTimer from "@/utlis/OfferTimer";
 
 export default function DetailsOuterZoom({ product }) {
   //const kidsBagId = "67a70ca93f464380b64b05a6";
+
   const [currentColor, setCurrentColor] = useState(colors[0]);
+
   const router = useRouter();
   const uploadModalRef = useRef(null);
   const handleColor = () => {};
@@ -210,6 +213,11 @@ export default function DetailsOuterZoom({ product }) {
                       )}
                     </h5>
                   </div>
+                  <div className="">
+                    {product && product.offerEndTime && (
+                      <OfferTimer offerEndTime={product.offerEndTime} />
+                    )}
+                  </div>
                   <div className="tf-product-info-price flex align-items-center mb-3">
                     <div style={{ fontWeight: 600 }} className="price-on-sale">
                       ₹{product?.offer?.toFixed(2)}
@@ -352,7 +360,7 @@ export default function DetailsOuterZoom({ product }) {
                             <span>
                               {isAddedToCartProducts(product._id)
                                 ? "Already Added"
-                                : "Add to cart"}{" "}
+                                : "Order now"}{" "}
                               :{"  "}
                             </span>
                             <span className="tf-qty-price">
@@ -372,7 +380,7 @@ export default function DetailsOuterZoom({ product }) {
                           <span>
                             {isAddedToCartProducts(product._id)
                               ? "Already Added"
-                              : "Add to cart"}{" "}
+                              : "Order now"}{" "}
                             :{"  "}
                           </span>
                           <span className="tf-qty-price">

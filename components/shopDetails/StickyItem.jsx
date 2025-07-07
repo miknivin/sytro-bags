@@ -73,7 +73,7 @@ export default function StickyItem({
                           <span>
                             {isAddedToCartProducts(product._id)
                               ? "Already Added"
-                              : "Add to cart"}{" "}
+                              : "Order now"}{" "}
                           </span>
                         </a>
                       </>
