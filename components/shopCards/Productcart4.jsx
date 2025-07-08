@@ -5,15 +5,26 @@ import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
 import CountdownComponent from "../common/Countdown";
+
 export const replaceS3WithCloudFront = (url) => {
   if (!url) return url;
   const s3Pattern = /^https:\/\/kids-bags\.s3\.eu-north-1\.amazonaws\.com/;
   const cloudFrontDomain =
     process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN ||
     "https://d229x2i5qj11ya.cloudfront.net";
-  // Replace S3 base URL and normalize multiple slashes to a single slash
-  return url.replace(s3Pattern, cloudFrontDomain).replace(/\/+/, "/");
+
+  let newUrl = url.replace(s3Pattern, cloudFrontDomain);
+
+  const domainEndIndex = newUrl.indexOf("/", 8); // Start after 'https://'
+  if (domainEndIndex !== -1) {
+    const protocolAndDomain = newUrl.slice(0, domainEndIndex);
+    const path = newUrl.slice(domainEndIndex).replace(/\/+/, "/");
+    newUrl = protocolAndDomain + path;
+  }
+
+  return newUrl;
 };
+
 export default function Productcard4({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -45,7 +56,6 @@ export default function Productcard4({ product }) {
               }
               alt="image-product"
               width="720"
-              crossOrigin="anonymous"
               height="1005"
             />
             <Image
@@ -60,7 +70,6 @@ export default function Productcard4({ product }) {
               }
               alt="image-product"
               width="720"
-              crossOrigin="anonymous"
               height="1005"
             />
           </Link>
