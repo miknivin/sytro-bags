@@ -20,12 +20,12 @@ export async function POST(req) {
       throw new Error("File key and uploadId are required");
     }
 
-    if (!process.env.AWS_S3_BUCKET_NAME) {
+    if (!process.env.AWS_BUCKET_NAME) {
       throw new Error("S3 bucket name not configured");
     }
 
     const abortParams = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: process.env.AWS_BUCKET_NAME,
       Key: fileKey,
       UploadId: uploadId,
     };

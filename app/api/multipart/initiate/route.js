@@ -60,7 +60,7 @@ export async function POST(req) {
         const fileKey = `user-uploads/${newFileName}`;
 
         const createParams = {
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Bucket: process.env.AWS_BUCKET_NAME,
           Key: fileKey,
           ContentType: meta.type,
         };
@@ -70,7 +70,7 @@ export async function POST(req) {
         const presignedUrls = {};
         for (let partNumber = 1; partNumber <= partCount; partNumber++) {
           const uploadPartParams = {
-            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Bucket: process.env.AWS_BUCKET_NAME,
             Key: fileKey,
             UploadId,
             PartNumber: partNumber,

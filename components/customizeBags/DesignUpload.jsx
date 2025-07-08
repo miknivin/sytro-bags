@@ -1,9 +1,16 @@
 "use client";
-import { useRef, useState } from "react";
+import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams } from "next/navigation";
+
+import { uploadMultipartFile } from "@/utlis/uploadMultipart";
+import {
+  useAbortMultipartUploadMutation,
+  useCompleteMultipartUploadMutation,
+  useInitiateMultipartUploadMutation,
+} from "@/redux/api/multipartApi";
 
 export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
   const [files, setFiles] = useState([]);
@@ -15,12 +22,17 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
   const searchParams = useSearchParams();
   const quantity = parseInt(searchParams.get("quantity") || "1");
 
+  const [initiateMultipartUpload] = useInitiateMultipartUploadMutation();
+  const [completeMultipartUpload] = useCompleteMultipartUploadMutation();
+  const [abortMultipartUpload] = useAbortMultipartUploadMutation();
+
+  const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
+  const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
+  const MULTIPART_THRESHOLD = 5 * 1024 * 1024; // Changed from 2MB to 5MB
+
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     const totalFiles = files.length + selectedFiles.length;
-
-    const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 MB
-    const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
 
     if (totalFiles > quantity) {
       setErrorMessage(
@@ -33,8 +45,8 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     let totalSize = files.reduce((sum, file) => sum + file.size, 0);
     for (const file of selectedFiles) {
       if (file.size > MAX_FILE_SIZE) {
-        setErrorMessage(`File ${file.name} exceeds 15 MB limit.`);
-        toast.error(`File ${file.name} exceeds 15 MB limit.`);
+        setErrorMessage(`File ${file.name} exceeds 25 MB limit.`);
+        toast.error(`File ${file.name} exceeds 25 MB limit.`);
         fileInputRef.current.value = null;
         return;
       }
@@ -62,86 +74,10 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     setPreviewUrls(newPreviewUrls);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (files.length === 0) return;
-    if (files.length < quantity) {
-      toast.error(
-        `You need to upload ${quantity - files.length} more image${
-          quantity - files.length > 1 ? "s" : ""
-        } to submit`
-      );
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const fileMetadata = files.map((file) => ({
-        name: file.name,
-        type: file.type,
-      }));
-      const formData = new FormData();
-      formData.append("files", JSON.stringify(fileMetadata)); // Send metadata as JSON
-      formData.append("quantity", quantity.toString());
-
-      const result = await getPresignedUrls(formData);
-      if (result.error) {
-        throw new Error(result.error);
-      }
-
-      const { presignedUrls } = result;
-
-      const uploadPromises = [];
-      for (let i = 0; i < presignedUrls.length; i++) {
-        setUploadingIndices((prev) => [...prev, i]);
-        const file = files[i];
-        uploadPromises.push(
-          (async () => {
-            const uploadResponse = await fetch(presignedUrls[i].presignedUrl, {
-              method: "PUT",
-              body: file,
-              headers: { "Content-Type": file.type },
-            });
-
-            if (!uploadResponse.ok) {
-              throw new Error(
-                `Failed to upload ${file.name}: ${uploadResponse.statusText}`
-              );
-            }
-
-            setUploadingIndices((prev) => prev.filter((idx) => idx !== i));
-            return presignedUrls[i].publicUrl;
-          })()
-        );
-      }
-
-      const uploadedUrls = await Promise.all(uploadPromises);
-      onFileUpload(uploadedUrls);
-
-      previewUrls.forEach((url) => URL.revokeObjectURL(url));
-      setPreviewUrls([]);
-      setFiles([]);
-      fileInputRef.current.value = null;
-    } catch (err) {
-      toast.error(err?.message || "Upload failed. Contact support.");
-      console.error("Upload failed:", err);
-    } finally {
-      setIsSubmitting(false);
-      setUploadingIndices([]);
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
   const handleDrop = (event) => {
     event.preventDefault();
     const droppedFiles = Array.from(event.dataTransfer.files);
     const totalFiles = files.length + droppedFiles.length;
-
-    const MAX_FILE_SIZE = 15 * 1024 * 1024;
-    const MAX_TOTAL_SIZE = 50 * 1024 * 1024;
 
     if (totalFiles > quantity) {
       setErrorMessage(
@@ -153,7 +89,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     let totalSize = files.reduce((sum, file) => sum + file.size, 0);
     for (const file of droppedFiles) {
       if (file.size > MAX_FILE_SIZE) {
-        setErrorMessage(`File ${file.name} exceeds 15 MB limit.`);
+        setErrorMessage(`File ${file.name} exceeds 25 MB limit.`);
         return;
       }
       totalSize += file.size;
@@ -169,6 +105,82 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     setFiles((prev) => [...prev, ...droppedFiles]);
     setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
     setErrorMessage("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (files.length === 0) return;
+    if (files.length < quantity) {
+      toast.error(
+        `You need to upload ${quantity - files.length} more image${
+          quantity - files.length > 1 ? "s" : ""
+        } to submit`
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    const uploadedUrls = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        setUploadingIndices((prev) => [...prev, i]);
+
+        if (file.size <= MULTIPART_THRESHOLD) {
+          // Single-part upload for files <= 5MB
+          const fileMetadata = [{ name: file.name, type: file.type }];
+          const formData = new FormData();
+          formData.append("files", JSON.stringify(fileMetadata));
+          formData.append("quantity", "1");
+
+          const result = await getPresignedUrls(formData);
+          if (result.error) {
+            throw new Error(result.error);
+          }
+
+          const { presignedUrls } = result;
+          const uploadResponse = await fetch(presignedUrls[0].presignedUrl, {
+            method: "PUT",
+            body: file,
+            headers: { "Content-Type": file.type },
+          });
+
+          if (!uploadResponse.ok) {
+            throw new Error(
+              `Failed to upload ${file.name}: ${uploadResponse.statusText}`
+            );
+          }
+
+          uploadedUrls.push(presignedUrls[0].publicUrl);
+        } else {
+          // Multipart upload for files > 5MB
+          const finalUrl = await uploadMultipartFile(
+            file,
+            1,
+            MULTIPART_THRESHOLD, // Now 5MB
+            initiateMultipartUpload,
+            completeMultipartUpload,
+            abortMultipartUpload
+          );
+          uploadedUrls.push(finalUrl);
+        }
+
+        setUploadingIndices((prev) => prev.filter((idx) => idx !== i));
+      }
+      
+      onFileUpload(uploadedUrls);
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+      setPreviewUrls([]);
+      setFiles([]);
+      fileInputRef.current.value = null;
+    } catch (err) {
+      toast.error(err.message || "Upload failed. Contact support.");
+      console.error("Upload failed:", err);
+    } finally {
+      setIsSubmitting(false);
+      setUploadingIndices([]);
+    }
   };
 
   const uploadMessage =
@@ -193,7 +205,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
               htmlFor="upload-file"
               className="d-flex flex-column align-items-center justify-content-center py-5 px-3 rounded w-100"
               style={{ cursor: "pointer", border: "2px dashed #6c757d" }}
-              onDragOver={handleDragOver}
+              onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
             >
               <FontAwesomeIcon
@@ -214,7 +226,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
               <p className="small text-muted">{uploadMessage}</p>
               <p className="small text-muted">SVG, PNG, JPG, JPEG</p>
               <p className="small text-warning">
-                (Max 15MB each, Max 50MB total)
+                (Max 25MB each, Max 50MB total)
               </p>
             </label>
           )}

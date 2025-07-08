@@ -21,12 +21,12 @@ export async function POST(req) {
       throw new Error("File key, uploadId, and parts are required");
     }
 
-    if (!process.env.AWS_S3_BUCKET_NAME) {
+    if (!process.env.AWS_BUCKET_NAME) {
       throw new Error("S3 bucket name not configured");
     }
 
     const completeParams = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: process.env.AWS_BUCKET_NAME,
       Key: fileKey,
       UploadId: uploadId,
       MultipartUpload: {
@@ -39,7 +39,7 @@ export async function POST(req) {
     const completeCommand = new CompleteMultipartUploadCommand(completeParams);
     const completeRes = await s3Client.send(completeCommand);
 
-    const finalUrl = `https://${process.env.CLOUDFRONT_DOMAIN}/${fileKey}`;
+    const finalUrl = `${process.env.CLOUDFRONT_DOMAIN_2}/${fileKey}`;
 
     return NextResponse.json({
       success: true,

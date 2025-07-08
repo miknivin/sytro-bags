@@ -9,6 +9,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "yet-another-react-lightbox/styles.css"; // Lightbox styles
+import { replaceS3WithCloudFront } from "@/components/shopCards/Productcart4";
 
 export default function Slider1ZoomOuter({
   handleColor = () => {},
@@ -23,6 +24,8 @@ export default function Slider1ZoomOuter({
   if (!firstImage.length) {
     return <div>No images available</div>;
   }
+
+  console.log(firstImage, "firstimage");
 
   return (
     <>
@@ -46,9 +49,9 @@ export default function Slider1ZoomOuter({
             <div className="item">
               <Image
                 className="lazyload"
-                data-src={slide.url}
+                data-src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
                 alt={"thumbnail"}
-                src={slide.url}
+                 src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
                 fill
                 style={{ objectFit: "cover" }}
               />
@@ -89,12 +92,12 @@ export default function Slider1ZoomOuter({
             >
               <Image
                 className="lazyload"
-                data-src={slide.url}
+                data-src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
                 alt={slide.url || "image"}
                 width={250}
                 height={320}
                 style={{ objectFit: "cover", maxHeight: "700px" }}
-                src={slide.url}
+                src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
               />
             </div>
           </SwiperSlide>

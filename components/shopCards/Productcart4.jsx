@@ -5,6 +5,15 @@ import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
 import CountdownComponent from "../common/Countdown";
+export const replaceS3WithCloudFront = (url) => {
+  if (!url) return url;
+  const s3Pattern = /^https:\/\/kids-bags\.s3\.eu-north-1\.amazonaws\.com/;
+  const cloudFrontDomain =
+    process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN ||
+    "https://d229x2i5qj11ya.cloudfront.net";
+  // Replace S3 base URL and normalize multiple slashes to a single slash
+  return url.replace(s3Pattern, cloudFrontDomain).replace(/\/+/, "/");
+};
 export default function Productcard4({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
   const { setQuickViewItem } = useContextElement();
@@ -26,16 +35,28 @@ export default function Productcard4({ product }) {
           <Link href={`/product-detail/${product._id}`} className="product-img">
             <Image
               className="lazyload img-product bg-light"
-              data-src={product.images[0].url || "/fallback.png"}
-              src={product.images[0].url || "/fallback.png"}
+              data-src={
+                replaceS3WithCloudFront(product.images[0].url) ||
+                "/fallback.png"
+              }
+              src={
+                replaceS3WithCloudFront(product.images[0].url) ||
+                "/fallback.png"
+              }
               alt="image-product"
               width="720"
               height="1005"
             />
             <Image
               className="lazyload img-hover"
-              data-src={product.images[1]?.url || "/fallback.png"}
-              src={product.images[1]?.url || "/fallback.png"}
+              data-src={
+                replaceS3WithCloudFront(product.images[0].url) ||
+                "/fallback.png"
+              }
+              src={
+                replaceS3WithCloudFront(product.images[0].url) ||
+                "/fallback.png"
+              }
               alt="image-product"
               width="720"
               height="1005"
