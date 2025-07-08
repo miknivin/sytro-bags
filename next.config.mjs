@@ -8,6 +8,11 @@ const nextConfig = {
         hostname: "ik.imagekit.io",
         pathname: "/**", // Allow all paths under this domain
       },
+      {
+        protocol: "https",
+        hostname: "d229x2i5qj11ya.cloudfront.net",
+        pathname: "/**", // Optional: Restrict to /uploads/ path
+      },
     ],
   },
   experimental: {

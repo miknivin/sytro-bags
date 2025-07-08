@@ -45,6 +45,7 @@ export default function Productcard4({ product }) {
               }
               alt="image-product"
               width="720"
+              crossOrigin="anonymous"
               height="1005"
             />
             <Image
@@ -59,6 +60,7 @@ export default function Productcard4({ product }) {
               }
               alt="image-product"
               width="720"
+              crossOrigin="anonymous"
               height="1005"
             />
           </Link>
