@@ -24,6 +24,12 @@ import {
 import { toast } from "react-hot-toast";
 import { useUploadKidsImageMutation } from "@/redux/api/orderApi";
 import { getPresignedUrls } from "@/functions/action";
+import {
+  useAbortMultipartUploadMutation,
+  useCompleteMultipartUploadMutation,
+  useInitiateMultipartUploadMutation,
+} from "@/redux/api/multipartApi";
+import { uploadMultipartFile } from "@/utlis/uploadMultipart";
 
 export default function ShopCart() {
   const [showPopover, setShowPopover] = useState(false);
@@ -42,6 +48,9 @@ export default function ShopCart() {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const fileInputRefs = useRef({});
+  const [initiateMultipartUpload] = useInitiateMultipartUploadMutation();
+  const [completeMultipartUpload] = useCompleteMultipartUploadMutation();
+  const [abortMultipartUpload] = useAbortMultipartUploadMutation();
 
   const [showUploadInput, setShowUploadInput] = useState({});
   const handlePopoverToggle = (productId, uploadedImage) => {
@@ -152,7 +161,7 @@ export default function ShopCart() {
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
-    const maxTotalSize = 50 * 1024 * 1024;
+    const maxTotalSize = 50 * 1024 * 1024; // 50MB total limit
     const totalSize = files.reduce((sum, file) => sum + file.size, 0);
     if (totalSize > maxTotalSize) {
       toast.error("Total file size exceeds 50MB limit.");
@@ -160,10 +169,10 @@ export default function ShopCart() {
       return;
     }
 
-    const maxIndividualSize = 15 * 1024 * 1024;
+    const maxIndividualSize = 25 * 1024 * 1024; // 25MB individual limit
     const oversizedFile = files.find((file) => file.size > maxIndividualSize);
     if (oversizedFile) {
-      toast.error(`File "${oversizedFile.name}" exceeds 15MB limit.`);
+      toast.error(`File "${oversizedFile.name}" exceeds 25MB limit.`);
       event.target.value = "";
       return;
     }
@@ -197,23 +206,49 @@ export default function ShopCart() {
       const { presignedUrls } = result;
 
       const uploadPromises = [];
-      for (let i = 0; i < presignedUrls.length; i++) {
+      const multipartThreshold = 5 * 1024 * 1024; // 5MB threshold for multipart
+
+      for (let i = 0; i < filesToUpload.length; i++) {
         const file = filesToUpload[i];
         uploadPromises.push(
           (async () => {
-            const uploadResponse = await fetch(presignedUrls[i].presignedUrl, {
-              method: "PUT",
-              body: file,
-              headers: { "Content-Type": file.type },
-            });
-
-            if (!uploadResponse.ok) {
-              throw new Error(
-                `Failed to upload ${file.name}: ${uploadResponse.statusText}`
+            let publicUrl;
+            if (file.size > multipartThreshold) {
+              // Use multipart upload for files > 5MB and <= 25MB
+              try {
+                publicUrl = await uploadMultipartFile(
+                  file,
+                  1,
+                  5 * 1024 * 1024, // 2MB part size
+                  initiateMultipartUpload,
+                  completeMultipartUpload,
+                  abortMultipartUpload
+                );
+              } catch (error) {
+                throw new Error(
+                  `Upload failed for ${file.name}: ${error.message}`
+                );
+              }
+            } else {
+              // Use single-part upload for files <= 5MB
+              const uploadResponse = await fetch(
+                presignedUrls[i].presignedUrl,
+                {
+                  method: "PUT",
+                  body: file,
+                  headers: { "Content-Type": file.type },
+                }
               );
+
+              if (!uploadResponse.ok) {
+                throw new Error(
+                  `Failed to upload ${file.name}: ${uploadResponse.statusText}`
+                );
+              }
+              publicUrl = presignedUrls[i].publicUrl;
             }
 
-            return presignedUrls[i].publicUrl;
+            return publicUrl;
           })()
         );
       }
