@@ -6,6 +6,17 @@ import { useDispatch } from "react-redux";
 import { setProducts } from "@/redux/features/productSlice";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
+export const categoriesWithName = [
+  { value: "Kids Bags", name: "Kids Bags" },
+  { value: "gym_duffle_bag", name: "Gym Duffle Bag" },
+  { value: "mens_sling_bag", name: "Men’s Sling Bag" },
+  { value: "womens_sling_bag", name: "Women’s Sling Bag" },
+  { value: "mens_backpack", name: "Men’s Backpack" },
+  { value: "laptop_backpack", name: "Laptop Backpack" },
+  { value: "ladies_backpack", name: "Ladies’ Backpack" },
+  { value: "tote_bag", name: "Tote Bag" },
+];
+
 export const categories = [
   "Kids Bags",
   "gym_duffle_bag",
@@ -149,17 +160,17 @@ export default function Products() {
           >
             All
           </button>
-          {categories.map((category) => (
+          {categoriesWithName.map(({ value, name }) => (
             <button
-              key={category}
+              key={value}
               className={`btn btn-sm rounded-pill category-pill white-space-no-wrap me-2 mb-2 ${
-                selectedCategory === category
+                selectedCategory === value
                   ? "btn-warning"
                   : "btn-outline-secondary"
               }`}
-              onClick={() => handleCategorySelect(category)}
+              onClick={() => handleCategorySelect(value)}
             >
-              {formatCategory(category)}
+              {name}
             </button>
           ))}
         </div>

@@ -33,7 +33,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
     const cartItem = {
       product: productId,
       name: product.name,
-      price: product.price,
+      price: product.offer,
       ...(product.category != null ? { category: product.category } : {}),
       quantity: quantity || 1,
       image: product.images[0]?.url || "/images/placeholder.jpg",
@@ -68,7 +68,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                   </div>
                   <div className="tf-product-info-price flex align-items-center mb-3">
                     <div className="price-on-sale">
-                      ₹{product.price.toFixed(2)}
+                      ₹{product.offer.toFixed(2)}
                     </div>
                     <div>
                       <span className=" fs-4 text-danger">
@@ -76,7 +76,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                           (1 - product.offer / product.actualPrice) *
                           100
                         ).toFixed(2)} */}
-                        <s>₹{product?.actualPrice?.toFixed(2) || 3000}</s>
+                        <s>₹{product?.price?.toFixed(2) || "3000"}</s>
                       </span>
                     </div>
                   </div>
