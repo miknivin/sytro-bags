@@ -28,7 +28,7 @@ export default function OrdinaryStickyItem({
       product: product._id,
       name: product.name,
       category: product.category, // Use product.category instead of product.name
-      price: product.price,
+      price: product.offer,
       quantity: quantity,
       image: product.images[0]?.url || "/images/placeholder.jpg",
       ...(product.category === "Kids Bags" ? { uploadedImage: [] } : {}), // Initialize empty uploadedImage for Kids Bags
