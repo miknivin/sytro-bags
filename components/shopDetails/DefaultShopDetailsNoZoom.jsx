@@ -66,9 +66,18 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                   <div className="tf-product-info-title">
                     <h5>{product.name}</h5>
                   </div>
-                  <div className="tf-product-info-price">
+                  <div className="tf-product-info-price flex align-items-center mb-3">
                     <div className="price-on-sale">
                       ₹{product.price.toFixed(2)}
+                    </div>
+                    <div>
+                      <span className=" fs-4 text-danger">
+                        {/* {(
+                          (1 - product.offer / product.actualPrice) *
+                          100
+                        ).toFixed(2)} */}
+                        <s>₹{product?.actualPrice?.toFixed(2) || 3000}</s>
+                      </span>
                     </div>
                   </div>
                   <ul className="list-unstyled">

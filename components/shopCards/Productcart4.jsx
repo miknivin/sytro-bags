@@ -155,12 +155,24 @@ export default function Productcard4({ product }) {
         )} */}
       </div>
       <div className="card-product-info">
-        <Link href={ product.category !== "Kids Bags"
-                ? `/product-no-zoom/${product._id}`
-                : `/product-detail/${product._id}`} className="title link">
+        <Link
+          href={
+            product.category !== "Kids Bags"
+              ? `/product-no-zoom/${product._id}`
+              : `/product-detail/${product._id}`
+          }
+          className="title link"
+        >
           {product.name}
         </Link>
-        <span className="price">₹{product.offer.toFixed(2)}</span>
+        <span className="price d-flex gap-1">
+          ₹{product.offer.toFixed(2)}
+          {product.offer < product.actualPrice && (
+            <del style={{ fontSize: "12px" }} className="text-danger">
+              ₹{product.actualPrice}
+            </del>
+          )}
+        </span>
         {/* {product.colors && (
           <ul className="list-color-product">
             {product.colors.map((color) => (

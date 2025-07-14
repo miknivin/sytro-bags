@@ -28,7 +28,7 @@ export default function Home() {
       <Header4 />
       <Hero />
       {/* <Marquee /> */}
-      {/* <Categories /> */}
+      <Categories />
       <Products />
       <Moments />
       <GoogleReviews />
