@@ -1,24 +1,24 @@
 import Footer1 from "@/components/footers/Footer1";
 import Header2 from "@/components/headers/Header2";
-import DefaultShopDetails from "@/components/shopDetails/DefaultShopDetails";
 import Products from "@/components/shopDetails/Products";
 import RecentProducts from "@/components/shopDetails/RecentProducts";
 import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
 import React from "react";
 import Link from "next/link";
-import DefaultShopDetailsNoZoom from "@/components/shopDetails/DefaultShopDetailsNoZoom";
-export const metadata = {
-  title: "Product No Zoom || Ecomus - ",
-  description: "Ecomus - ",
-};
-import { allProducts } from "@/data/products";
 import ProductSinglePrevNext from "@/components/common/ProductSinglePrevNext";
+import DefaultShopDetailsNoZoom from "@/components/shopDetails/DefaultShopDetailsNoZoom";
+import OrdinaryProductDetailsClient from "@/components/shopDetails/OrdinaryProductDetailsClient";
+import Header4 from "@/components/headers/Header4";
+
+export const metadata = {
+  title: "Product details || Sytro",
+  description: "Sytro",
+};
+
 export default function page({ params }) {
-  const product =
-    allProducts.filter((elm) => elm.id == params.id)[0] || allProducts[0];
   return (
     <>
-      <Header2 />
+      <Header4 />
       <div className="tf-breadcrumb">
         <div className="container">
           <div className="tf-breadcrumb-wrap d-flex justify-content-between flex-wrap align-items-center">
@@ -27,17 +27,15 @@ export default function page({ params }) {
                 Home
               </Link>
               <i className="icon icon-arrow-right" />
-
-              <span className="text">{product.title}</span>
+              <span className="text">Product</span>
             </div>
-            <ProductSinglePrevNext currentId={product.id} />
+            {/* <ProductSinglePrevNext currentId={params.id} /> */}
           </div>
         </div>
       </div>
-      <DefaultShopDetailsNoZoom product={product} />
-      <ShopDetailsTab />
-      <Products />
-      <RecentProducts />
+      <OrdinaryProductDetailsClient productId={params.id} />
+      {/* <Products />
+      <RecentProducts /> */}
       <Footer1 />
     </>
   );

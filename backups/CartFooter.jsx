@@ -23,7 +23,6 @@ import {
 import { validateCartItems } from "@/app/helpers/Cartvalidator";
 import toast from "react-hot-toast";
 import handleCheckoutSession from "@/utlis/checkoutSession";
-
 const CartFooter = ({
   cartItems,
   subtotal,
@@ -42,7 +41,7 @@ const CartFooter = ({
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState("");
-  const [discount, setDiscount] = useState(0);
+  const [discount, setDiscount] = useState(0); // 0 or 0.1 (10%)
   const [discountAmount, setDiscountAmount] = useState(0);
   const [discountedTotal, setDiscountedTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("BANK");
@@ -51,7 +50,6 @@ const CartFooter = ({
   const [checkoutSession, { isLoading: sessionLoading, error }] =
     useRazorpayCheckoutSessionMutation();
   const dispatch = useDispatch();
-
   const isFormValid = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
@@ -76,9 +74,9 @@ const CartFooter = ({
       zipCodeRegex.test(trimmedZipCode)
     );
   };
-
   const handleApplyCoupon = (e) => {
     e.preventDefault();
+
     setCouponError("");
 
     if (
@@ -129,15 +127,15 @@ const CartFooter = ({
       currency: "INR",
       itemsPrice: Number(finalTotal.toFixed(2)),
     };
-
     if (!isFormValid() || !cartItems.length) return;
-
     let checkoutData;
     try {
+      // Pass checkoutSession to handleCheckoutSession
       checkoutData = await handleCheckoutSession(orderData, checkoutSession);
       console.log(checkoutData, "checkoutData");
     } catch (error) {
-      return;
+      // Error is already handled in handleCheckoutSession (Swal alert + API call)
+      return; // Exit if checkout fails
     }
 
     const options = {
@@ -150,6 +148,7 @@ const CartFooter = ({
       image:
         "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
       handler: async function (response) {
+        // console.log("Payment successful, verifying with server...", response);
         const fullName = `${formData.firstName} ${formData.lastName}`.trim();
         const paymentData = {
           razorpay_order_id: response.razorpay_order_id,
@@ -158,6 +157,7 @@ const CartFooter = ({
           shippingInfo: {
             ...formData,
             fullName,
+            // email,
           },
           cartItems,
           couponApplied: couponCode || "No",
@@ -173,6 +173,7 @@ const CartFooter = ({
 
           if (serverResponse.success) {
             console.log("Payment verified. Order placed");
+
             Swal.fire({
               icon: "success",
               title: "Order Placed Successfully!",
@@ -188,7 +189,8 @@ const CartFooter = ({
           }
         } catch (error) {
           try {
-            setRetryLoading(true);
+            setRetryLoading(true); // Start loading
+
             const backupPaymentData = {
               ...paymentData,
               userId: user?._id,
@@ -209,6 +211,7 @@ const CartFooter = ({
             const result = await apiResponse.json();
             setRetryLoading(false);
             if (result.success) {
+              setRetryLoading(false);
               console.log("retried");
               Swal.fire({
                 icon: "success",
@@ -264,6 +267,7 @@ const CartFooter = ({
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
+    // console.log(script);
     return () => {
       document.body.removeChild(script);
     };
@@ -284,7 +288,6 @@ const CartFooter = ({
 
   const isAnyLoading =
     isLoading || sessionLoading || webhookLoading || retryLoading;
-
   return (
     <>
       {isAnyLoading && <FullScreenSpinner />}
@@ -314,12 +317,9 @@ const CartFooter = ({
                         <Image
                           style={{ borderRadius: "10px" }}
                           alt="product"
-                          src={elm.image || "/images/placeholder.jpg"}
+                          src={elm.image}
                           width={720}
                           height={1005}
-                          onError={(e) => {
-                            e.target.src = "/images/placeholder.jpg";
-                          }}
                         />
                         <span className="quantity bg-warning">
                           {elm.quantity}
@@ -336,96 +336,88 @@ const CartFooter = ({
                         </span>
                       </div>
                     </div>
-                    {elm.category === "Kids Bags" &&
-                      elm.uploadedImage &&
-                      Array.isArray(elm.uploadedImage) &&
-                      elm.uploadedImage.length > 0 && (
-                        <div
-                          style={{ width: "fit-content", gap: "0" }}
-                          className="checkout-product-item flex-column justify-content-start"
-                        >
-                          <Swiper
-                            modules={[Navigation, Pagination]}
-                            spaceBetween={10}
-                            slidesPerView={1}
-                            navigation={{
-                              prevEl: prevRefs.current[i].current,
-                              nextEl: nextRefs.current[i].current,
-                            }}
-                            onBeforeInit={(swiper) => {
-                              swiper.params.navigation.prevEl =
-                                prevRefs.current[i].current;
-                              swiper.params.navigation.nextEl =
-                                nextRefs.current[i].current;
-                            }}
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                            }}
+                    <div
+                      style={{ width: "fit-content", gap: "0" }}
+                      className="checkout-product-item flex-column justify-content-start"
+                    >
+                      <Swiper
+                        modules={[Navigation, Pagination]}
+                        spaceBetween={10}
+                        slidesPerView={1}
+                        navigation={{
+                          prevEl: prevRefs.current[i].current,
+                          nextEl: nextRefs.current[i].current,
+                        }}
+                        onBeforeInit={(swiper) => {
+                          swiper.params.navigation.prevEl =
+                            prevRefs.current[i].current;
+                          swiper.params.navigation.nextEl =
+                            nextRefs.current[i].current;
+                        }}
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                        }}
+                      >
+                        {elm.uploadedImage.map((url, index) => (
+                          <SwiperSlide
+                            key={index}
+                            className="position-relative border p-1"
                           >
-                            {elm.uploadedImage.map((url, index) => (
-                              <SwiperSlide
-                                key={index}
-                                className="position-relative border p-1"
-                              >
-                                <Image
-                                  src={url}
-                                  alt={`Uploaded image ${index + 1} for ${
-                                    elm.name
-                                  }`}
-                                  width={100}
-                                  height={100}
-                                  className="popover-image"
-                                  style={{
-                                    objectFit: "contain",
-                                    width: "100%",
-                                    height: "100%",
-                                  }}
-                                  onError={(e) => {
-                                    e.target.src = "/images/placeholder.jpg";
-                                  }}
-                                />
-                                <div
-                                  style={{
-                                    fontSize: "10px",
-                                    height: "fit-content",
-                                  }}
-                                  className="position-absolute text-white p-1 rounded-circle top-0 left-0 bg-black bg-opacity-75"
-                                >
-                                  {index + 1}/{elm.uploadedImage.length}
-                                </div>
-                              </SwiperSlide>
-                            ))}
-                            <button
-                              ref={prevRefs.current[i]}
-                              type="button"
-                              role="button"
-                              className="nav-btn prev-btn"
+                            <Image
+                              src={url}
+                              alt={`Uploaded image ${index + 1} for ${
+                                elm.name
+                              }`}
+                              width={100}
+                              height={100}
+                              className="popover-image"
+                              style={{
+                                objectFit: "contain",
+                                width: "100%",
+                                height: "100%",
+                              }}
+                            />
+                            <div
+                              style={{
+                                fontSize: "10px",
+                                height: "fit-content",
+                              }}
+                              className="position-absolute text-white p-1  rounded-circle top-0 left-0 bg-black bg-opacity-75"
                             >
-                              <FontAwesomeIcon
-                                icon={faCircleChevronLeft}
-                                size="sm"
-                              />
-                            </button>
-                            <button
-                              ref={nextRefs.current[i]}
-                              type="button"
-                              role="button"
-                              className="nav-btn next-btn"
-                            >
-                              <FontAwesomeIcon
-                                icon={faCircleChevronRight}
-                                size="sm"
-                              />
-                            </button>
-                          </Swiper>
-                          <div className="content">
-                            <div className="info">
-                              <p className="name ps-2">Uploaded image</p>
+                              {index + 1}/{elm.uploadedImage?.length}
                             </div>
-                          </div>
+                          </SwiperSlide>
+                        ))}
+                        <button
+                          ref={prevRefs.current[i]}
+                          type="button"
+                          role="button"
+                          className="nav-btn prev-btn"
+                        >
+                          <FontAwesomeIcon
+                            icon={faCircleChevronLeft}
+                            size="sm"
+                          />
+                        </button>
+                        <button
+                          ref={nextRefs.current[i]}
+                          type="button"
+                          role="button"
+                          className="nav-btn next-btn"
+                        >
+                          <FontAwesomeIcon
+                            icon={faCircleChevronRight}
+                            size="sm"
+                          />
+                        </button>
+                      </Swiper>
+                      <div className="content">
+                        <div className="info">
+                          <p className="name ps-2">Uploaded image</p>
                         </div>
-                      )}
+                      </div>
+                    </div>
                   </li>
                 );
               })}
@@ -437,7 +429,7 @@ const CartFooter = ({
                   <div className="col-12 fs-18">Your shop cart is empty</div>
                   <div className="col-12 mt-3">
                     <Link
-                      href="/shop-collection-sub"
+                      href={`/shop-collection-sub`}
                       className="tf-btn btn-fill animate-hover-btn radius-3 w-100"
                     >
                       Explore Products!
@@ -477,7 +469,7 @@ const CartFooter = ({
             </div>
 
             <div className="order-summary">
-              <div className="d-flex justify-content-between line py-4">
+              <div className="d-flex justify-content-between line  py-4">
                 <h6 className="fw-5">Subtotal</h6>
                 <h6 className="fw-5">₹{subtotal.toFixed(2)}</h6>
               </div>
@@ -508,6 +500,19 @@ const CartFooter = ({
                 />
                 <label htmlFor="bank">Online transfer</label>
               </div>
+              {/* <div className="fieldset-radio mb_20">
+              <input
+                required
+                type="radio"
+                name="paymentMethod"
+                id="delivery"
+                value="COD"
+                className="tf-check"
+                checked={paymentMethod === "COD"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <label htmlFor="delivery">Cash on delivery</label>
+            </div> */}
             </div>
 
             {!isAuthenticated ? (

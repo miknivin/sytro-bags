@@ -5,6 +5,7 @@ export async function addOrderToSheet(order, user, cartItems) {
     const expectedHeader = [
       "Sr No",
       "Date",
+      "Order _id",
       "Order id",
       "Item Id",
       "Product Name/SKU",
@@ -60,6 +61,8 @@ export async function addOrderToSheet(order, user, cartItems) {
               return "";
             case "Date":
               return currentDate;
+            case "Order _id":
+              return order._id.toString();
             case "Order id":
               return order._id.toString().slice(-6);
             case "Item Id":

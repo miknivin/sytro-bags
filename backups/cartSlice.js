@@ -44,22 +44,10 @@ export const cartSlice = createSlice({
 
       if (isItemExist) {
         state.cartItems = state.cartItems.map((i) =>
-          i.product === isItemExist.product
-            ? {
-                ...i,
-                ...item,
-                ...(item.category === "Kids Bags" && item.uploadedImage
-                  ? { uploadedImage: item.uploadedImage }
-                  : {}),
-              }
-            : i
+          i.product === isItemExist.product ? { ...i, ...item } : i
         );
       } else {
-        state.cartItems.push(
-          item.category === "Kids Bags"
-            ? item
-            : { ...item, uploadedImage: undefined }
-        );
+        state.cartItems.push(item);
       }
 
       saveToLocalStorage("cartItems", state.cartItems);
@@ -72,31 +60,19 @@ export const cartSlice = createSlice({
       );
 
       if (isItemExist) {
-        if (item.category === "Kids Bags") {
-          const uploadedImageCount = Array.isArray(isItemExist.uploadedImage)
-            ? isItemExist.uploadedImage.length
-            : isItemExist.uploadedImage
-            ? 1
-            : 0;
+        const uploadedImageCount = Array.isArray(isItemExist.uploadedImage)
+          ? isItemExist.uploadedImage.length
+          : isItemExist.uploadedImage
+          ? 1
+          : 0;
 
-          if (isItemExist.quantity === uploadedImageCount) {
-            state.cartItems = state.cartItems.map((i) =>
-              i.product === isItemExist.product ? item : i
-            );
-          }
-        } else {
+        if (isItemExist.quantity === uploadedImageCount) {
           state.cartItems = state.cartItems.map((i) =>
-            i.product === isItemExist.product
-              ? { ...item, uploadedImage: undefined }
-              : i
+            i.product === isItemExist.product ? item : i
           );
         }
       } else {
-        state.cartItems.push(
-          item.category === "Kids Bags"
-            ? item
-            : { ...item, uploadedImage: undefined }
-        );
+        state.cartItems.push(item);
       }
 
       saveToLocalStorage("cartItems", state.cartItems);
@@ -106,9 +82,11 @@ export const cartSlice = createSlice({
       const productId = action.payload;
       state.cartItems = state.cartItems.filter((i) => i.product !== productId);
       delete state.uploadedImages[productId];
+      // delete state.selectedDesigns[productId];
 
       saveToLocalStorage("cartItems", state.cartItems);
       saveToLocalStorage("uploadedImages", state.uploadedImages);
+      // saveToLocalStorage("selectedDesigns", state.selectedDesigns);
     },
 
     saveShippingInfo: (state, action) => {
@@ -177,12 +155,14 @@ export const cartSlice = createSlice({
       saveToLocalStorage("uploadedImages", state.uploadedImages);
     },
 
+    // New reducer to remove a specific image from the array
     removeUploadedImage: (state, action) => {
       const { productId, imageIndex } = action.payload;
       if (state.uploadedImages[productId]) {
         state.uploadedImages[productId] = state.uploadedImages[
           productId
         ].filter((_, index) => index !== imageIndex);
+        // Clean up if array becomes empty
         if (state.uploadedImages[productId].length === 0) {
           delete state.uploadedImages[productId];
         }
@@ -194,15 +174,11 @@ export const cartSlice = createSlice({
       state.cartItems = state.cartItems.map((item) => ({
         ...item,
         selectedDesign: state.selectedDesigns[item.product] || null,
-        uploadedImages:
-          item.category === "Kids Bags"
-            ? state.uploadedImages[item.product] || []
-            : undefined,
+        uploadedImages: state.uploadedImages[item.product] || [],
       }));
 
       saveToLocalStorage("cartItems", state.cartItems);
     },
-
     setQuantityChange: (state, action) => {
       const { isIncreasing } = action.payload;
       state.quantityChange = {
@@ -211,7 +187,6 @@ export const cartSlice = createSlice({
       };
       saveToLocalStorage("quantityChange", state.quantityChange);
     },
-
     removeCartItemUploadedImage: (state, action) => {
       const { productId, imageIndex } = action.payload;
       const cartItem = state.cartItems.find(

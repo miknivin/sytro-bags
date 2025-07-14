@@ -34,7 +34,10 @@ export default function MobileMenu() {
           ...products.map((product) => ({
             id: product._id,
             label: product.name,
-            href: `/product-detail/${product._id}`,
+            href:
+              product.category !== "Kids Bags"
+                ? `/product-no-zoom/${product._id}`
+                : `/product-detail/${product._id}`,
           })),
         ],
       };

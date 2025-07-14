@@ -56,6 +56,7 @@ export default function DetailsOuterZoom({ product }) {
     const cartItem = {
       product: product?._id,
       name: product?.name,
+      category:product?.category || "Kids Bags",
       price: product?.offer,
       image: product?.images[0]?.url,
       stock: product?.stock,

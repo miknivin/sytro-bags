@@ -12,7 +12,7 @@ import "swiper/css/pagination";
 
 export default function GoogleReviews({ isTitle = true }) {
   const { data: reviewsData, isLoading, error } = useGoogleReviewsQuery();
-
+  
   if (isLoading) {
     return <div className=" text-center">Loading reviews...</div>;
   }
@@ -30,7 +30,7 @@ export default function GoogleReviews({ isTitle = true }) {
       className="flat-spacing-5 pt_0 flat-testimonial"
       style={{ maxWidth: "100vw", overflow: "hidden" }}
     >
-      <div style={{ padding: "0 20px" }} className="container px-2.5">
+      <div className="container px-md-5">
         {isTitle && (
           <div
             className="flat-title wow fadeInUp mx-auto pb-5"
@@ -46,7 +46,7 @@ export default function GoogleReviews({ isTitle = true }) {
             <div className="d-flex align-items-start justify-content-center">
               <p
                 style={{ marginTop: "-24px" }}
-                className="sub-title text-start fs-5"
+                className="sub-title text-start fs-5 d-flex flex-wrap"
               >
                 {totalRating.toFixed(1)} / 5
                 <span className="rating ms-2 d-inline-block">

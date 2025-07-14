@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import userReducer from "./features/userSlice";
 import cartReducer from "./features/cartSlice";
-
+import ordinaryCartReducer from "./features/ordinaryCartSlice";
 import { productApi } from "./api/productsApi";
 import { authApi } from "./api/authApi";
 import { userApi } from "./api/userApi";
@@ -16,6 +16,7 @@ export const store = configureStore({
   reducer: {
     auth: userReducer,
     cart: cartReducer,
+    ordinaryCart: ordinaryCartReducer,
     product: productsReducer,
     customBag: customBagReducer,
     [productApi.reducerPath]: productApi.reducer,
@@ -32,6 +33,6 @@ export const store = configureStore({
       userApi.middleware,
       orderApi.middleware,
       websiteSettingsApi.middleware,
-      multipartApi.middleware
+      multipartApi.middleware,
     ]),
 });

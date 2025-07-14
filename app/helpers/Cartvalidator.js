@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 
 export const validateCartItems = (cartItems) => {
   const mismatchedItems = cartItems.filter((item) => {
+  if (item.category !== "Kids Bags") return false;
     const uploadedImageArray = Array.isArray(item.uploadedImage)
       ? item.uploadedImage
       : item.uploadedImage

@@ -3,10 +3,11 @@ import Order from "@/models/Order";
 import { isAuthenticatedUser } from "@/middlewares/auth";
 import dbConnect from "@/lib/db/connection";
 import User from "@/models/User";
-
+import Product from "@/models/Products";
 export async function GET(req) {
   try {
     User;
+    Product;
     await dbConnect();
 
     const user = await isAuthenticatedUser(req);

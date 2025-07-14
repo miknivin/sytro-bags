@@ -6,7 +6,9 @@ export async function GET(req) {
   try {
     await dbConnect();
 
-    const filteredProducts = await products.find().select("name images offer");
+    const filteredProducts = await products
+      .find()
+      .select("name images offer category");
 
     return NextResponse.json(
       {

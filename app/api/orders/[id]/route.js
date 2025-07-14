@@ -9,6 +9,10 @@ import SessionStartedOrder from "@/models/SessionStartedOrder";
 
 export async function GET(req, { params }) {
   try {
+    User;
+    Product;
+    SessionStartedOrder;
+    ShipRocketToken;
     await dbConnect();
 
     const user = await isAuthenticatedUser(req);

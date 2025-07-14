@@ -3,12 +3,23 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useContextElement } from "@/context/Context";
-
 import { setSingleProductForQuickAdd } from "@/redux/features/productSlice";
 import { useDispatch } from "react-redux";
+
+// Utility function to replace S3 URL with CloudFront URL
+const getCloudFrontUrl = (s3Url) => {
+  const cloudFrontDomain =
+    process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN ||
+    "https://d229x2i5qj11ya.cloudfront.net";
+  if (!s3Url) return s3Url; // Return original if undefined or null
+  return s3Url.replace(/https:\/\/[^/]+/, cloudFrontDomain);
+};
+
 export const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
-  const [currentImage, setCurrentImage] = useState(product.imgSrc);
+  const [currentImage, setCurrentImage] = useState(
+    getCloudFrontUrl(product?.images[0]?.url)
+  );
   const { setQuickViewItem } = useContextElement();
   const {
     setQuickAddItem,
@@ -17,17 +28,25 @@ export const ProductCard = ({ product }) => {
     addToCompareItem,
     isAddedtoCompareItem,
   } = useContextElement();
+
   useEffect(() => {
-    setCurrentImage(product?.images[0]?.url);
+    setCurrentImage(getCloudFrontUrl(product?.images[0]?.url));
   }, [product]);
 
   return (
     <div className="card-product fl-item" key={product._id}>
       <div className="card-product-wrapper">
-        <Link href={`/product-detail/${product._id}`} className="product-img">
+        <Link
+          href={
+            product.category !== "Kids Bags"
+              ? `/product-no-zoom/${product._id}`
+              : `/product-detail/${product._id}`
+          }
+          className="product-img"
+        >
           <Image
             className="lazyload img-product"
-            data-src={product?.images[0]?.url}
+            data-src={getCloudFrontUrl(product?.images[0]?.url)}
             src={currentImage}
             alt="image-product"
             width={720}
@@ -35,16 +54,16 @@ export const ProductCard = ({ product }) => {
           />
           <Image
             className="lazyload img-hover"
-            data-src={
+            data-src={getCloudFrontUrl(
               product?.images[1]?.url
                 ? product?.images[1]?.url
                 : product?.images[0]?.url
-            }
-            src={
+            )}
+            src={getCloudFrontUrl(
               product?.images[1]?.url
                 ? product?.images[1]?.url
                 : product?.images[0]?.url
-            }
+            )}
             alt="image-product"
             width={720}
             height={1005}
@@ -102,8 +121,11 @@ export const ProductCard = ({ product }) => {
             <span className="icon icon-check" />
           </a> */}
           <Link
-            href={`/product-detail/${product._id}`}
-            // onClick={() => setQuickViewItem(product)}
+            href={
+              product.category !== "Kids Bags"
+                ? `/product-no-zoom/${product._id}`
+                : `/product-detail/${product._id}`
+            }
             className="box-icon bg_white quickview tf-btn-loading"
           >
             <span className="icon icon-view" />
@@ -126,7 +148,14 @@ export const ProductCard = ({ product }) => {
         )} */}
       </div>
       <div className="card-product-info">
-        <Link href={`/product-detail/${product._id}`} className="title link">
+        <Link
+          href={
+            product.category !== "Kids Bags"
+              ? `/product-no-zoom/${product._id}`
+              : `/product-detail/${product._id}`
+          }
+          className="title link"
+        >
           {product.name}
         </Link>
         <span className="price">₹ {product.offer.toFixed(2)}</span>
@@ -135,17 +164,17 @@ export const ProductCard = ({ product }) => {
             {product.colors.map((color) => (
               <li
                 className={`list-color-item color-swatch ${
-                  currentImage == color.imgSrc ? "active" : ""
+                  currentImage == getCloudFrontUrl(color.imgSrc) ? "active" : ""
                 } `}
                 key={color.name}
-                onMouseOver={() => setCurrentImage(color.imgSrc)}
+                onMouseOver={() => setCurrentImage(getCloudFrontUrl(color.imgSrc))}
               >
                 <span className="tooltip">{color.name}</span>
                 <span className={`swatch-value ${color.colorClass}`} />
                 <Image
                   className="lazyload"
-                  data-src={color.imgSrc}
-                  src={color.imgSrc}
+                  data-src={getCloudFrontUrl(color.imgSrc)}
+                  src={getCloudFrontUrl(color.imgSrc)}
                   alt="image-product"
                   width={720}
                   height={1005}

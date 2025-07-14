@@ -4,44 +4,103 @@ import { useGetProductsQuery } from "@/redux/api/productsApi";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setProducts } from "@/redux/features/productSlice";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+
+export const categories = [
+  "Kids Bags",
+  "gym_duffle_bag",
+  // "travel_duffle_bag",
+  "mens_sling_bag",
+  "womens_sling_bag",
+  "mens_backpack",
+  "laptop_backpack",
+  "ladies_backpack",
+  // "womens_backpack",
+  // "laptop_messenger_bag",
+  // "trekking_bag",
+  "tote_bag",
+  // "women_shoulder_bag",
+];
+
+const formatCategory = (category) =>
+  category
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 
 export default function Products() {
   const [page, setPage] = useState(1);
   const [allProducts, setAllProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const dispatch = useDispatch();
   const observerRef = useRef(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { data, error, isLoading, isFetching } = useGetProductsQuery({
     resPerPage: 8,
     page,
+    ...(selectedCategory && { category: selectedCategory }),
   });
-
-  //console.log("API Response:", { data, error, isLoading, isFetching, page });
 
   const filteredProductsCount = data?.filteredProductsCount || 0;
   const totalPages = Math.ceil(filteredProductsCount / 8) || 1;
   const products = data?.filteredProducts || [];
 
-  // Update products only when new unique data arrives
+  // Handle category change from URL
+  useEffect(() => {
+    const categoryFromQuery = searchParams.get("category");
+    if (categoryFromQuery && categories.includes(categoryFromQuery)) {
+      setSelectedCategory(categoryFromQuery);
+    } else {
+      setSelectedCategory(null);
+    }
+  }, [searchParams]);
+
+  // Reset page and products when category changes
+  useEffect(() => {
+    setPage(1);
+    setAllProducts([]);
+  }, [selectedCategory]);
+
+  // Update products state
   useEffect(() => {
     if (products.length > 0) {
       setAllProducts((prev) => {
-        // Filter out duplicates by _id
+        // If it's the first page or category changed, replace the products
+        if (page === 1) {
+          return [...products];
+        }
+
+        // For subsequent pages, merge and filter duplicates
         const newProducts = products.filter(
           (p) => !prev.some((existing) => existing._id === p._id)
         );
-        const updatedProducts = [...prev, ...newProducts];
-        // console.log(
-        //   "New Products Added:",
-        //   updatedProducts.length,
-        //   "Page:",
-        //   page
-        // );
-        dispatch(setProducts(updatedProducts));
-        return updatedProducts;
+        return [...prev, ...newProducts];
       });
     }
-  }, [data, dispatch, page]); // Added page to dependencies
+  }, [products, page]);
+
+  // Dispatch products to Redux
+  useEffect(() => {
+    dispatch(setProducts(allProducts));
+  }, [allProducts, dispatch]);
+
+  // Handle category selection
+  const handleCategorySelect = (category) => {
+    const newSelectedCategory = category === selectedCategory ? null : category;
+    setSelectedCategory(newSelectedCategory);
+
+    // Update URL
+    const params = new URLSearchParams(searchParams.toString());
+    if (newSelectedCategory) {
+      params.set("category", newSelectedCategory);
+    } else {
+      params.delete("category");
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // Infinite scroll observer
   useEffect(() => {
@@ -50,7 +109,6 @@ export default function Products() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !isFetching) {
-          // console.log("Observer Triggered, Loading Page:", page + 1);
           setPage((prev) => prev + 1);
         }
       },
@@ -72,7 +130,7 @@ export default function Products() {
   return (
     <section className="flat-spacing-6">
       <div className="container">
-        <div className="flat-title mb_1 gap-14">
+        <div className="flat-title mb_1 gap-14 text-center">
           <span className="title wow fadeInUp" data-wow-delay="0s">
             Where Quality Meets Innovation
           </span>
@@ -80,11 +138,35 @@ export default function Products() {
             Crafting excellence into every stitch since 1995
           </p>
         </div>
-
-        {isLoading && page === 1 ? (
+        <div className="mb-4 d-flex flex-nowrap flex-md-wrap overflow-x-auto gap-2 justify-content-start justify-content-md-center">
+          <button
+            className={`btn btn-sm rounded-pill category-pill white-space-no-break me-2 mb-2 ${
+              selectedCategory === null
+                ? "btn-warning"
+                : "btn-outline-secondary"
+            }`}
+            onClick={() => handleCategorySelect(null)}
+          >
+            All
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={`btn btn-sm rounded-pill category-pill white-space-no-wrap me-2 mb-2 ${
+                selectedCategory === category
+                  ? "btn-warning"
+                  : "btn-outline-secondary"
+              }`}
+              onClick={() => handleCategorySelect(category)}
+            >
+              {formatCategory(category)}
+            </button>
+          ))}
+        </div>
+        {(isLoading || isFetching) && page === 1 ? (
           <div className="text-center">
-            <div class="spinner-border text-warning" role="status">
-              <span class="visually-hidden">Loading...</span>
+            <div className="spinner-border text-warning" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
           </div>
         ) : error ? (
@@ -103,8 +185,8 @@ export default function Products() {
 
               {isFetching && page > 1 && (
                 <div className="text-center mt-4">
-                  <div class="spinner-border text-warning" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                  <div className="spinner-border text-warning" role="status">
+                    <span className="visually-hidden">Loading...</span>
                   </div>
                 </div>
               )}
@@ -116,10 +198,7 @@ export default function Products() {
                     marginTop: "20px",
                     background: "transparent",
                   }}
-                >
-                  {/* Visible for debugging, can be hidden */}
-                  {isFetching ? "" : "Scroll to load more"}
-                </div>
+                />
               )}
             </div>
           </>

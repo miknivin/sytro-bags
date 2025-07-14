@@ -36,7 +36,7 @@ export default function OrderDetails() {
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, 
+      hour12: false,
     }).format(date);
   };
 
@@ -262,21 +262,23 @@ export default function OrderDetails() {
                           item.quantity > 1 ? ` * ${item.quantity}` : ""
                         }`}
                       </div>
-                      <div className="">
-                        <button
-                          style={{ textDecoration: "underline" }}
-                          onClick={() =>
-                            openModal(
-                              Array.isArray(item.uploadedImage)
-                                ? item.uploadedImage
-                                : [item.uploadedImage]
-                            )
-                          }
-                          className="fw-6 border-0 text-brand-primary bg-transparent"
-                        >
-                          Uploaded image
-                        </button>
-                      </div>
+                      {item.uploadedImage && item.uploadedImage.length > 0 && (
+                        <div>
+                          <button
+                            style={{ textDecoration: "underline" }}
+                            onClick={() =>
+                              openModal(
+                                Array.isArray(item.uploadedImage)
+                                  ? item.uploadedImage
+                                  : [item.uploadedImage]
+                              )
+                            }
+                            className="fw-6 border-0 text-brand-primary bg-transparent"
+                          >
+                            Uploaded image
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

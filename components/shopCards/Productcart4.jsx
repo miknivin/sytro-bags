@@ -27,14 +27,7 @@ export const replaceS3WithCloudFront = (url) => {
 
 export default function Productcard4({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
-  const { setQuickViewItem } = useContextElement();
-  const {
-    setQuickAddItem,
-    addToWishlist,
-    isAddedtoWishlist,
-    addToCompareItem,
-    isAddedtoCompareItem,
-  } = useContextElement();
+
   useEffect(() => {
     setCurrentImage(product.imgSrc);
   }, [product]);
@@ -43,7 +36,14 @@ export default function Productcard4({ product }) {
     <div className="card-product style-4 fl-item p-2 border" key={product._id}>
       <div className="card-product-wrapper">
         {product.images && product.images.length > 1 && (
-          <Link href={`/product-detail/${product._id}`} className="product-img">
+          <Link
+            href={
+              product.category !== "Kids Bags"
+                ? `/product-no-zoom/${product._id}`
+                : `/product-detail/${product._id}`
+            }
+            className="product-img"
+          >
             <Image
               className="lazyload img-product bg-light"
               data-src={
@@ -113,8 +113,11 @@ export default function Productcard4({ product }) {
             <span className="icon icon-check"></span>
           </a> */}
           <Link
-            href={`/product-detail/${product._id}`}
-            onClick={() => setQuickViewItem(product)}
+            href={
+              product.category !== "Kids Bags"
+                ? `/product-no-zoom/${product._id}`
+                : `/product-detail/${product._id}`
+            }
             // data-bs-toggle="modal"
             className="box-icon bg_white quickview tf-btn-loading round"
           >
@@ -152,7 +155,9 @@ export default function Productcard4({ product }) {
         )} */}
       </div>
       <div className="card-product-info">
-        <Link href={`/product-detail/${product._id}`} className="title link">
+        <Link href={ product.category !== "Kids Bags"
+                ? `/product-no-zoom/${product._id}`
+                : `/product-detail/${product._id}`} className="title link">
           {product.name}
         </Link>
         <span className="price">₹{product.offer.toFixed(2)}</span>

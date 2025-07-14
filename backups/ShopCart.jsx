@@ -12,6 +12,7 @@ import {
 } from "@/redux/features/cartSlice";
 import { resetSingleProduct } from "@/redux/features/productSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { useRouter, usePathname } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -19,7 +20,6 @@ import {
   faCircleChevronLeft,
   faCircleChevronRight,
   faTrash,
-  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { useUploadKidsImageMutation } from "@/redux/api/orderApi";
@@ -30,6 +30,7 @@ import {
   useInitiateMultipartUploadMutation,
 } from "@/redux/api/multipartApi";
 import { uploadMultipartFile } from "@/utlis/uploadMultipart";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export default function ShopCart() {
   const [showPopover, setShowPopover] = useState(false);
@@ -53,7 +54,6 @@ export default function ShopCart() {
   const [abortMultipartUpload] = useAbortMultipartUploadMutation();
 
   const [showUploadInput, setShowUploadInput] = useState({});
-
   const handlePopoverToggle = (productId, uploadedImage) => {
     setPopoverStates((prev) => ({
       ...prev,
@@ -75,6 +75,7 @@ export default function ShopCart() {
       [productId]: false,
     }));
   };
+  //console.log(cartItems);
 
   const handleClick = () => {
     if (isQuantityValid()) {
@@ -87,13 +88,11 @@ export default function ShopCart() {
       }
     } else {
       const mismatchedItems = cartItems.filter(
-        (item) =>
-          item.category === "Kids Bags" &&
-          item.quantity !== (imageUrls[item.product]?.length || 0)
+        (item) => item.quantity !== (imageUrls[item.product]?.length || 0)
       );
       const productNames = mismatchedItems.map((item) => item.name).join(", ");
       toast.error(
-        `These Kids Bags products have mismatched image with quantity: ${productNames}`
+        `These products have mismatched image with quantity: ${productNames}`
       );
       console.log("Mismatched items:", mismatchedItems);
     }
@@ -102,7 +101,6 @@ export default function ShopCart() {
   const isQuantityValid = () => {
     if (cartItems.length === 0) return false;
     return cartItems.every((item) => {
-      if (item.category !== "Kids Bags") return true; // Skip validation for non-Kids Bags
       const imageCount = imageUrls[item.product]?.length || 0;
       return item.quantity === imageCount;
     });
@@ -117,19 +115,14 @@ export default function ShopCart() {
     );
     decreaseQuantity(cartItem, productId);
   };
-
   useEffect(() => {
     const updatedImageUrls = {};
     cartItems.forEach((item) => {
-      if (item.category === "Kids Bags") {
-        updatedImageUrls[item.product] = item.uploadedImage || [];
-      }
+      updatedImageUrls[item.product] = item.uploadedImage || [];
     });
     setImageUrls(updatedImageUrls);
   }, [cartItems]);
-
   const isShopCollectionSub = pathname?.includes("/shop-collection-sub");
-
   useEffect(() => {
     const newSubtotal = cartItems.reduce((total, item) => {
       const price = Number(item.price) || 0;
@@ -144,27 +137,22 @@ export default function ShopCart() {
     const modalInstance = modalRef.current?.modalInstance;
 
     if (modalInstance) {
-      modalInstance.hide();
-      router.push("/shop-collection-sub");
+      modalInstance.hide(); // Close the modal
+      router.push("/shop-collection-sub"); // Navigate after closing
     }
   };
-
   const increaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) + 1;
-    if (cartItem.category === "Kids Bags") {
-      const imageCount = imageUrls[cartItem.product]?.length || 0;
-      if (imageCount < newQuantity) {
-        setShowUploadInput((prev) => ({
-          ...prev,
-          [id]: true,
-        }));
-        updateQuantity(cartItem, id, newQuantity);
-        setTimeout(() => {
-          fileInputRefs.current[id]?.click();
-        }, 100);
-      } else {
-        updateQuantity(cartItem, id, newQuantity);
-      }
+    const imageCount = imageUrls[cartItem.product]?.length || 0;
+    if (imageCount < newQuantity) {
+      setShowUploadInput((prev) => ({
+        ...prev,
+        [id]: true,
+      }));
+      updateQuantity(cartItem, id, newQuantity);
+      setTimeout(() => {
+        fileInputRefs.current[id]?.click();
+      }, 100);
     } else {
       updateQuantity(cartItem, id, newQuantity);
     }
@@ -227,6 +215,7 @@ export default function ShopCart() {
           (async () => {
             let publicUrl;
             if (file.size > multipartThreshold) {
+              // Use multipart upload for files > 5MB and <= 25MB
               try {
                 publicUrl = await uploadMultipartFile(
                   file,
@@ -242,6 +231,7 @@ export default function ShopCart() {
                 );
               }
             } else {
+              // Use single-part upload for files <= 5MB
               const uploadResponse = await fetch(
                 presignedUrls[i].presignedUrl,
                 {
@@ -324,16 +314,13 @@ export default function ShopCart() {
   const decreaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) - 1;
     if (newQuantity >= 1) {
-      if (cartItem.category === "Kids Bags") {
-        const updatedUploadedImage = imageUrls[cartItem.product]
-          ? imageUrls[cartItem.product].length > newQuantity
-            ? imageUrls[cartItem.product].slice(0, newQuantity)
-            : imageUrls[cartItem.product]
-          : [];
-        updateQuantity(cartItem, id, newQuantity, updatedUploadedImage);
-      } else {
-        updateQuantity(cartItem, id, newQuantity);
-      }
+      const updatedUploadedImage = imageUrls[cartItem.product]
+        ? imageUrls[cartItem.product].length > newQuantity
+          ? imageUrls[cartItem.product].slice(0, newQuantity)
+          : imageUrls[cartItem.product]
+        : [];
+
+      updateQuantity(cartItem, id, newQuantity, updatedUploadedImage);
     }
   };
 
@@ -351,9 +338,7 @@ export default function ShopCart() {
       stock: item?.stock || 0,
       quantity: safeQuantity,
       offer: item?.offer || 0,
-      ...(item.category === "Kids Bags" && uploadedImage
-        ? { uploadedImage }
-        : {}),
+      uploadedImage: uploadedImage || item?.uploadedImage || [], // Include updatedUploadedImage or fallback to existing
     };
     dispatch(updateCartItem(cartItem));
   };
@@ -416,180 +401,171 @@ export default function ShopCart() {
                               2
                             )}
                           </div>
-                          {elm.category === "Kids Bags" && (
-                            <>
-                              <div className="popover-container">
-                                <button
-                                  type="button"
-                                  className="popover-button text-decoration-underline"
-                                  onClick={() =>
-                                    handlePopoverToggle(
-                                      elm.product,
-                                      elm.uploadedImage
-                                    )
-                                  }
+                          <div className="popover-container">
+                            <button
+                              type="button"
+                              className="popover-button text-decoration-underline"
+                              onClick={() =>
+                                handlePopoverToggle(
+                                  elm.product,
+                                  elm.uploadedImage
+                                )
+                              }
+                              // onBlur={() => handleClosePopover(elm.product)} // Close on blur
+                            >
+                              Uploaded image(s)
+                            </button>
+
+                            {popoverStates[elm.product] &&
+                              imageUrls[elm.product] &&
+                              imageUrls[elm.product].length > 0 && (
+                                <div
+                                  className="popover-content "
+                                  data-placement="bottom"
                                 >
-                                  Uploaded image(s)
-                                </button>
-
-                                {popoverStates[elm.product] &&
-                                  imageUrls[elm.product] &&
-                                  imageUrls[elm.product].length > 0 && (
-                                    <div
-                                      className="popover-content"
-                                      data-placement="bottom"
+                                  <div className="position-relative">
+                                    <Swiper
+                                      modules={[Navigation, Pagination]}
+                                      spaceBetween={10}
+                                      slidesPerView={1}
+                                      navigation={{
+                                        prevEl: prevRef.current,
+                                        nextEl: nextRef.current,
+                                      }}
+                                      onBeforeInit={(swiper) => {
+                                        swiper.params.navigation.prevEl =
+                                          prevRef.current;
+                                        swiper.params.navigation.nextEl =
+                                          nextRef.current;
+                                      }}
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                      }}
                                     >
-                                      <div className="position-relative">
-                                        <Swiper
-                                          modules={[Navigation, Pagination]}
-                                          spaceBetween={10}
-                                          slidesPerView={1}
-                                          navigation={{
-                                            prevEl: prevRef.current,
-                                            nextEl: nextRef.current,
-                                          }}
-                                          onBeforeInit={(swiper) => {
-                                            swiper.params.navigation.prevEl =
-                                              prevRef.current;
-                                            swiper.params.navigation.nextEl =
-                                              nextRef.current;
-                                          }}
-                                          style={{
-                                            width: "100px",
-                                            height: "100px",
-                                          }}
-                                        >
-                                          {imageUrls[elm.product].map(
-                                            (url, index) => (
-                                              <SwiperSlide
-                                                key={index}
-                                                className="position-relative"
+                                      {imageUrls[elm.product].map(
+                                        (url, index) => (
+                                          <SwiperSlide
+                                            key={index}
+                                            className="position-relative"
+                                          >
+                                            <Image
+                                              src={url}
+                                              alt={`Uploaded image ${
+                                                index + 1
+                                              } for ${elm.name}`}
+                                              width={100}
+                                              height={100}
+                                              className="popover-image"
+                                              style={{
+                                                objectFit: "contain",
+                                                width: "100%",
+                                                height: "100%",
+                                              }}
+                                            />
+                                            <div
+                                              style={{
+                                                fontSize: "10px",
+                                                height: "fit-content",
+                                              }}
+                                              className="position-absolute text-white p-1  rounded-circle top-0 left-0 bg-black bg-opacity-75"
+                                            >
+                                              {index + 1}/
+                                              {imageUrls[elm.product]?.length}
+                                            </div>
+                                            {imageUrls[elm.product].length >
+                                              1 && (
+                                              <button
+                                                style={{
+                                                  fontSize: "10px",
+                                                  left: "40%",
+                                                }}
+                                                onClick={() =>
+                                                  handleRemoveImage(
+                                                    elm.product,
+                                                    elm,
+                                                    index
+                                                  )
+                                                }
+                                                className="position-absolute border-0 bg-opacity-75 text-white p-1 rounded-circle bottom-0 bg-danger"
                                               >
-                                                <Image
-                                                  src={url}
-                                                  alt={`Uploaded image ${
-                                                    index + 1
-                                                  } for ${elm.name}`}
-                                                  width={100}
-                                                  height={100}
-                                                  className="popover-image"
-                                                  style={{
-                                                    objectFit: "contain",
-                                                    width: "100%",
-                                                    height: "100%",
-                                                  }}
+                                                <FontAwesomeIcon
+                                                  style={{ color: "white" }}
+                                                  icon={faTrash}
                                                 />
-                                                <div
-                                                  style={{
-                                                    fontSize: "10px",
-                                                    height: "fit-content",
-                                                  }}
-                                                  className="position-absolute text-white p-1 rounded-circle top-0 left-0 bg-black bg-opacity-75"
-                                                >
-                                                  {index + 1}/
-                                                  {
-                                                    imageUrls[elm.product]
-                                                      ?.length
-                                                  }
-                                                </div>
-                                                {imageUrls[elm.product].length >
-                                                  1 && (
-                                                  <button
-                                                    style={{
-                                                      fontSize: "10px",
-                                                      left: "40%",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleRemoveImage(
-                                                        elm.product,
-                                                        elm,
-                                                        index
-                                                      )
-                                                    }
-                                                    className="position-absolute border-0 bg-opacity-75 text-white p-1 rounded-circle bottom-0 bg-danger"
-                                                  >
-                                                    <FontAwesomeIcon
-                                                      style={{ color: "white" }}
-                                                      icon={faTrash}
-                                                    />
-                                                  </button>
-                                                )}
-                                              </SwiperSlide>
-                                            )
-                                          )}
-                                          <button
-                                            ref={prevRef}
-                                            className="nav-btn prev-btn"
-                                          >
-                                            <FontAwesomeIcon
-                                              icon={faCircleChevronLeft}
-                                              size="sm"
-                                            />
-                                          </button>
-                                          <button
-                                            ref={nextRef}
-                                            className="nav-btn next-btn"
-                                          >
-                                            <FontAwesomeIcon
-                                              icon={faCircleChevronRight}
-                                              size="sm"
-                                            />
-                                          </button>
-                                        </Swiper>
-                                      </div>
-
+                                              </button>
+                                            )}
+                                          </SwiperSlide>
+                                        )
+                                      )}
                                       <button
-                                        type="button"
-                                        style={{ zIndex: 999 }}
-                                        className="popover-close-button"
-                                        onClick={() =>
-                                          handleClosePopover(elm.product)
-                                        }
+                                        ref={prevRef}
+                                        className="nav-btn prev-btn"
                                       >
                                         <FontAwesomeIcon
-                                          icon={faTimes}
-                                          size="xs"
+                                          icon={faCircleChevronLeft}
+                                          size="sm"
                                         />
                                       </button>
-                                    </div>
-                                  )}
-                              </div>
-                              {imageUrls[elm.product]?.length !==
-                                elm.quantity && (
-                                <div className="upload-input-container">
-                                  {isLoading ? (
-                                    <div
-                                      className="spinner-border spinner-border-sm text-primary"
-                                      role="status"
-                                    >
-                                      <span className="visually-hidden">
-                                        Uploading...
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <input
-                                      type="file"
-                                      className="form-control form-control-sm"
-                                      accept="image/*"
-                                      multiple
-                                      ref={(el) => {
-                                        if (el)
-                                          fileInputRefs.current[elm.product] =
-                                            el;
-                                      }}
-                                      onChange={(e) =>
-                                        handleFileUpload(
-                                          e,
-                                          elm.product,
-                                          elm.quantity,
-                                          imageUrls[elm.product]?.length || 0
-                                        )
-                                      }
-                                    />
-                                  )}
+                                      <button
+                                        ref={nextRef}
+                                        className="nav-btn next-btn"
+                                      >
+                                        <FontAwesomeIcon
+                                          icon={faCircleChevronRight}
+                                          size="sm"
+                                        />
+                                      </button>
+                                    </Swiper>
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    style={{ zIndex: 999 }}
+                                    className="popover-close-button"
+                                    onClick={() =>
+                                      handleClosePopover(elm.product)
+                                    }
+                                  >
+                                    <FontAwesomeIcon icon={faTimes} size="xs" />
+                                  </button>
                                 </div>
                               )}
-                            </>
+                          </div>
+                          {imageUrls[elm.product]?.length !== elm.quantity && (
+                            <div className="upload-input-container">
+                              <div className="upload-input-container">
+                                {isLoading ? (
+                                  <div
+                                    className="spinner-border spinner-border-sm text-primary"
+                                    role="status"
+                                  >
+                                    <span className="visually-hidden">
+                                      Uploading...
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <input
+                                    type="file"
+                                    className="form-control form-control-sm"
+                                    accept="image/*"
+                                    multiple
+                                    ref={(el) => {
+                                      if (el)
+                                        fileInputRefs.current[elm.product] = el;
+                                    }}
+                                    onChange={(e) =>
+                                      handleFileUpload(
+                                        e,
+                                        elm.product,
+                                        elm.quantity,
+                                        imageUrls[elm.product]?.length || 0
+                                      )
+                                    }
+                                  />
+                                )}
+                              </div>
+                            </div>
                           )}
                           <div className="tf-mini-cart-btns">
                             <div className="wg-quantity small">
@@ -685,16 +661,14 @@ export default function ShopCart() {
                     ) : cartItems.length > 0 ? (
                       <>
                         <span className="text-danger">
-                          These Kids Bags products have mismatched image with
-                          quantity:
+                          These products have mismatched image with quantity:
                         </span>
                         <ul className="text-danger">
                           {cartItems
                             .filter(
                               (item) =>
-                                item.category === "Kids Bags" &&
                                 item.quantity !==
-                                  (imageUrls[item.product]?.length || 0)
+                                (imageUrls[item.product]?.length || 0)
                             )
                             .map((item, index) => (
                               <li key={index}>

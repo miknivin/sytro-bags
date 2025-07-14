@@ -10,7 +10,7 @@ const tabs = [
   // { title: "Return Polocies", active: false },
 ];
 
-export default function ShopDetailsTab({details}) {
+export default function ShopDetailsTab({ details }) {
   const [currentTab, setCurrentTab] = useState(1);
 
   return (
@@ -31,7 +31,7 @@ export default function ShopDetailsTab({details}) {
                       currentTab == i + 1 ? "active" : ""
                     } `}
                   >
-                    <span className="inner">{elm.title}</span>
+                    <span className="inner">{elm?.title}</span>
                   </li>
                 ))}
               </ul>
@@ -42,9 +42,7 @@ export default function ShopDetailsTab({details}) {
                   } `}
                 >
                   <div className="">
-                    <p className="mb_30">
-                      {details.description}
-                    </p>
+                    <p className="mb_30">{details?.description}</p>
                     <div className="tf-product-des-demo">
                       <div className="right">
                         <h3 className="fs-16 fw-5">Features</h3>
@@ -77,7 +75,7 @@ export default function ShopDetailsTab({details}) {
                     currentTab == 2 ? "active" : ""
                   } `}
                 >
-                  <Testimonials isTitle={false}/>
+                  <Testimonials isTitle={false} />
                 </div>
                 <div
                   className={`widget-content-inner ${
