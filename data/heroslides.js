@@ -76,8 +76,41 @@ export const slides2 = [
 export const slides3 = [
   {
     imgSrc:
+      "https://ik.imagekit.io/c1jhxlxiy/banner-backpack.jpg?updatedAt=1752560591447",
+    alt: "backpacks",
+    link: "/shop-collection-sub/mens_backpack",
+    heading: "Engineered for the Urban Explorer",
+    subheading: "TRAVEL COLLECTION",
+    shortDescription:
+      "Showcasing premium travel bags that adapt to your journey",
+  },
+
+  {
+    imgSrc:
+      "https://ik.imagekit.io/c1jhxlxiy/gym%20bag.jpg?updatedAt=1752560718222",
+    alt: "gym duffle bags",
+    link: "/shop-collection-sub/gym_duffle_bag",
+    heading: "Engineered for the Urban Explorer",
+    subheading: "TRAVEL COLLECTION",
+    shortDescription:
+      "Showcasing premium travel bags that adapt to your journey",
+  },
+
+  {
+    imgSrc:
+      "https://ik.imagekit.io/c1jhxlxiy/ladies%20sling%20bag.webp?updatedAt=1752561777192",
+    alt: "womens_sling_bag",
+    link: "/shop-collection-sub/womens_sling_bag",
+    heading: "Engineered for the Urban Explorer",
+    subheading: "TRAVEL COLLECTION",
+    shortDescription:
+      "Showcasing premium travel bags that adapt to your journey",
+  },
+  {
+    imgSrc:
       "https://ik.imagekit.io/c1jhxlxiy/sgwe1phpuv5niwzej6cx.webp?updatedAt=1741438690756",
     alt: "fashion-slideshow",
+    link: "/shop-collection-sub/Kids%20Bags",
     heading: "Transform Your Child Into A Superhero",
     subheading: "KIDS COLLECTION",
     shortDescription:
@@ -87,11 +120,23 @@ export const slides3 = [
     imgSrc:
       "https://ik.imagekit.io/c1jhxlxiy/u1d3zm7uxlaihgeevavt.webp?updatedAt=1741438878940",
     alt: "fashion-slideshow-02",
+    link: "/shop-collection-sub/Kids%20Bags",
     heading: "Engineered for the Urban Explorer",
     subheading: "TRAVEL COLLECTION",
     shortDescription:
       "Showcasing premium travel bags that adapt to your journey",
   },
+  // {
+  //   imgSrc:
+  //     "https://ik.imagekit.io/c1jhxlxiy/u1d3zm7uxlaihgeevavt.webp?updatedAt=1741438878940",
+  //   alt: "fashion-slideshow-02",
+  //   link: "/shop-collection-sub/Kids%20Bags",
+  //   heading: "Engineered for the Urban Explorer",
+  //   subheading: "TRAVEL COLLECTION",
+  //   shortDescription:
+  //     "Showcasing premium travel bags that adapt to your journey",
+  // },
+
   // {
   //   imgSrc:
   //     "https://ik.imagekit.io/c1jhxlxiy/flipped_image.jpeg?updatedAt=1738347872430",

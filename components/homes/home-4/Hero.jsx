@@ -5,6 +5,7 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
 import { Autoplay, Pagination } from "swiper/modules";
+
 export default function Hero() {
   return (
     <div className="tf-slideshow slider-home-4 slider-effect-fade position-relative">
@@ -14,8 +15,8 @@ export default function Hero() {
         spaceBetween={0}
         loop={true}
         autoplay={{
-          delay: 6000, // Set autoplay delay
-          disableOnInteraction: false, // Continue autoplay after interaction
+          delay: 6000,
+          disableOnInteraction: false,
         }}
         delay={2000}
         speed={1000}
@@ -26,17 +27,24 @@ export default function Hero() {
         {slides3.map((slide, index) => (
           <SwiperSlide key={index}>
             <div className="wrap-slider">
-              <Image
-                className="lazyload"
-                data-src={slide.imgSrc}
-                alt={slide.alt}
-                src={slide.imgSrc}
-                width={index === 0 ? 2000 : 1800}
-                height={index === 0 ? 1034 : 931}
-                priority
-              />
+              <Link
+                href={slide.link}
+                style={{ display: "block", height: "100%" }}
+              >
+                <Image
+                  className="lazyload"
+                  style={{ height: "100%", width: "100%", objectFit: "cover" }}
+                  data-src={slide.imgSrc}
+                  alt={slide.alt}
+                  src={slide.imgSrc}
+                  width={index === 0 ? 2000 : 1800}
+                  height={index === 0 ? 931 : 721}
+                  priority
+                />
+              </Link>
               <div className="box-content">
                 <div className="container">
+                  {/* Uncomment if you want to restore the card content */}
                   {/* <div className="card-box bg_dark">
                     <h6 className="fade-item fade-item-1 text-white subheading fw-7">
                       {slide.subheading}
@@ -49,7 +57,7 @@ export default function Hero() {
                         </React.Fragment>
                       ))}
                     </h3>
-                    <p  style={{fontSize:"16px"}} className="fade-item fade-item-1 text-white">
+                    <p style={{ fontSize: "16px" }} className="fade-item fade-item-1 text-white">
                       {slide.shortDescription}
                     </p>
                     <div className="fade-item fade-item-3">

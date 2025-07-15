@@ -2,16 +2,57 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules"; // Import Swiper modules
-import "swiper/css"; // Import Swiper core styles
-import "swiper/css/navigation"; // Import Swiper navigation styles
-import "swiper/css/pagination"; // Import Swiper pagination styles
-import { categories } from "./Products";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+export const categoriesWithDetails = [
+  // {
+  //   name: "Super Shell Collection",
+  //   image:
+  //     "https://ik.imagekit.io/c1jhxlxiy/supershell.webp?updatedAt=1741619407000",
+  //   url: "/shop-collection-sub/kids_bags",
+  // },
+  {
+    name: "Gym Duffle Bag",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/gym%20duffle%20bags.webp?updatedAt=1752562395881",
+    url: "/shop-collection-sub/gym_duffle_bag",
+  },
+  {
+    name: "Mens Sling Bag",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/mens%20sling%20bag.webp?updatedAt=1752562348385",
+    url: "/shop-collection-sub/mens_sling_bag",
+  },
+  {
+    name: "Womens Sling Bag",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/womens%20sling%20bag.webp?updatedAt=1752562439373",
+    url: "/shop-collection-sub/womens_sling_bag",
+  },
+  {
+    name: "Laptop Backpack",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/laptop%20bags.webp?updatedAt=1752562560331",
+    url: "/shop-collection-sub/laptop_backpack",
+  },
+  {
+    name: "Womens Backpack",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/women%20backpacks.webp?updatedAt=1752562477210",
+    url: "/shop-collection-sub/ladies_backpack",
+  },
+  // {
+  //   name: "Tote Bag",
+  //   image:
+  //     "https://ik.imagekit.io/c1jhxlxiy/tote_bag.jpg?updatedAt=1752256353548",
+  //   url: "/shop-collection-sub/tote_bag",
+  // },
+];
 
 export default function Categories() {
-  const imageUrl =
-    "https://ik.imagekit.io/c1jhxlxiy/963852_78078-OFCN4G-491.jpg?updatedAt=1752256353548";
-
   return (
     <section className="flat-spacing-13 position-relative">
       <div className="container-full">
@@ -25,35 +66,30 @@ export default function Categories() {
               640: { slidesPerView: 3 },
               0: { slidesPerView: 1.3 },
             }}
-            modules={[Navigation, Pagination]} // Register Swiper modules
+            modules={[Navigation, Pagination]}
             navigation={{
               prevEl: ".snbp3",
               nextEl: ".snbn3",
             }}
             pagination={{ clickable: true, el: ".spb3" }}
           >
-            {categories.map((category, index) => (
+            {categoriesWithDetails.map((category, index) => (
               <SwiperSlide key={index}>
                 <div className="collection-item-v2 hover-img">
-                  <Link
-                    href={`/shop-collection-sub/${category}`}
-                    className="collection-inner"
-                  >
+                  <Link href={category.url} className="collection-inner">
                     <div className="collection-image img-style">
                       <Image
                         className="lazyload"
-                        data-src={imageUrl}
-                        alt={category}
-                        src={imageUrl}
+                        data-src={category.image}
+                        alt={category.name}
+                        src={category.image}
                         width={600}
                         height={666}
                       />
                     </div>
                     <div className="collection-content">
                       <div className="top wow fadeInUp" data-wow-delay="0s">
-                        {/* <p className="subheading">
-                          Start from <span className="fw-6">{slide.price}</span>
-                        </p> */}
+                        {/* <h3>{category.name}</h3> */}
                       </div>
                       <div className="bottom wow fadeInUp" data-wow-delay="0s">
                         <button className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg">
