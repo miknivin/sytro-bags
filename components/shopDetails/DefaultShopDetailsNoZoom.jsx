@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import Slider1ZoomOuterOrdinary from "./sliders/Slider1ZoomOuterOrdinary";
 import DetailsStatic from "./DetailsStatic";
-
+import OfferTimer from "@/utlis/OfferTimer";
 export default function DefaultShopDetailsNoZoom({ product }) {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
@@ -65,6 +65,11 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                 <div className="tf-product-info-list">
                   <div className="tf-product-info-title">
                     <h5>{product.name}</h5>
+                  </div>
+                  <div>
+                    {product && product.offerEndTime && (
+                      <OfferTimer offerEndTime={product.offerEndTime} />
+                    )}
                   </div>
                   <div className="tf-product-info-price flex align-items-center mb-3">
                     <div className="price-on-sale">

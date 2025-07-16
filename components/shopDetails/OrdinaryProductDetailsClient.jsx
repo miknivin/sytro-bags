@@ -29,17 +29,18 @@ export default function ProductDetailsClient({ productId }) {
   }
 
   const product = {
-    _id: data.productById._id,
-    name: data.productById?.name || "Product",
-    category: data.productById?.category || "Kids Bags",
-    price: data.productById.actualPrice || 0,
-    offer: data.productById.offer || 0,
+    _id: data?.productById?._id,
+    name: data?.productById?.name || "Product",
+    category: data?.productById?.category || "Kids Bags",
+    price: data?.productById?.actualPrice || 0,
+    offer: data?.productById?.offer || 0,
+    offerEndTime: data?.productById?.offerEndTime || null,
     images:
-      data.productById.images?.length > 0
-        ? data.productById.images
+      data?.productById?.images?.length > 0
+        ? data.productById?.images
         : [{ url: "/images/placeholder.jpg" }],
-    stocks: data.productById.stock || 0,
-    details: data.productById.details || "No details available",
+    stocks: data?.productById?.stock || 0,
+    details: data?.productById?.details || "No details available",
   };
 
   return (

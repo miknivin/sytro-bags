@@ -27,10 +27,10 @@ export const categoriesWithDetails = [
     url: "/shop-collection-sub/mens_sling_bag",
   },
   {
-    name: "Womens Sling Bag",
+    name: "Womens Tote Bag",
     image:
-      "https://ik.imagekit.io/c1jhxlxiy/womens%20sling%20bag.webp?updatedAt=1752562439373",
-    url: "/shop-collection-sub/womens_sling_bag",
+      "https://ik.imagekit.io/c1jhxlxiy/800X800-04.webp?updatedAt=1752652610373",
+    url: "/shop-collection-sub/tote_bag",
   },
   {
     name: "Laptop Backpack",

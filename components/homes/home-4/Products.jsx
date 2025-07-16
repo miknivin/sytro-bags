@@ -10,27 +10,21 @@ export const categoriesWithName = [
   { value: "Kids Bags", name: "Kids Bags" },
   { value: "gym_duffle_bag", name: "Gym Duffle Bag" },
   { value: "mens_sling_bag", name: "Men’s Sling Bag" },
-  { value: "womens_sling_bag", name: "Women’s Sling Bag" },
   { value: "mens_backpack", name: "Men’s Backpack" },
   { value: "laptop_backpack", name: "Laptop Backpack" },
   { value: "ladies_backpack", name: "Ladies’ Backpack" },
-  { value: "tote_bag", name: "Tote Bag" },
+  { value: "tote_bag", name: "Women's Tote Bag" },
 ];
 
 export const categories = [
   "Kids Bags",
   "gym_duffle_bag",
-  // "travel_duffle_bag",
   "mens_sling_bag",
   "womens_sling_bag",
   "mens_backpack",
   "laptop_backpack",
   "ladies_backpack",
-  // "womens_backpack",
-  // "laptop_messenger_bag",
-  // "trekking_bag",
   "tote_bag",
-  // "women_shoulder_bag",
 ];
 
 const formatCategory = (category) =>
@@ -43,17 +37,20 @@ export default function Products() {
   const [page, setPage] = useState(1);
   const [allProducts, setAllProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isCategoryChanging, setIsCategoryChanging] = useState(false);
   const dispatch = useDispatch();
   const observerRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { data, error, isLoading, isFetching } = useGetProductsQuery({
-    resPerPage: 8,
-    page,
-    ...(selectedCategory && { category: selectedCategory }),
-  });
+  const { data, error, isLoading, isFetching, isSuccess } = useGetProductsQuery(
+    {
+      resPerPage: 8,
+      page,
+      ...(selectedCategory && { category: selectedCategory }),
+    }
+  );
 
   const filteredProductsCount = data?.filteredProductsCount || 0;
   const totalPages = Math.ceil(filteredProductsCount / 8) || 1;
@@ -63,35 +60,36 @@ export default function Products() {
   useEffect(() => {
     const categoryFromQuery = searchParams.get("category");
     if (categoryFromQuery && categories.includes(categoryFromQuery)) {
-      setSelectedCategory(categoryFromQuery);
-    } else {
+      if (categoryFromQuery !== selectedCategory) {
+        setSelectedCategory(categoryFromQuery);
+        setIsCategoryChanging(true);
+        setPage(1);
+        setAllProducts([]);
+      }
+    } else if (selectedCategory !== null) {
       setSelectedCategory(null);
+      setIsCategoryChanging(true);
+      setPage(1);
+      setAllProducts([]);
     }
-  }, [searchParams]);
-
-  // Reset page and products when category changes
-  useEffect(() => {
-    setPage(1);
-    setAllProducts([]);
-  }, [selectedCategory]);
+  }, [searchParams, selectedCategory]);
 
   // Update products state
   useEffect(() => {
+    if (!isSuccess) return;
+    setIsCategoryChanging(false);
     if (products.length > 0) {
       setAllProducts((prev) => {
-        // If it's the first page or category changed, replace the products
         if (page === 1) {
           return [...products];
         }
-
-        // For subsequent pages, merge and filter duplicates
         const newProducts = products.filter(
           (p) => !prev.some((existing) => existing._id === p._id)
         );
         return [...prev, ...newProducts];
       });
     }
-  }, [products, page]);
+  }, [products, page, isSuccess]);
 
   // Dispatch products to Redux
   useEffect(() => {
@@ -101,21 +99,22 @@ export default function Products() {
   // Handle category selection
   const handleCategorySelect = (category) => {
     const newSelectedCategory = category === selectedCategory ? null : category;
-    setSelectedCategory(newSelectedCategory);
-
-    // Update URL
-    const params = new URLSearchParams(searchParams.toString());
-    if (newSelectedCategory) {
-      params.set("category", newSelectedCategory);
-    } else {
-      params.delete("category");
+    if (newSelectedCategory !== selectedCategory) {
+      setSelectedCategory(newSelectedCategory);
+      const params = new URLSearchParams(searchParams.toString());
+      if (newSelectedCategory) {
+        params.set("category", newSelectedCategory);
+      } else {
+        params.delete("category");
+      }
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      setAllProducts([]);
     }
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   // Infinite scroll observer
   useEffect(() => {
-    if (isFetching || page >= totalPages) return;
+    if (isFetching || page >= totalPages || isCategoryChanging) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -136,7 +135,7 @@ export default function Products() {
         observer.unobserve(currentObserverRef);
       }
     };
-  }, [isFetching, page, totalPages]);
+  }, [isFetching, page, totalPages, isCategoryChanging]);
 
   return (
     <section className="flat-spacing-6">
@@ -174,7 +173,7 @@ export default function Products() {
             </button>
           ))}
         </div>
-        {(isLoading || isFetching) && page === 1 ? (
+        {isLoading || (isFetching && !isSuccess) || isCategoryChanging ? (
           <div className="text-center">
             <div className="spinner-border text-warning" role="status">
               <span className="visually-hidden">Loading...</span>
@@ -185,6 +184,10 @@ export default function Products() {
             Failed to load products:{" "}
             {error?.data?.error || error?.message || "Unknown error"}
           </div>
+        ) : allProducts.length === 0 ? (
+          <div className="text-center text-gray-500">
+            No products available for this category.
+          </div>
         ) : (
           <>
             <div style={{ minHeight: "fit-content" }}>
@@ -193,7 +196,6 @@ export default function Products() {
                   <Productcard4 product={product} key={product._id} />
                 ))}
               </div>
-
               {isFetching && page > 1 && (
                 <div className="text-center mt-4">
                   <div className="spinner-border text-warning" role="status">

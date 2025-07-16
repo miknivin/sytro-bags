@@ -214,7 +214,7 @@ export default function DetailsOuterZoom({ product }) {
                       )}
                     </h5>
                   </div>
-                  <div className="">
+                  <div>
                     {product && product.offerEndTime && (
                       <OfferTimer offerEndTime={product.offerEndTime} />
                     )}

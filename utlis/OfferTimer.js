@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 
 function OfferTimer({ offerEndTime }) {
+
+
   const [timeLeft, setTimeLeft] = useState({
     hours: "00",
     minutes: "00",
@@ -12,12 +14,12 @@ function OfferTimer({ offerEndTime }) {
     const now = DateTime.now().setZone("Asia/Kolkata");
     const endTimeInIST = DateTime.fromISO(endTime, { zone: "Asia/Kolkata" });
     const difference = endTimeInIST
-      .diff(now, ["hours", "minutes", "seconds"])
+      .diff(now, ["days", "hours", "minutes", "seconds"])
       .toObject();
 
     // Check if the end time is in the future
     if (endTimeInIST > now) {
-      const hours = Math.floor(difference.hours % 24)
+      const totalHours = Math.floor(difference.days * 24 + difference.hours)
         .toString()
         .padStart(2, "0");
       const minutes = Math.floor(difference.minutes % 60)
@@ -26,7 +28,7 @@ function OfferTimer({ offerEndTime }) {
       const seconds = Math.floor(difference.seconds % 60)
         .toString()
         .padStart(2, "0");
-      return { hours, minutes, seconds };
+      return { hours: totalHours, minutes, seconds };
     }
     return { hours: "00", minutes: "00", seconds: "00" };
   };
