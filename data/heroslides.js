@@ -89,7 +89,7 @@ export const slides3 = [
     imgSrc:
       "https://ik.imagekit.io/c1jhxlxiy/banner-backpack.jpg?updatedAt=1752560591447",
     alt: "backpacks",
-    link: "/shop-collection-sub/mens_backpack",
+    link: "/shop-collection-sub/laptop_backpack",
     heading: "Engineered for the Urban Explorer",
     subheading: "TRAVEL COLLECTION",
     shortDescription:
@@ -100,7 +100,7 @@ export const slides3 = [
     imgSrc:
       "https://ik.imagekit.io/c1jhxlxiy/ladies%20sling%20bag.webp?updatedAt=1752561777192",
     alt: "womens_sling_bag",
-    link: "/shop-collection-sub/womens_sling_bag",
+    link: "/shop-collection-sub/tote_bag",
     heading: "Engineered for the Urban Explorer",
     subheading: "TRAVEL COLLECTION",
     shortDescription:
