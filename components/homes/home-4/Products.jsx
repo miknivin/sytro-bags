@@ -137,6 +137,12 @@ export default function Products() {
     };
   }, [isFetching, page, totalPages, isCategoryChanging]);
 
+  const handleLoadMore = () => {
+    if (selectedCategory === null && page < totalPages && !isFetching) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
   return (
     <section className="flat-spacing-6">
       <div className="container">
@@ -201,6 +207,17 @@ export default function Products() {
                   <div className="spinner-border text-warning" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </div>
+                </div>
+              )}
+              {selectedCategory === null && page < totalPages && (
+                <div className="text-center mt-4">
+                  <button
+                    className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                    onClick={handleLoadMore}
+                    disabled={isFetching}
+                  >
+                    Load More
+                  </button>
                 </div>
               )}
               {page < totalPages && (
