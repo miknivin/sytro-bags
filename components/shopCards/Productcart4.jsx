@@ -125,13 +125,13 @@ export default function Productcard4({ product }) {
             <span className="tooltip">Quick View</span>
           </Link>
         </div>
-        {product.sizes && (
+        {/* {product.sizes && (
           <div className="size-list">
             {product.sizes.map((size) => (
               <span key={size}>{size}</span>
             ))}
           </div>
-        )}
+        )} */}
         {/* <a
           href="#quick_add"
           onClick={() => setQuickAddItem(product._id)}
@@ -165,14 +165,17 @@ export default function Productcard4({ product }) {
         >
           {product.name}
         </Link>
-        <span className="price d-flex gap-1">
-          ₹{product.offer.toFixed(2)}
-          {product.offer < product.actualPrice && (
-            <del style={{ fontSize: "12px" }} className="text-danger">
-              ₹{product.actualPrice}
-            </del>
-          )}
-        </span>
+       {product.actualPrice && product.offer && (
+          <span className="price d-flex gap-1">
+            ₹{product.offer.toFixed(2)}
+            {product.offer < product.actualPrice && (
+              <del style={{ fontSize: "12px" }} className="text-danger">
+                ₹{product.actualPrice}
+              </del>
+            )}
+          </span>
+        )}
+
         {/* {product.colors && (
           <ul className="list-color-product">
             {product.colors.map((color) => (

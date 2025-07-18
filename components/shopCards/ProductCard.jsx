@@ -158,7 +158,17 @@ export const ProductCard = ({ product }) => {
         >
           {product.name}
         </Link>
-        <span className="price">₹ {product.offer.toFixed(2)}</span>
+        {product.actualPrice && product.offer && (
+          <span className="price d-flex gap-1">
+            ₹{product.offer.toFixed(2)}
+            {product.offer < product.actualPrice && (
+              <del style={{ fontSize: "12px" }} className="text-danger">
+                ₹{product.actualPrice}
+              </del>
+            )}
+          </span>
+        )}
+
         {/* {product.colors && (
           <ul className="list-color-product">
             {product.colors.map((color) => (
