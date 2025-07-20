@@ -13,7 +13,10 @@ export async function GET(req) {
     const resPerPage = parseInt(searchParams.get("resPerPage")) || 50;
     const queryParams = Object.fromEntries(searchParams.entries());
 
-    const apiFilters = new APIFilters(products, queryParams).search().filter();
+    const apiFilters = new APIFilters(products, queryParams)
+      .search()
+      .filter()
+      .sort();
 
     let filteredProducts = await apiFilters.query.select("-choiceImages");
     const filteredProductsCount = filteredProducts.length;
