@@ -5,6 +5,7 @@ import DefaultShopDetailsNoZoom from "@/components/shopDetails/DefaultShopDetail
 import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
 import GoogleReviews from "../common/GoogleReviews";
 import FullScreenSpinner from "../common/FullScreenSpinner";
+import RelatedProducts from "./RelatedProducts";
 
 export default function ProductDetailsClient({ productId }) {
   const { data, error, isLoading } = useGetProductDetailsQuery(productId);
@@ -46,6 +47,7 @@ export default function ProductDetailsClient({ productId }) {
   return (
     <>
       <DefaultShopDetailsNoZoom product={product} />
+      <RelatedProducts product={product} />
       <GoogleReviews />
       <ShopDetailsTab product={product} details={product.details} />
     </>

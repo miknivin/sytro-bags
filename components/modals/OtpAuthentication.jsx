@@ -116,7 +116,7 @@ const OTPAuthentication = ({ phone, closeModal, onPhoneVerified }) => {
       if (result.user) {
         console.log("OTP verified successfully");
         // toast.success("OTP verified successfully");
-        onPhoneVerified(phoneNumber,otp); // Pass phone number to parent
+        onPhoneVerified(phoneNumber, otp); // Pass phone number to parent
         closeModal(); // Close the modal
       }
     } catch (error) {
@@ -128,9 +128,9 @@ const OTPAuthentication = ({ phone, closeModal, onPhoneVerified }) => {
   };
 
   return (
-    <div className="">
+    <div>
       <div id="recaptcha-container"></div>
-      <div className="">
+      <div>
         <div>
           {!verificationId && (
             <>
@@ -177,6 +177,11 @@ const OTPAuthentication = ({ phone, closeModal, onPhoneVerified }) => {
           {verificationId && (
             <>
               <div className="mb-3">
+                {error && (
+                  <div className="text-danger mb-3">
+                    <p>{error}</p>
+                  </div>
+                )}
                 <label htmlFor="otp" className="form-label">
                   OTP
                 </label>
