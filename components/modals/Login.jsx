@@ -1,17 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useLoginMutation } from "@/redux/api/authApi";
+import React, { useEffect, useState } from "react";
+import { useOtpLoginMutation } from "@/redux/api/authApi";
 import Swal from "sweetalert2";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import OTPAuthentication from "./OtpAuthentication";
+
 export default function Login() {
   const router = useRouter();
-  const [login, { isLoading, error }] = useLoginMutation();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [otpLogin, { isLoading, error }] = useOtpLoginMutation();
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -20,18 +18,11 @@ export default function Login() {
     }
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { email, password } = formData;
-
+  const handlePhoneVerified = async (phone, otp) => {
     try {
-      await login({ email, password }).unwrap();
+      await otpLogin({ phone, otp }).unwrap();
 
-      // Ensure this only runs in the browser
+      // Close the modal
       if (typeof document !== "undefined") {
         const modalElement = document.getElementById("login");
         if (modalElement) {
@@ -49,11 +40,22 @@ export default function Login() {
         router.push("/checkout");
         console.log("Navigating to checkout");
       }
-      // Reset form fields
-      setFormData({ email: "", password: "" });
     } catch (err) {
       console.error(err);
-      setErrorMessage("Invalid email or password. Please try again.");
+      setErrorMessage("Failed to log in. Please try again.");
+    }
+  };
+
+  const closeModal = () => {
+    if (typeof document !== "undefined") {
+      const modalElement = document.getElementById("login");
+      if (modalElement) {
+        import("bootstrap").then(({ Modal }) => {
+          const modalInstance =
+            Modal.getInstance(modalElement) || new Modal(modalElement);
+          modalInstance.hide();
+        });
+      }
     }
   };
 
@@ -68,80 +70,23 @@ export default function Login() {
       >
         <div className="modal-content">
           <div className="header">
-            <div className="demo-title">Log in</div>
+            <div className="demo-title">Enter Your Phone Number</div>
             <span
               className="icon-close icon-close-popup"
               data-bs-dismiss="modal"
             />
           </div>
           <div className="tf-login-form">
-            <form onSubmit={handleSubmit}>
-              <div className="tf-field style-1">
-                <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="email"
-                  name="email"
-                  required
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label">Email *</label>
-              </div>
-              <div className="tf-field style-1">
-                <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="password"
-                  name="password"
-                  required
-                  autoComplete="current-password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label">Password *</label>
-              </div>
-              {errorMessage && (
-                <p className="error-message text-danger">{errorMessage}</p>
-              )}
-              <div>
-                <a
-                  href="#forgotPassword"
-                  data-bs-toggle="modal"
-                  className="btn-link link mb-1"
-                >
-                  Forgot your password?
-                </a>
-              </div>
-              <div className="bottom">
-                <div className="w-100">
-                  <button
-                    type="submit"
-                    className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Logging in..." : "Log in"}
-                  </button>
-                </div>
-
-                <div className="w-100">
-                  <a
-                    href="#register"
-                    data-bs-toggle="modal"
-                    className="tf-btn btn-fill border-black bg-transparent border text-black animate-hover-btn radius-3 w-100 justify-content-center"
-                  >
-                    Sign up for new customers
-                    <i className="icon icon-arrow1-top-left" />
-                  </a>
-                </div>
-              </div>
-              <p className="text-center">OR</p>
-              <GoogleSigninButton />
-            </form>
-
+            <OTPAuthentication
+              onPhoneVerified={handlePhoneVerified}
+              closeModal={closeModal}
+            />
+            <p className="text-center">OR</p>
+            <GoogleSigninButton />
             {error && (
-              <p className="error-message text-danger">{error.data?.message}</p>
+              <p className="error-message text-danger">
+                {error.data?.message || errorMessage}
+              </p>
             )}
           </div>
         </div>

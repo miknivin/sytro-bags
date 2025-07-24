@@ -120,7 +120,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                         <span>
                           {isAddedToCartProducts(product._id)
                             ? "Already Added"
-                            : "Add to cart"}{" "}
+                            : "Order now"}{" "}
                           - ₹{(product.offer * quantity).toFixed(2)}
                         </span>
                       </a>

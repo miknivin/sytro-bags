@@ -9,7 +9,7 @@ import fetchFirstDocuments from "../../utils/fetchFirstDocuments/fetchFirst";
 export async function POST(request) {
   try {
     await dbConnect();
-    fetchFirstDocuments()
+    //fetchFirstDocuments()
     const { name, email, password } = await request.json();
 
     const user = await User.create({

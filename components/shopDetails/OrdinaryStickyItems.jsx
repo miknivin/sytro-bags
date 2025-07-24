@@ -80,7 +80,7 @@ export default function OrdinaryStickyItem({
                     <span>
                       {isAddedToCartProducts(product._id)
                         ? "Already Added"
-                        : "Add to cart"}
+                        : "Order now"}
                     </span>
                   </a>
                 )}

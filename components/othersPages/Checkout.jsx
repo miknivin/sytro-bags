@@ -34,7 +34,7 @@ export default function Checkout() {
     address: "",
     state: stateId === "19" ? "Kerala" : "",
     city: "",
-    phoneNo: user?.phone || "",
+    phoneNo: user?.phone ? user.phone.replace(/^\+?91/, "") : "",
     zipCode: "",
     country: "India",
     orderNotes: "",

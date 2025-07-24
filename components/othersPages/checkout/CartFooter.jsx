@@ -508,6 +508,29 @@ const CartFooter = ({
                 />
                 <label htmlFor="bank">Online transfer</label>
               </div>
+              <div className="fieldset-radio mb_20">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  id="cod"
+                  value="COD"
+                  className="tf-check d-flex align-items-center"
+                  checked={paymentMethod === "COD"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  disabled={cartItems.some(
+                    (item) => item.category === "Kids Bags"
+                  )}
+                  data-tooltip-id="cod-tooltip"
+                  data-tooltip-content={
+                    cartItems.some((item) => item.category === "Kids Bags")
+                      ? "It contains custom bags. Either remove or proceed online transfer."
+                      : ""
+                  }
+                />
+                <label htmlFor="cod">Cash on Delivery</label>
+                <FontAwesomeIcon icon="fa-solid fa-circle-info" />
+                <Tooltip id="cod-tooltip" place="top" />
+              </div>
             </div>
 
             {!isAuthenticated ? (

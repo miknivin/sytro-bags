@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { userApi } from "./userApi";
-import { setUser, setIsAuthenticated} from "../features/userSlice";
+import { setUser, setIsAuthenticated } from "../features/userSlice";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -57,6 +57,23 @@ export const authApi = createApi({
         }
       },
     }),
+    otpLogin: builder.mutation({
+      query(body) {
+        return {
+          url: "auth/otplogin",
+          method: "POST",
+          body,
+        };
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          await dispatch(userApi.endpoints.getMe.initiate(null));
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
     logout: builder.mutation({
       query: () => ({
         url: "auth/logout",
@@ -65,20 +82,21 @@ export const authApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          const { data } = await dispatch(userApi.endpoints.getMe.initiate(null)).unwrap();
-
+          const { data } = await dispatch(
+            userApi.endpoints.getMe.initiate(null)
+          ).unwrap();
         } catch (error) {
           console.log(error);
         }
       },
     }),
-    
   }),
 });
 
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useLogoutMutation, 
+  useLogoutMutation,
   useGoogleSignInMutation,
+  useOtpLoginMutation,
 } = authApi;
