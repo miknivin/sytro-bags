@@ -43,7 +43,7 @@ export function ReduxConsumer({ children }) {
       <ShoppingBanner /> */}
       {/* <QuickView /> */}
       <QuickAdd />
-      <VideoPlayer />
+      {/* <VideoPlayer /> */}
       {/* <ProductSidebar /> */}
       <ShopCart />
       <AskQuestion />
