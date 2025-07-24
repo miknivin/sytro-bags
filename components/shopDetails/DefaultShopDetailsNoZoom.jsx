@@ -11,6 +11,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import Slider1ZoomOuterOrdinary from "./sliders/Slider1ZoomOuterOrdinary";
 import DetailsStatic from "./DetailsStatic";
 import OfferTimer from "@/utlis/OfferTimer";
+import DetailsStaticNoZoom from "./DetailsStaticNoZoom";
 export default function DefaultShopDetailsNoZoom({ product }) {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
@@ -109,7 +110,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                     <Quantity setQuantity={setQuantity} quantity={quantity} />
                   </div>
                   <>
-                    <DetailsStatic />
+                    <DetailsStaticNoZoom />
                   </>
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()}>
