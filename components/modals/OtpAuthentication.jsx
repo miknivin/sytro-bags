@@ -127,6 +127,15 @@ const OTPAuthentication = ({ phone, closeModal, onPhoneVerified }) => {
     }
   };
 
+  const handleChangePhoneNumber = () => {
+    setVerificationId("");
+    setOtp("");
+    setTimer(0);
+    setResendDisabled(false);
+    setError("");
+    setPhoneError("");
+  };
+
   return (
     <div>
       <div id="recaptcha-container"></div>
@@ -182,9 +191,22 @@ const OTPAuthentication = ({ phone, closeModal, onPhoneVerified }) => {
                     <p>{error}</p>
                   </div>
                 )}
-                <label htmlFor="otp" className="form-label">
-                  OTP
-                </label>
+                <div className="d-flex justify-content-between">
+                  <label htmlFor="otp" className="form-label">
+                    OTP
+                  </label>
+                  <button
+                    type="button"
+                    role="button"
+                    style={{ textDecoration: "underline" }}
+                    onClick={handleChangePhoneNumber}
+                    disabled={isLoading}
+                    className="btn btn-link p-0 text-decoration-underline text-dark"
+                  >
+                    Change phone number
+                  </button>
+                </div>
+
                 <input
                   type="text"
                   className="form-control"
