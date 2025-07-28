@@ -140,6 +140,7 @@ export default function OrderDetails() {
               <h6 className="mt-8 fw-5">
                 Order #{orderDetails?._id?.slice(-6)}
               </h6>
+              <p>Payment method:{orderDetails?.paymentMethod}</p>
             </div>
           </div>
           <div className="tf-grid-layout md-col-2 gap-15">

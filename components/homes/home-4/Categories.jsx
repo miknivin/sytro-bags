@@ -32,6 +32,7 @@ export const categoriesWithDetails = [
       "https://ik.imagekit.io/c1jhxlxiy/800X800-04.webp?updatedAt=1752652610373",
     url: "/shop-collection-sub/tote_bag",
   },
+ 
   {
     name: "Laptop Backpack",
     image:
@@ -43,6 +44,12 @@ export const categoriesWithDetails = [
     image:
       "https://ik.imagekit.io/c1jhxlxiy/women%20backpacks.webp?updatedAt=1752562477210",
     url: "/shop-collection-sub/ladies_backpack",
+  },
+    {
+    name: "Travel Duffle Bag",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/travel_duffle.webp?updatedAt=1753718908340",
+    url: "/shop-collection-sub/travel_duffle_bag",
   },
   // {
   //   name: "Tote Bag",

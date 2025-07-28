@@ -4,9 +4,7 @@ import Order from "@/models/Order";
 import dbConnect from "@/lib/db/connection";
 import { isAuthenticatedUser } from "@/middlewares/auth";
 import User from "@/models/User";
-import { createShiprocketOrder } from "@/lib/shipRocket/createShipRocketOrder";
 import Product from "@/models/Products";
-import { addOrderToSheet } from "../../utils/sheets/addOrderToSheet";
 
 export async function POST(req) {
   try {
@@ -76,42 +74,11 @@ export async function POST(req) {
       couponApplied,
     });
 
-    try {
-      console.log("Attempting to sync order to Google Sheets:", {
-        orderId: order._id,
-        cartItemsLength: cartItems?.length || 0,
-        userId: user._id,
-      });
-      if (
-        !order ||
-        !user ||
-        !Array.isArray(cartItems) ||
-        cartItems.length === 0
-      ) {
-        console.log("Invalid input data for Google Sheets sync")
-      }
-      const syncResult = await addOrderToSheet(order, user, cartItems);
-      if (!syncResult.success) {
-        console.warn("Failed to sync order to Google Sheets:", {
-          error: syncResult.error,
-          details: syncResult.details,
-        });
-      } else {
-        console.log("Google Sheets sync successful:", syncResult);
-      }
-    } catch (error) {
-      console.error("Error in Google Sheets sync:", {
-        message: error.message,
-        stack: error.stack,
-      });
-    }
-
     return NextResponse.json({
       success: true,
       message: "Order placed successfully",
       order: {
         localOrder: order,
-        // shiprocketOrder: shiprocketResult || {},
       },
     });
   } catch (error) {

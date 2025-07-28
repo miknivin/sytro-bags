@@ -277,3 +277,9 @@ label.non-mandatory:after {
 .white-space-no-wrap {
   white-space: nowrap;
 }
+
+.react-tooltip {
+  max-width: 200px !important;
+  white-space: break-spaces !important;
+  text-align:center;
+}

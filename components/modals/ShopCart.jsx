@@ -390,7 +390,13 @@ export default function ShopCart() {
                         className="tf-mini-cart-item border-bottom border-black"
                       >
                         <div className="tf-mini-cart-image">
-                          <Link href={`/product-detail/${elm.product}`}>
+                          <Link
+                            href={
+                              elm.category !== "Kids Bags"
+                                ? `/product-no-zoom/${elm.product}`
+                                : `/product-detail/${elm.product}`
+                            }
+                          >
                             <Image
                               alt="image"
                               src={elm.image}
@@ -406,7 +412,11 @@ export default function ShopCart() {
                         <div className="tf-mini-cart-info">
                           <Link
                             className="title link"
-                            href={`/product-detail/${elm.product}`}
+                            href={
+                              elm.category !== "Kids Bags"
+                                ? `/product-no-zoom/${elm.product}`
+                                : `/product-detail/${elm.product}`
+                            }
                           >
                             {elm.name}
                           </Link>
@@ -662,26 +672,12 @@ export default function ShopCart() {
                     className="tf-mini-cart-view-checkout flex-column"
                   >
                     {isQuantityValid() ? (
-                      isAuthenticated ? (
-                        <Link
-                          href="/checkout"
-                          className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                        >
-                          <span>Check out</span>
-                        </Link>
-                      ) : (
-                        <a
-                          href="#login"
-                          data-bs-toggle="modal"
-                          className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center mt-0 w-100"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleClick();
-                          }}
-                        >
-                          Check out
-                        </a>
-                      )
+                      <Link
+                        href="/checkout"
+                        className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                      >
+                        <span>Check out</span>
+                      </Link>
                     ) : cartItems.length > 0 ? (
                       <>
                         <span className="text-danger">

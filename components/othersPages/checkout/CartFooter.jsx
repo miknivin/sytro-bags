@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import {
   useRazorpayCheckoutSessionMutation,
@@ -34,7 +34,9 @@ const CartFooter = ({
 }) => {
   const prevRefs = useRef([]);
   const nextRefs = useRef([]);
+  const buttonRef = useRef(null);
   const cartModalref = useRef(null);
+  const hasClickedRef = useRef(false);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
@@ -51,7 +53,7 @@ const CartFooter = ({
   const [checkoutSession, { isLoading: sessionLoading, error }] =
     useRazorpayCheckoutSessionMutation();
   const dispatch = useDispatch();
-
+  const searchParams = useSearchParams();
   const isFormValid = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
@@ -258,6 +260,32 @@ const CartFooter = ({
     const razor = new window.Razorpay(options);
     razor.open();
   };
+
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    // Add toclickplaceorder query parameter to the current URL
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("toclickplaceorder", "true");
+    router.push(`?${newSearchParams.toString()}`);
+  };
+
+ useEffect(() => {
+    console.log("use effect called")
+    if (
+      isAuthenticated &&
+      searchParams.get("toclickplaceorder") === "true" &&
+      buttonRef.current &&
+      !hasClickedRef.current
+    ) {
+      if (!isLoading && isFormValid() && cartItems.length > 0) {
+        hasClickedRef.current = true;
+        buttonRef.current.click();
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.delete("toclickplaceorder");
+        router.replace(`?${newSearchParams.toString()}`);
+      }
+    }
+  }, [isAuthenticated, searchParams, isLoading, isFormValid, cartItems, router]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -523,31 +551,47 @@ const CartFooter = ({
                   data-tooltip-id="cod-tooltip"
                   data-tooltip-content={
                     cartItems.some((item) => item.category === "Kids Bags")
-                      ? "It contains custom bags. Either remove or proceed online transfer."
+                      ? "It contains custom bags. \n Either remove or proceed with online transfer."
                       : ""
                   }
                 />
                 <label htmlFor="cod">Cash on Delivery</label>
-                <FontAwesomeIcon icon="fa-solid fa-circle-info" />
                 <Tooltip id="cod-tooltip" place="top" />
               </div>
             </div>
 
             {!isAuthenticated ? (
               <>
-                <small className="text-danger">
-                  You need to log in in order to purchase.
-                </small>
-                <a
-                  href="#login"
-                  data-bs-toggle="modal"
-                  className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center mt-0"
-                >
-                  Click here to login
-                </a>
+                {!isFormValid() || !cartItems.length ? (
+                  <button
+                    disabled
+                    className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center disabled-btn"
+                    data-tooltip-id="cart-tooltip"
+                    data-tooltip-content={
+                      !isFormValid()
+                        ? "Fill all the details correctly"
+                        : !cartItems.length
+                        ? "Cart is empty"
+                        : ""
+                    }
+                  >
+                    Place order
+                  </button>
+                ) : (
+                  <a
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#login"
+                    className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center mt-0"
+                    onClick={handleLoginClick}
+                  >
+                    Place order
+                  </a>
+                )}
               </>
             ) : (
               <button
+                ref={buttonRef}
                 type="submit"
                 disabled={isLoading || !isFormValid() || !cartItems.length}
                 className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${

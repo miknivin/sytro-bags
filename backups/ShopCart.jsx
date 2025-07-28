@@ -375,7 +375,13 @@ export default function ShopCart() {
                         className="tf-mini-cart-item border-bottom border-black"
                       >
                         <div className="tf-mini-cart-image">
-                          <Link href={`/product-detail/${elm.product}`}>
+                          <Link
+                            href={
+                              elm.category !== "Kids Bags"
+                                ? `/product-no-zoom/${elm.product}`
+                                : `/product-detail/${elm.product}`
+                            }
+                          >
                             <Image
                               alt="image"
                               src={elm.image}
@@ -391,7 +397,11 @@ export default function ShopCart() {
                         <div className="tf-mini-cart-info">
                           <Link
                             className="title link"
-                            href={`/product-detail/${elm.product}`}
+                            href={
+                              elm.category !== "Kids Bags"
+                                ? `/product-no-zoom/${elm.product}`
+                                : `/product-detail/${elm.product}`
+                            }
                           >
                             {elm.name}
                           </Link>
