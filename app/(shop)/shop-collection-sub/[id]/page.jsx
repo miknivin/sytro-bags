@@ -24,6 +24,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default function Page({ params }) {
+  const decodedId = decodeURIComponent(params.id).replace(/_/g, " ");
+  const formattedTitle = capitalizeWords(decodedId);
   return (
     <>
       {/* Noscript fallback for Facebook Pixel */}
@@ -58,18 +60,16 @@ export default function Page({ params }) {
       />
 
       <Header4 />
-      {/* <div className="tf-page-title">
+      <div className="tf-page-title">
         <div className="container-full">
-          <div className="heading text-center">
-            Make your child’s school bag truly special with Sytro Bags!
-          </div>
-          <p className="text-center text-2 text_black-2 mt_5">
+          <div className="heading text-center">{formattedTitle}</div>
+          {/* <p className="text-center text-2 text_black-2 mt_5">
             Now, you can upload your child’s photo and watch them transform into
             their favorite superhero, printed right on their bag! Let them carry
             their powers wherever they go.
-          </p>
+          </p> */}
         </div>
-      </div> */}
+      </div>
       <ShopDefault id={params.id} />
       <Footer1 />
     </>

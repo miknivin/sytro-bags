@@ -81,9 +81,17 @@ export default function ProductGrid({ gridItems = 4, id }) {
     );
   }
 
+  if (allProducts.length === 0) {
+    return (
+      <div style={{ textAlign: "center", padding: "20px", color: "#333" }}>
+        No products found.
+      </div>
+    );
+  }
+
   return (
     <>
-      <div
+      {/* <div
         style={{
           width: "fit-content",
           margin: "0 auto",
@@ -92,7 +100,7 @@ export default function ProductGrid({ gridItems = 4, id }) {
         }}
       >
         {allProducts.length} product(s) found in {category.replace(/_/g, " ")}
-      </div>
+      </div> */}
       <div className="grid-layout wrapper-shop" data-grid={`grid-${gridItems}`}>
         {allProducts.map((elm, i) => (
           <ProductCard product={elm} key={i} />
