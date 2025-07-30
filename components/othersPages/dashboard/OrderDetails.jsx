@@ -263,6 +263,12 @@ export default function OrderDetails() {
                           item.quantity > 1 ? ` * ${item.quantity}` : ""
                         }`}
                       </div>
+                      {item.customNameToPrint&&(
+                        <div>
+                          <span className="fw-6">Name on bag: </span>
+                          {item.customNameToPrint}
+                        </div>
+                      )}
                       {item.uploadedImage && item.uploadedImage.length > 0 && (
                         <div>
                           <button
