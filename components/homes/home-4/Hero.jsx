@@ -15,7 +15,7 @@ export default function Hero() {
         spaceBetween={0}
         loop={true}
         autoplay={{
-          delay: 6000,
+          delay: 2500,
           disableOnInteraction: false,
         }}
         delay={2000}

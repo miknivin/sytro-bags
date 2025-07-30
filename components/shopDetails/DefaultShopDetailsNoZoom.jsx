@@ -12,8 +12,12 @@ import Slider1ZoomOuterOrdinary from "./sliders/Slider1ZoomOuterOrdinary";
 import DetailsStatic from "./DetailsStatic";
 import OfferTimer from "@/utlis/OfferTimer";
 import DetailsStaticNoZoom from "./DetailsStaticNoZoom";
+import CustomAlert from "@/utlis/CustomAlert";
+
 export default function DefaultShopDetailsNoZoom({ product }) {
   const [quantity, setQuantity] = useState(1);
+  const [customName, setCustomName] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
 
@@ -21,10 +25,16 @@ export default function DefaultShopDetailsNoZoom({ product }) {
   if (!product) {
     return <div className="text-center">No product data available</div>;
   }
+
   const isAddedToCartProducts = (productId) =>
     cartItems.some((item) => item.product === productId);
 
   const handleAddToCart = (productId, quantity) => {
+    if (product.category === "custom_sling_bag" && !customName.trim()) {
+      setShowAlert(true);
+      return;
+    }
+
     if (isAddedToCartProducts(productId)) {
       toast.success("Item already in cart!");
       openCartModal();
@@ -38,12 +48,35 @@ export default function DefaultShopDetailsNoZoom({ product }) {
       ...(product.category != null ? { category: product.category } : {}),
       quantity: quantity || 1,
       image: product.images[0]?.url || "/images/placeholder.jpg",
+      ...(product.category === "custom_sling_bag" && customName
+        ? { customNameToPrint: customName }
+        : {}),
     };
-    console.log(product.category);
 
     dispatch(setCartItem(cartItem));
     toast.success("Item added to cart!");
     openCartModal();
+  };
+
+  const handleAlertConfirm = (value) => {
+    setCustomName(value);
+    setShowAlert(false);
+    const cartItem = {
+      product: product._id,
+      name: product.name,
+      price: product.offer,
+      ...(product.category != null ? { category: product.category } : {}),
+      quantity: quantity || 1,
+      image: product.images[0]?.url || "/images/placeholder.jpg",
+      customNameToPrint: value,
+    };
+    dispatch(setCartItem(cartItem));
+    toast.success("Item added to cart!");
+    openCartModal();
+  };
+
+  const handleAlertCancel = () => {
+    setShowAlert(false);
   };
 
   return (
@@ -51,6 +84,15 @@ export default function DefaultShopDetailsNoZoom({ product }) {
       className="flat-spacing-4 pt_0"
       style={{ maxWidth: "100vw", overflow: "clip" }}
     >
+      <CustomAlert
+        show={showAlert}
+        onConfirm={handleAlertConfirm}
+        onCancel={handleAlertCancel}
+        title="Name Required"
+        message="Please enter a name for the custom sling bag."
+        confirmText="Add to Cart"
+        cancelText="Cancel"
+      />
       <div className="tf-main-product section-image-zoom">
         <div className="container">
           <div className="row">
@@ -78,10 +120,6 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                     </div>
                     <div>
                       <span className=" fs-4 text-danger">
-                        {/* {(
-                          (1 - product.offer / product.actualPrice) *
-                          100
-                        ).toFixed(2)} */}
                         <s>₹{product?.price?.toFixed(2) || "3000"}</s>
                       </span>
                     </div>
@@ -105,18 +143,31 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                         </li>
                       ))}
                   </ul>
-                  <div className="tf-product-info-quantity">
-                    <div className="quantity-title fw-6">Quantity</div>
-                    <Quantity setQuantity={setQuantity} quantity={quantity} />
-                  </div>
-                  <>
-                    <DetailsStaticNoZoom />
-                  </>
+                  {product?.category === "custom_sling_bag" ? (
+                    <div className="tf-product-info-custom-name">
+                      <div className="mb-1 custom-name-title fw-6">
+                        Enter the name you want on the bag
+                      </div>
+                      <input
+                        type="text"
+                        value={customName}
+                        onChange={(e) => setCustomName(e.target.value)}
+                        placeholder="Enter the name you want on the bag"
+                        className="form-control"
+                      />
+                    </div>
+                  ) : (
+                    <div className="tf-product-info-quantity">
+                      <div className="quantity-title fw-6">Quantity</div>
+                      <Quantity setQuantity={setQuantity} quantity={quantity} />
+                    </div>
+                  )}
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()}>
                       <a
                         onClick={() => handleAddToCart(product._id, quantity)}
                         className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+                        style={{ backgroundColor: "#122432" }}
                       >
                         <span>
                           {isAddedToCartProducts(product._id)
@@ -127,6 +178,9 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                       </a>
                     </form>
                   </div>
+                  <>
+                    <DetailsStaticNoZoom />
+                  </>
                 </div>
               </div>
             </div>
@@ -135,6 +189,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
       </div>
       <OrdinaryStickyItem
         product={product}
+        customNameToPrint={customName}
         isAddedToCartProducts={isAddedToCartProducts}
         setQuantity={setQuantity}
         quantity={quantity}

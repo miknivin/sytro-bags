@@ -20,6 +20,7 @@ import {
   faCircleChevronRight,
   faTrash,
   faTimes,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { useUploadKidsImageMutation } from "@/redux/api/orderApi";
@@ -33,6 +34,7 @@ import { uploadMultipartFile } from "@/utlis/uploadMultipart";
 
 export default function ShopCart() {
   const [showPopover, setShowPopover] = useState(false);
+  const [editStates, setEditStates] = useState({});
   const [uploadKidsImage, { isLoading, error }] = useUploadKidsImageMutation();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [imageUrl, setImageUrl] = useState("");
@@ -48,6 +50,7 @@ export default function ShopCart() {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const fileInputRefs = useRef({});
+  const nameInputRefs = useRef({});
   const [initiateMultipartUpload] = useInitiateMultipartUploadMutation();
   const [completeMultipartUpload] = useCompleteMultipartUploadMutation();
   const [abortMultipartUpload] = useAbortMultipartUploadMutation();
@@ -67,6 +70,19 @@ export default function ShopCart() {
         ? [uploadedImage]
         : [],
     }));
+  };
+
+  const handleEditToggle = (productId) => {
+    setEditStates((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+    // Auto-focus the input field when enabling edit mode
+    if (!editStates[productId]) {
+      setTimeout(() => {
+        nameInputRefs.current[productId]?.focus();
+      }, 0);
+    }
   };
 
   const handleClosePopover = (productId) => {
@@ -116,6 +132,15 @@ export default function ShopCart() {
       })
     );
     decreaseQuantity(cartItem, productId);
+  };
+
+  const handleNameChange = (productId, newName) => {
+    dispatch(
+      updateCartItem({
+        product: productId,
+        customNameToPrint: newName,
+      })
+    );
   };
 
   useEffect(() => {
@@ -601,47 +626,93 @@ export default function ShopCart() {
                               )}
                             </>
                           )}
-                          <div className="tf-mini-cart-btns">
-                            <div className="wg-quantity small">
-                              <span
-                                className="btn-quantity minus-btn"
-                                onClick={() =>
-                                  decreaseQuantity(elm, elm.product)
-                                }
+                          {elm.category !== "custom_sling_bag" && (
+                            <div className="tf-mini-cart-btns">
+                              <div className="wg-quantity small">
+                                <span
+                                  className="btn-quantity minus-btn"
+                                  onClick={() =>
+                                    decreaseQuantity(elm, elm.product)
+                                  }
+                                >
+                                  -
+                                </span>
+                                <input
+                                  type="number"
+                                  name="number"
+                                  value={elm.quantity}
+                                  min={1}
+                                  readOnly
+                                  onChange={(e) =>
+                                    updateQuantity(
+                                      elm,
+                                      elm.product,
+                                      parseInt(e.target.value) || 1
+                                    )
+                                  }
+                                />
+                                <span
+                                  className="btn-quantity plus-btn"
+                                  onClick={() =>
+                                    increaseQuantity(elm, elm.product)
+                                  }
+                                >
+                                  +
+                                </span>
+                              </div>
+                              <div
+                                className="tf-mini-cart-remove"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => removeItem(elm.product)}
                               >
-                                -
-                              </span>
-                              <input
-                                type="number"
-                                name="number"
-                                value={elm.quantity}
-                                min={1}
-                                readOnly
-                                onChange={(e) =>
-                                  updateQuantity(
-                                    elm,
-                                    elm.product,
-                                    parseInt(e.target.value) || 1
-                                  )
-                                }
-                              />
-                              <span
-                                className="btn-quantity plus-btn"
-                                onClick={() =>
-                                  increaseQuantity(elm, elm.product)
-                                }
+                                Remove
+                              </div>
+                            </div>
+                          )}
+                          {elm.customNameToPrint !== "" && (
+                            <div className="custom-name-container pt-1 d-flex align-items-center">
+                              <div className="input-group mb-3">
+                                <input
+                                  type="text"
+                                  className="form-control py-1"
+                                  placeholder="Enter the name on bag"
+                                  aria-label="Enter the name on bag"
+                                  aria-describedby="button-addon2"
+                                  value={elm.customNameToPrint}
+                                  readOnly={
+                                    editStates[elm.product] ? false : true
+                                  }
+                                  onChange={(e) =>
+                                    handleNameChange(
+                                      elm.product,
+                                      e.target.value
+                                    )
+                                  }
+                                  ref={(el) => {
+                                    if (el)
+                                      nameInputRefs.current[elm.product] = el;
+                                  }}
+                                />
+                                <button
+                                  className="btn btn-outline-secondary"
+                                  type="button"
+                                  id={`button-addon2-${elm.product}`}
+                                onClick={() => handleEditToggle(elm.product)}
+                                >
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          {elm.category==="custom_sling_bag"&&(
+                             <div
+                                className="tf-mini-cart-remove"
+                                style={{ cursor: "pointer", textDecoration:"underline" }}
+                                onClick={() => removeItem(elm.product)}
                               >
-                                +
-                              </span>
-                            </div>
-                            <div
-                              className="tf-mini-cart-remove"
-                              style={{ cursor: "pointer" }}
-                              onClick={() => removeItem(elm.product)}
-                            >
-                              Remove
-                            </div>
-                          </div>
+                                Remove
+                              </div>
+                          )}
                         </div>
                       </div>
                     ))}

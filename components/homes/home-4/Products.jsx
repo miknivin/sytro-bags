@@ -10,7 +10,9 @@ export const categoriesWithName = [
   { value: "Kids Bags", name: "Kids Bags" },
   { value: "gym_duffle_bag", name: "Gym Duffle Bag" },
   { value: "mens_sling_bag", name: "Men’s Sling Bag" },
-   { value: "travel_duffle_bag", name: "Travel Duffle Bag" },
+  // { value: "custom_sling_bag", name: "Custom Sling Bag" },
+  { value: "travel_duffle_bag", name: "Travel Duffle Bag" },
+   
   // { value: "mens_backpack", name: "Men’s Backpack" },
   { value: "laptop_backpack", name: "Laptop Backpack" },
   { value: "ladies_backpack", name: "Ladies’ Backpack" },
@@ -23,6 +25,7 @@ export const categories = [
   "mens_sling_bag",
   "womens_sling_bag",
   "travel_duffle_bag",
+  // "custom_sling_bag",
   // "mens_backpack",
   "laptop_backpack",
   "ladies_backpack",

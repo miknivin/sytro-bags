@@ -40,7 +40,7 @@ const productSchema = new mongoose.Schema(
         },
       },
     ],
-     category: {
+    category: {
       type: String,
       required: [true, "Please enter bag category"],
       enum: {
@@ -49,6 +49,7 @@ const productSchema = new mongoose.Schema(
           "gym_duffle_bag",
           "travel_duffle_bag",
           "mens_sling_bag",
+          "custom_sling_bag",
           "womens_sling_bag",
           "mens_backpack",
           "laptop_backpack",

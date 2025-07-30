@@ -358,6 +358,9 @@ const CartFooter = ({
                           <p className="name" style={{ paddingRight: "10px" }}>
                             {elm.name}
                           </p>
+                          {elm.customNameToPrint&&(
+                            <p>Name on bag : <b>{elm.customNameToPrint}</b></p>
+                          )}
                         </div>
                         <span className="price">
                           ₹{(elm.price * elm.quantity).toFixed(2)}

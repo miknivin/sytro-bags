@@ -27,7 +27,7 @@ export async function POST(req) {
       paymentMethod,
       paymentInfo,
     } = body;
-
+ 
     const order = await Order.create({
       orderItems,
       shippingInfo,

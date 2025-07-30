@@ -281,5 +281,10 @@ label.non-mandatory:after {
 .react-tooltip {
   max-width: 200px !important;
   white-space: break-spaces !important;
-  text-align:center;
+  text-align: center;
+}
+
+.swal-inherit-font,
+.swal-inherit-font * {
+  font-family: inherit !important;
 }

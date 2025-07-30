@@ -32,7 +32,7 @@ export async function POST(req) {
       orderNotes,
       couponApplied,
     } = body;
-    console.log(cartItems);
+    console.log(cartItems, 'cartItems');
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json(

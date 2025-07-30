@@ -13,6 +13,7 @@ export default function OrdinaryStickyItem({
   isAddedToCartProducts,
   setQuantity,
   quantity,
+  customNameToPrint,
 }) {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -31,7 +32,10 @@ export default function OrdinaryStickyItem({
       price: product.offer,
       quantity: quantity,
       image: product.images[0]?.url || "/images/placeholder.jpg",
-      ...(product.category === "Kids Bags" ? { uploadedImage: [] } : {}), // Initialize empty uploadedImage for Kids Bags
+      ...(product.category === "Kids Bags" ? { uploadedImage: [] } : {}),
+      ...(product.category === "custom_sling_bag" && customNameToPrint
+        ? { customNameToPrint: customNameToPrint }
+        : {}),
     };
 
     dispatch(setCartItem(cartItem));
@@ -65,9 +69,11 @@ export default function OrdinaryStickyItem({
             <form onSubmit={(e) => e.preventDefault()} className="">
               <div className="tf-sticky-atc-variant-price text-center"></div>
               <div className="tf-sticky-atc-btns">
-                <div className="tf-product-info-quantity">
-                  <Quantity quantity={quantity} setQuantity={setQuantity} />
-                </div>
+                {product.category !== "custom_sling_bag" && (
+                  <div className="tf-product-info-quantity">
+                    <Quantity quantity={quantity} setQuantity={setQuantity} />
+                  </div>
+                )}
                 {product.stocks <= 0 ? (
                   <a className="tf-btn btns-sold-out cursor-not-allowed btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn">
                     <span>Sold out</span>

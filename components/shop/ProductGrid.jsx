@@ -39,7 +39,7 @@ export default function ProductGrid({ gridItems = 4, id }) {
           setPage((prev) => prev + 1);
         }
       },
-      { threshold: 1.0 }
+      { threshold: 0.1 }
     );
 
     if (loaderRef.current) {
@@ -52,6 +52,13 @@ export default function ProductGrid({ gridItems = 4, id }) {
       }
     };
   }, [hasMore, isFetching]);
+
+  // Handle Load More button click
+  const handleLoadMore = () => {
+    if (hasMore && !isFetching) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   // Show invalid category message if id is provided but not in categories
   if (decodedId && !categories.includes(decodedId)) {
@@ -108,7 +115,16 @@ export default function ProductGrid({ gridItems = 4, id }) {
       </div>
       {hasMore && (
         <div ref={loaderRef} style={{ textAlign: "center", padding: "20px" }}>
-          {isFetching ? "Loading more..." : "Scroll to load more"}
+          {isFetching ? (
+            "Loading..."
+          ) : (
+            <button
+              onClick={handleLoadMore}
+              className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+            >
+              Load More
+            </button>
+          )}
         </div>
       )}
     </>
