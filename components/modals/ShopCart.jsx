@@ -669,49 +669,57 @@ export default function ShopCart() {
                               </div>
                             </div>
                           )}
-                          {elm.customNameToPrint !== "" && (
-                            <div className="custom-name-container pt-1 d-flex align-items-center">
-                              <div className="input-group mb-3">
-                                <input
-                                  type="text"
-                                  className="form-control py-1"
-                                  placeholder="Enter the name on bag"
-                                  aria-label="Enter the name on bag"
-                                  aria-describedby="button-addon2"
-                                  value={elm.customNameToPrint}
-                                  readOnly={
-                                    editStates[elm.product] ? false : true
-                                  }
-                                  onChange={(e) =>
-                                    handleNameChange(
-                                      elm.product,
-                                      e.target.value
-                                    )
-                                  }
-                                  ref={(el) => {
-                                    if (el)
-                                      nameInputRefs.current[elm.product] = el;
-                                  }}
-                                />
-                                <button
-                                  className="btn btn-outline-secondary"
-                                  type="button"
-                                  id={`button-addon2-${elm.product}`}
-                                onClick={() => handleEditToggle(elm.product)}
-                                >
-                                  Edit
-                                </button>
-                              </div>
+                          {elm.customNameToPrint !== "" &&
+                            elm.category ===
+                              "custom_sling_bag"&&(
+                                <div className="custom-name-container pt-1 d-flex align-items-center">
+                                  <div className="input-group mb-3">
+                                    <input
+                                      type="text"
+                                      className="form-control py-1"
+                                      placeholder="Enter the name on bag"
+                                      aria-label="Enter the name on bag"
+                                      aria-describedby="button-addon2"
+                                      value={elm.customNameToPrint}
+                                      readOnly={
+                                        editStates[elm.product] ? false : true
+                                      }
+                                      onChange={(e) =>
+                                        handleNameChange(
+                                          elm.product,
+                                          e.target.value
+                                        )
+                                      }
+                                      ref={(el) => {
+                                        if (el)
+                                          nameInputRefs.current[elm.product] =
+                                            el;
+                                      }}
+                                    />
+                                    <button
+                                      className="btn btn-outline-secondary"
+                                      type="button"
+                                      id={`button-addon2-${elm.product}`}
+                                      onClick={() =>
+                                        handleEditToggle(elm.product)
+                                      }
+                                    >
+                                      Edit
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                          {elm.category === "custom_sling_bag" && (
+                            <div
+                              className="tf-mini-cart-remove"
+                              style={{
+                                cursor: "pointer",
+                                textDecoration: "underline",
+                              }}
+                              onClick={() => removeItem(elm.product)}
+                            >
+                              Remove
                             </div>
-                          )}
-                          {elm.category==="custom_sling_bag"&&(
-                             <div
-                                className="tf-mini-cart-remove"
-                                style={{ cursor: "pointer", textDecoration:"underline" }}
-                                onClick={() => removeItem(elm.product)}
-                              >
-                                Remove
-                              </div>
                           )}
                         </div>
                       </div>

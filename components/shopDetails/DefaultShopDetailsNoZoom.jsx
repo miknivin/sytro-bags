@@ -68,7 +68,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
       ...(product.category != null ? { category: product.category } : {}),
       quantity: quantity || 1,
       image: product.images[0]?.url || "/images/placeholder.jpg",
-      customNameToPrint: value,
+      customNameToPrint: value?.trim(),
     };
     dispatch(setCartItem(cartItem));
     toast.success("Item added to cart!");
@@ -151,10 +151,14 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                       <input
                         type="text"
                         value={customName}
+                        maxLength={11}
                         onChange={(e) => setCustomName(e.target.value)}
                         placeholder="Enter the name you want on the bag"
                         className="form-control"
                       />
+                      <div className="text-muted mt-1">
+                        {customName.length}/11 characters
+                      </div>
                     </div>
                   ) : (
                     <div className="tf-product-info-quantity">

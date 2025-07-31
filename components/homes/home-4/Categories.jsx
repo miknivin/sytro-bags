@@ -15,6 +15,12 @@ export const categoriesWithDetails = [
     url: "/shop-collection-sub/gym_duffle_bag",
   },
   {
+    name: "Custom Sling Bag",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/custom%20sling%20bag.webp?updatedAt=1753947269261",
+    url: "/shop-collection-sub/custom_sling_bag",
+  },
+  {
     name: "Mens Sling Bag",
     image:
       "https://ik.imagekit.io/c1jhxlxiy/mens%20sling%20bag.webp?updatedAt=1752562348385",
@@ -45,6 +51,7 @@ export const categoriesWithDetails = [
       "https://ik.imagekit.io/c1jhxlxiy/travel_duffle.webp?updatedAt=1753718908340",
     url: "/shop-collection-sub/travel_duffle_bag",
   },
+
   {
     name: "Super Shell Collection",
     image:

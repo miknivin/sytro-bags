@@ -269,8 +269,8 @@ const CartFooter = ({
     router.push(`?${newSearchParams.toString()}`);
   };
 
- useEffect(() => {
-    console.log("use effect called")
+  useEffect(() => {
+    console.log("use effect called");
     if (
       isAuthenticated &&
       searchParams.get("toclickplaceorder") === "true" &&
@@ -285,7 +285,14 @@ const CartFooter = ({
         router.replace(`?${newSearchParams.toString()}`);
       }
     }
-  }, [isAuthenticated, searchParams, isLoading, isFormValid, cartItems, router]);
+  }, [
+    isAuthenticated,
+    searchParams,
+    isLoading,
+    isFormValid,
+    cartItems,
+    router,
+  ]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -358,8 +365,10 @@ const CartFooter = ({
                           <p className="name" style={{ paddingRight: "10px" }}>
                             {elm.name}
                           </p>
-                          {elm.customNameToPrint&&(
-                            <p>Name on bag : <b>{elm.customNameToPrint}</b></p>
+                          {elm.customNameToPrint && (
+                            <p>
+                              Name on bag : <b>{elm.customNameToPrint}</b>
+                            </p>
                           )}
                         </div>
                         <span className="price">

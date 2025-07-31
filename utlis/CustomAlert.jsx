@@ -18,13 +18,30 @@ export default function CustomAlert({
     }
   }, [show]);
 
+  // Handle input change with validation
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    // Remove leading/trailing spaces
+    const cleanedValue = value.trim();
+    if (cleanedValue.length <= 11) {
+      setInputValue(value); // Keep original input (including multiple spaces) for display
+    } else {
+      alert("Name cannot exceed 11 characters!");
+    }
+  };
+
   // Handle confirm button click
   const handleConfirm = () => {
-    if (!inputValue.trim()) {
-      alert("Please enter a valid name!"); // Simple validation
+    const cleanedValue = inputValue.trim();
+    if (!cleanedValue) {
+      alert("Please enter a valid name!");
       return;
     }
-    onConfirm(inputValue);
+    if (cleanedValue.length > 11) {
+      alert("Name cannot exceed 11 characters!");
+      return;
+    }
+    onConfirm(cleanedValue);
   };
 
   // Handle key press (Enter to confirm, Escape to cancel)
@@ -61,15 +78,23 @@ export default function CustomAlert({
             <input
               type="text"
               className="form-control custom-alert-input"
-              placeholder="Enter the name you want on the bag"
+              placeholder="Enter name (max 11 characters)"
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={handleKeyDown}
+              maxLength={11}
               autoFocus
             />
+            <div className="text-muted mt-1">
+              {inputValue.trim().length}/11 characters
+            </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="tf-btn justify-content-center fw-6 fs-16 animate-hover-btn" onClick={onCancel}>
+            <button
+              type="button"
+              className="tf-btn justify-content-center fw-6 fs-16 animate-hover-btn"
+              onClick={onCancel}
+            >
               {cancelText}
             </button>
             <button

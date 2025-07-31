@@ -288,3 +288,9 @@ label.non-mandatory:after {
 .swal-inherit-font * {
   font-family: inherit !important;
 }
+
+@media (max-width: 576px) {
+  .checkout-product-item .content {
+    max-width: 230px;
+  }
+}

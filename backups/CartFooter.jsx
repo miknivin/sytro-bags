@@ -313,27 +313,39 @@ const CartFooter = ({
                     className="d-flex flex-column border-black border p-2 rounded-2 gap-1 mb-2"
                   >
                     <div className="checkout-product-item">
-                      <figure className="img-product">
-                        <Image
-                          style={{ borderRadius: "10px" }}
-                          alt="product"
-                          src={elm.image}
-                          width={720}
-                          height={1005}
-                        />
-                        <span className="quantity bg-warning">
-                          {elm.quantity}
-                        </span>
-                      </figure>
-                      <div className="content">
-                        <div className="info">
-                          <p className="name" style={{ paddingRight: "10px" }}>
-                            {elm.name}
-                          </p>
+                      <div className="row align-items-center">
+                        <div className="col-2">
+                          <figure className="img-product position-relative">
+                            <Image
+                              style={{ borderRadius: "10px" }}
+                              alt="product"
+                              src={elm.image}
+                              width={720}
+                              height={1005}
+                              className="img-fluid"
+                            />
+                            <span className="quantity bg-warning position-absolute">
+                              {elm.quantity}
+                            </span>
+                          </figure>
                         </div>
-                        <span className="price">
-                          ₹{(elm.price * elm.quantity).toFixed(2)}
-                        </span>
+                        <div className="col-8">
+                          <div className="content">
+                            <div className="info">
+                              <p
+                                className="name mb-0"
+                                style={{ paddingRight: "10px" }}
+                              >
+                                {elm.name}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-2">
+                          <span className="price">
+                            ₹{(elm.price * elm.quantity).toFixed(2)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div
