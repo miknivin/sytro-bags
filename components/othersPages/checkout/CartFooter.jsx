@@ -114,6 +114,27 @@ const CartFooter = ({
   };
 
   const handleRazorpayPayment = async () => {
+    const invalidSlingBags = cartItems.filter(
+      (item) =>
+        item.category === "custom_sling_bag" &&
+        (!item.customNameToPrint || item.customNameToPrint.trim() === "")
+    );
+    if (invalidSlingBags.length > 0) {
+      const productNames = invalidSlingBags.map((item) => item.name).join(", ");
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Order!",
+        text: `Please provide a name for the following custom sling bag products: ${productNames}`,
+        confirmButtonText: "OK",
+      });
+      
+      if(cartModalref && cartModalref.current){
+        cartModalref.current?.click();
+      }
+
+      return;
+    }
+
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
     const finalTotal = discountedTotal || subtotal;
 
@@ -536,40 +557,43 @@ const CartFooter = ({
             </div>
 
             <div className="wd-check-payment">
-              <div className="fieldset-radio mb_20">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  id="bank"
-                  value="BANK"
-                  className="tf-check d-flex align-items-center"
-                  checked={paymentMethod === "BANK"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                />
-                <label htmlFor="bank">Online transfer</label>
-              </div>
-              <div className="fieldset-radio mb_20">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  id="cod"
-                  value="COD"
-                  className="tf-check d-flex align-items-center"
-                  checked={paymentMethod === "COD"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  disabled={cartItems.some(
-                    (item) => item.category === "Kids Bags"
-                  )}
-                  data-tooltip-id="cod-tooltip"
-                  data-tooltip-content={
-                    cartItems.some((item) => item.category === "Kids Bags")
-                      ? "It contains custom bags. \n Either remove or proceed with online transfer."
-                      : ""
-                  }
-                />
-                <label htmlFor="cod">Cash on Delivery</label>
-                <Tooltip id="cod-tooltip" place="top" />
-              </div>
+              {cartItems.some(
+                (item) =>
+                  item.category === "Kids Bags" ||
+                  item.category === "custom_sling_bag"
+              ) ? (
+                <div className="alert alert-warning" role="alert">
+                  Cash on Delivery is not available for custom bags. Please
+                  proceed with online transfer.
+                </div>
+              ) : (
+                <>
+                  <div className="fieldset-radio mb_20">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      id="bank"
+                      value="BANK"
+                      className="tf-check d-flex align-items-center"
+                      checked={paymentMethod === "BANK"}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    <label htmlFor="bank">Online transfer</label>
+                  </div>
+                  <div className="fieldset-radio mb_20">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      id="cod"
+                      value="COD"
+                      className="tf-check d-flex align-items-center"
+                      checked={paymentMethod === "COD"}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    <label htmlFor="cod">Cash on Delivery</label>
+                  </div>
+                </>
+              )}
             </div>
 
             {!isAuthenticated ? (

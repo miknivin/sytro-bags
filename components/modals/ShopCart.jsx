@@ -54,7 +54,7 @@ export default function ShopCart() {
   const [initiateMultipartUpload] = useInitiateMultipartUploadMutation();
   const [completeMultipartUpload] = useCompleteMultipartUploadMutation();
   const [abortMultipartUpload] = useAbortMultipartUploadMutation();
-
+  const [nameErrorMessage, setNameErrorMessage] = useState(null);
   const [showUploadInput, setShowUploadInput] = useState({});
 
   const handlePopoverToggle = (productId, uploadedImage) => {
@@ -111,6 +111,7 @@ export default function ShopCart() {
       toast.error(
         `These Kids Bags products have mismatched image with quantity: ${productNames}`
       );
+      
       console.log("Mismatched items:", mismatchedItems);
     }
   };
@@ -387,6 +388,25 @@ export default function ShopCart() {
     setCartProducts((prev) => prev.filter((item) => item.product !== id));
     dispatch(removeCartItem(id));
     dispatch(resetSingleProduct());
+  };
+
+  const handleCheckoutClick = () => {
+    const invalidSlingBags = cartItems.filter(
+      (item) =>
+        item.category === "custom_sling_bag" &&
+        (!item.customNameToPrint || item.customNameToPrint.trim() === "")
+    );
+    if (invalidSlingBags.length === 0) {
+      router.push("/checkout", { scroll: false });
+    } else {
+      const productNames = invalidSlingBags.map((item) => item.name).join(", ");
+      // toast.error(
+      //   `Please provide a name for the following custom sling bag products: ${productNames}`
+      // );
+
+      setNameErrorMessage(`Please provide a name for the following custom sling bag products: ${productNames}`)
+      console.log("Invalid custom sling bags:", invalidSlingBags);
+    }
   };
 
   return (
@@ -669,46 +689,49 @@ export default function ShopCart() {
                               </div>
                             </div>
                           )}
-                          {elm.customNameToPrint !== "" &&
-                            elm.category ===
-                              "custom_sling_bag"&&(
-                                <div className="custom-name-container pt-1 d-flex align-items-center">
-                                  <div className="input-group mb-3">
-                                    <input
-                                      type="text"
-                                      className="form-control py-1"
-                                      placeholder="Enter the name on bag"
-                                      aria-label="Enter the name on bag"
-                                      aria-describedby="button-addon2"
-                                      value={elm.customNameToPrint}
-                                      readOnly={
-                                        editStates[elm.product] ? false : true
-                                      }
-                                      onChange={(e) =>
-                                        handleNameChange(
-                                          elm.product,
-                                          e.target.value
-                                        )
-                                      }
-                                      ref={(el) => {
-                                        if (el)
-                                          nameInputRefs.current[elm.product] =
-                                            el;
-                                      }}
-                                    />
-                                    <button
-                                      className="btn btn-outline-secondary"
-                                      type="button"
-                                      id={`button-addon2-${elm.product}`}
-                                      onClick={() =>
-                                        handleEditToggle(elm.product)
-                                      }
-                                    >
-                                      Edit
-                                    </button>
+                          {elm.category === "custom_sling_bag" && (
+                            <div className="custom-name-container pt-1 d-flex flex-column align-items-start">
+                              <div className="input-group mb-3">
+                                <input
+                                  type="text"
+                                  className="form-control py-1"
+                                  placeholder="Enter the name on bag"
+                                  aria-label="Enter the name on bag"
+                                  aria-describedby="button-addon2"
+                                  maxLength={11}
+                                  value={elm.customNameToPrint}
+                                  readOnly={
+                                    editStates[elm.product] ? false : true
+                                  }
+                                  onChange={(e) =>
+                                    handleNameChange(
+                                      elm.product,
+                                      e.target.value
+                                    )
+                                  }
+                                  ref={(el) => {
+                                    if (el)
+                                      nameInputRefs.current[elm.product] = el;
+                                  }}
+                                />
+                                <button
+                                  className="btn btn-outline-secondary"
+                                  type="button"
+                                  id={`button-addon2-${elm.product}`}
+                                  onClick={() => handleEditToggle(elm.product)}
+                                >
+                                  Edit
+                                </button>
+                              </div>
+                              {editStates[elm.product] &&
+                                elm.customNameToPrint && (
+                                  <div className="text-muted mt-1">
+                                    {elm.customNameToPrint.length} / 11
+                                    characters
                                   </div>
-                                </div>
-                              )}
+                                )}
+                            </div>
+                          )}
                           {elm.category === "custom_sling_bag" && (
                             <div
                               className="tf-mini-cart-remove"
@@ -751,12 +774,16 @@ export default function ShopCart() {
                     className="tf-mini-cart-view-checkout flex-column"
                   >
                     {isQuantityValid() ? (
-                      <Link
-                        href="/checkout"
+                      <>
+                                            {nameErrorMessage&& <span className="text-danger">{nameErrorMessage}</span>}
+                      <button
                         className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                        onClick={handleCheckoutClick}
                       >
                         <span>Check out</span>
-                      </Link>
+                      </button>
+
+                      </>
                     ) : cartItems.length > 0 ? (
                       <>
                         <span className="text-danger">

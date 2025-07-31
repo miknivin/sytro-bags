@@ -273,7 +273,15 @@ export default function InvoiceSection({ orderId }) {
                       className="content"
                       style={{ borderBottom: "1px solid #e0e0e0" }}
                     >
-                      <td style={{ padding: "10px" }}>{item.name || "N/A"}</td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          maxWidth: "200px",
+                          whiteSpace: "break-spaces",
+                        }}
+                      >
+                        {item.name || "N/A"}
+                      </td>
                       <td style={{ padding: "10px" }}>
                         ₹{parseFloat(item.price).toFixed(2) || "0.00"}
                       </td>

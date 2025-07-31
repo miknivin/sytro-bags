@@ -88,6 +88,22 @@ export default function Checkout() {
 
   const handleSubmit = async (e = null, paymentMode = "COD") => {
     if (e && paymentMode === "COD") e?.preventDefault();
+    const invalidSlingBags = cartItems.filter(
+      (item) =>
+        item.category === "custom_sling_bag" &&
+        (!item.customNameToPrint || item.customNameToPrint.trim() === "")
+    );
+    if (invalidSlingBags.length > 0) {
+      const productNames = invalidSlingBags.map((item) => item.name).join(", ");
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Order!",
+        text: `Please provide a name for the following custom sling bag products: ${productNames}`,
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
 
     const orderData = {
