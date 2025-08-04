@@ -294,3 +294,19 @@ label.non-mandatory:after {
     max-width: 230px;
   }
 }
+
+.user-account {
+  min-height: 40px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .react-stars span {
+    font-size: 21px !important;
+  }
+}

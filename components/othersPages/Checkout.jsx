@@ -165,9 +165,10 @@ export default function Checkout() {
                   )}
                 </fieldset>
                 <fieldset className="fieldset">
-                  <label htmlFor="lastName">Last Name</label>
+                  <label htmlFor="lastName" className="non-mandatory">
+                    Last Name
+                  </label>
                   <input
-                    required
                     type="text"
                     id="lastName"
                     value={formData.lastName}

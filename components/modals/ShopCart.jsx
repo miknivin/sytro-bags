@@ -34,7 +34,7 @@ import { uploadMultipartFile } from "@/utlis/uploadMultipart";
 
 export default function ShopCart() {
   const [showPopover, setShowPopover] = useState(false);
-  const [editStates, setEditStates] = useState({});
+  // const [editStates, setEditStates] = useState({});
   const [uploadKidsImage, { isLoading, error }] = useUploadKidsImageMutation();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [imageUrl, setImageUrl] = useState("");
@@ -72,18 +72,18 @@ export default function ShopCart() {
     }));
   };
 
-  const handleEditToggle = (productId) => {
-    setEditStates((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-    // Auto-focus the input field when enabling edit mode
-    if (!editStates[productId]) {
-      setTimeout(() => {
-        nameInputRefs.current[productId]?.focus();
-      }, 0);
-    }
-  };
+  // const handleEditToggle = (productId) => {
+  //   setEditStates((prev) => ({
+  //     ...prev,
+  //     [productId]: !prev[productId],
+  //   }));
+  //   // Auto-focus the input field when enabling edit mode
+  //   if (!editStates[productId]) {
+  //     setTimeout(() => {
+  //       nameInputRefs.current[productId]?.focus();
+  //     }, 0);
+  //   }
+  // };
 
   const handleClosePopover = (productId) => {
     setPopoverStates((prev) => ({
@@ -111,7 +111,7 @@ export default function ShopCart() {
       toast.error(
         `These Kids Bags products have mismatched image with quantity: ${productNames}`
       );
-      
+
       console.log("Mismatched items:", mismatchedItems);
     }
   };
@@ -404,7 +404,9 @@ export default function ShopCart() {
       //   `Please provide a name for the following custom sling bag products: ${productNames}`
       // );
 
-      setNameErrorMessage(`Please provide a name for the following custom sling bag products: ${productNames}`)
+      setNameErrorMessage(
+        `Please provide a name for the following custom sling bag products: ${productNames}`
+      );
       console.log("Invalid custom sling bags:", invalidSlingBags);
     }
   };
@@ -691,18 +693,14 @@ export default function ShopCart() {
                           )}
                           {elm.category === "custom_sling_bag" && (
                             <div className="custom-name-container pt-1 d-flex flex-column align-items-start">
-                              <div className="input-group mb-3">
+                              <div className="input-group mb-1">
                                 <input
                                   type="text"
                                   className="form-control py-1"
                                   placeholder="Enter the name on bag"
                                   aria-label="Enter the name on bag"
-                                  aria-describedby="button-addon2"
                                   maxLength={11}
                                   value={elm.customNameToPrint}
-                                  readOnly={
-                                    editStates[elm.product] ? false : true
-                                  }
                                   onChange={(e) =>
                                     handleNameChange(
                                       elm.product,
@@ -714,22 +712,12 @@ export default function ShopCart() {
                                       nameInputRefs.current[elm.product] = el;
                                   }}
                                 />
-                                <button
-                                  className="btn btn-outline-secondary"
-                                  type="button"
-                                  id={`button-addon2-${elm.product}`}
-                                  onClick={() => handleEditToggle(elm.product)}
-                                >
-                                  Edit
-                                </button>
                               </div>
-                              {editStates[elm.product] &&
-                                elm.customNameToPrint && (
-                                  <div className="text-muted mt-1">
-                                    {elm.customNameToPrint.length} / 11
-                                    characters
-                                  </div>
-                                )}
+                              {elm.customNameToPrint && (
+                                <div className="text-muted">
+                                  {elm.customNameToPrint.length} / 11 characters
+                                </div>
+                              )}
                             </div>
                           )}
                           {elm.category === "custom_sling_bag" && (
@@ -775,14 +763,17 @@ export default function ShopCart() {
                   >
                     {isQuantityValid() ? (
                       <>
-                                            {nameErrorMessage&& <span className="text-danger">{nameErrorMessage}</span>}
-                      <button
-                        className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                        onClick={handleCheckoutClick}
-                      >
-                        <span>Check out</span>
-                      </button>
-
+                        {nameErrorMessage && (
+                          <span className="text-danger">
+                            {nameErrorMessage}
+                          </span>
+                        )}
+                        <button
+                          className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                          onClick={handleCheckoutClick}
+                        >
+                          <span>Check out</span>
+                        </button>
                       </>
                     ) : cartItems.length > 0 ? (
                       <>

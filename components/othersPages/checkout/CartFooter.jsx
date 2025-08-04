@@ -67,7 +67,6 @@ const CartFooter = ({
 
     return (
       formData.firstName &&
-      formData.lastName &&
       formData.address &&
       formData.city &&
       trimmedPhoneNo &&
@@ -127,11 +126,10 @@ const CartFooter = ({
         text: `Please provide a name for the following custom sling bag products: ${productNames}`,
         confirmButtonText: "OK",
       });
-      
-      if(cartModalref && cartModalref.current){
+
+      if (cartModalref && cartModalref.current) {
         cartModalref.current?.click();
       }
-
       return;
     }
 
