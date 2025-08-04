@@ -364,7 +364,10 @@ const CartFooter = ({
                     className="d-flex flex-column border-black border p-2 rounded-2 gap-1 mb-2"
                   >
                     <div className="checkout-product-item">
-                      <figure className="img-product">
+                      <figure
+                        style={{ borderRadius: "10px" }}
+                        className="img-product"
+                      >
                         <Image
                           style={{ borderRadius: "10px" }}
                           alt="product"

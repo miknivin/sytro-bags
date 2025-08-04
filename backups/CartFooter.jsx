@@ -315,7 +315,10 @@ const CartFooter = ({
                     <div className="checkout-product-item">
                       <div className="row align-items-center">
                         <div className="col-2">
-                          <figure className="img-product position-relative">
+                          <figure
+                            
+                            className="img-product position-relative"
+                          >
                             <Image
                               style={{ borderRadius: "10px" }}
                               alt="product"

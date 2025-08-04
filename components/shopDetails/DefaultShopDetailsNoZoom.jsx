@@ -79,6 +79,10 @@ export default function DefaultShopDetailsNoZoom({ product }) {
     setShowAlert(false);
   };
 
+  const triggerAlert = () => {
+    setShowAlert(true);
+  };
+
   return (
     <section
       className="flat-spacing-4 pt_0"
@@ -198,6 +202,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
         setQuantity={setQuantity}
         quantity={quantity}
         soldOut={product.stocks <= 0}
+        triggerAlert={triggerAlert}
       />
     </section>
   );
