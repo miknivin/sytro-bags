@@ -133,11 +133,12 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                       .reverse()
                       ?.map((feature, index) => (
                         <li className="mb-2" key={index}>
-                          <div className="row align-items-center">
+                          <div className="row align-items-start">
                             <div
                               className="col-auto"
                               style={{
                                 color: "var(--primary)",
+                                marginTop: "4px",
                               }}
                             >
                               <FontAwesomeIcon icon={faCircleCheck} />
