@@ -8,7 +8,7 @@ import { isAuthenticatedUser } from "@/middlewares/auth";
 export async function POST(req) {
   try {
     const body = await req.json();
-    User
+    User;
     await dbConnect();
     console.log("DB connected");
 
@@ -54,7 +54,7 @@ export async function POST(req) {
     });
 
     await newOrder.save();
-
+    console.log(newOrder);
     return new Response(JSON.stringify(order), { status: 200 });
   } catch (error) {
     console.error("Error:", error);
