@@ -12,8 +12,8 @@ export const categoriesWithName = [
   { value: "mens_sling_bag", name: "Men’s Sling Bag" },
   { value: "custom_sling_bag", name: "Custom Sling Bag" },
   { value: "travel_duffle_bag", name: "Travel Duffle Bag" },
-   
-  // { value: "mens_backpack", name: "Men’s Backpack" },
+
+  { value: "trekking_bag", name: "Trekking Bag" },
   { value: "laptop_backpack", name: "Laptop Backpack" },
   { value: "ladies_backpack", name: "Ladies’ Backpack" },
   { value: "tote_bag", name: "Women's Tote Bag" },
@@ -30,6 +30,7 @@ export const categories = [
   "laptop_backpack",
   "ladies_backpack",
   "tote_bag",
+  "trekking_bag",
 ];
 
 const formatCategory = (category) =>
