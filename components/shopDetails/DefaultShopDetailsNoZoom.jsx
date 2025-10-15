@@ -127,7 +127,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                         <s>₹{product?.price?.toFixed(2) || "3000"}</s>
                       </span>
                     </div>
-                    <div style={{ color: "lightGray" }} className="fw-light">
+                    <div style={{ color: "##787878" }} className="fw-light">
                       Inc. GST
                     </div>
                   </div>
