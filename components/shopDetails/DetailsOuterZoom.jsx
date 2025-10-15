@@ -232,7 +232,7 @@ export default function DetailsOuterZoom({ product }) {
                         <s>₹{product?.actualPrice?.toFixed(2) || 3000}</s>
                       </span>
                     </div>
-                    <div style={{ color: "#949494" }} className="fw-light">
+                    <div style={{ color: "#787878" }} className="fw-light">
                       Inc. GST
                     </div>
                   </div>
