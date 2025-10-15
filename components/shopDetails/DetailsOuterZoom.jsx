@@ -56,7 +56,7 @@ export default function DetailsOuterZoom({ product }) {
     const cartItem = {
       product: product?._id,
       name: product?.name,
-      category:product?.category || "Kids Bags",
+      category: product?.category || "Kids Bags",
       price: product?.offer,
       image: product?.images[0]?.url,
       stock: product?.stock,
@@ -231,6 +231,9 @@ export default function DetailsOuterZoom({ product }) {
                         ).toFixed(2)} */}
                         <s>₹{product?.actualPrice?.toFixed(2) || 3000}</s>
                       </span>
+                    </div>
+                    <div style={{ color: "#949494" }} className="fw-light">
+                      Inc. GST
                     </div>
                   </div>
                   <div className="tf-product-info-variant-picker mb-0">

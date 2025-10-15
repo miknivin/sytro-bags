@@ -77,7 +77,7 @@ export default function Footer1({ bgColor = "" }) {
                   <ul>
                     <li>
                       <p>
-                        <b>Address:</b> Panakal tower North Basin Road
+                        <b>Address:</b>Sytrobags Panakal tower North Basin Road
                         <br />
                         Broadway Ernakulam,
                         <br />
