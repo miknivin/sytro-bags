@@ -53,21 +53,10 @@ export default function BackToSchoolCollection() {
                             }}>
                                 <Link
                                     href="/shop-collection-sub/Kids%20Bags"
-                                    className="tf-btn btn-fill animate-hover-btn"
-                                    style={{
-                                        backgroundColor: '#fff',
-                                        color: '#122432',
-                                        padding: '6px 16px',
-                                        fontSize: '12px',
-                                        fontWeight: '600',
-                                        borderRadius: '6px',
-                                        textDecoration: 'none',
-                                        display: 'inline-block',
-                                        border: 'none',
-                                        outline: 'none'
-                                    }}
+                                    className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg"
                                 >
-                                    View More
+                                    <span>View More</span>
+                                    <i className="icon icon-arrow1-top-left" />
                                 </Link>
                             </div>
                         </div>
@@ -102,21 +91,10 @@ export default function BackToSchoolCollection() {
                             }}>
                                 <Link
                                     href="/shop-collection-sub/laptop_backpack"
-                                    className="tf-btn btn-fill animate-hover-btn"
-                                    style={{
-                                        backgroundColor: '#fff',
-                                        color: '#122432',
-                                        padding: '6px 16px',
-                                        fontSize: '12px',
-                                        fontWeight: '600',
-                                        borderRadius: '6px',
-                                        textDecoration: 'none',
-                                        display: 'inline-block',
-                                        border: 'none',
-                                        outline: 'none'
-                                    }}
+                                    className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg"
                                 >
-                                    View More
+                                    <span>View More</span>
+                                    <i className="icon icon-arrow1-top-left" />
                                 </Link>
                             </div>
                         </div>
