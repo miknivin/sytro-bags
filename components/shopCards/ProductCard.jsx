@@ -146,6 +146,18 @@ export const ProductCard = ({ product }) => {
             ))}
           </div>
         )} */}
+        {/* Limited Orders Tag for Custom Sling Bags */}
+        {product.category === "custom_sling_bag" && (
+          <div className="limited-orders-tag">
+            <span className="limited-orders-text">Only Limited Orders Daily</span>
+          </div>
+        )}
+        {/* Limited Orders Tag for Kids Bags */}
+        {product.category === "Kids Bags" && (
+          <div className="limited-orders-tag">
+            <span className="limited-orders-text">Only Limited Orders Daily</span>
+          </div>
+        )}
       </div>
       <div className="card-product-info">
         <Link
@@ -158,15 +170,34 @@ export const ProductCard = ({ product }) => {
         >
           {product.name}
         </Link>
+        {product.category === "Kids Bags" && (
+          <p className="product-note">
+            Personalised Bags With Kid Photo and Name
+          </p>
+        )}
+        {product.category === "custom_sling_bag" && (
+          <p className="product-note">
+            Premium quality custom design with durable materials
+          </p>
+        )}
         {product.actualPrice && product.offer && (
-          <span className="price d-flex gap-1">
-            ₹{product.offer.toFixed(2)}
-            {product.offer < product.actualPrice && (
-              <del style={{ fontSize: "12px" }} className="text-danger">
-                ₹{product.actualPrice}
-              </del>
-            )}
-          </span>
+          <div className="price product-card-price d-flex flex-column">
+            <div className="d-flex align-items-center gap-1">
+              <span className="offer-price">
+                ₹{product.offer.toFixed(2)}
+              </span>
+              {product.offer < product.actualPrice && (
+                <>
+                  <del className="original-price">
+                    ₹{product.actualPrice}
+                  </del>
+                  <span className="discount-percentage">
+                    {Math.round(((product.actualPrice - product.offer) / product.actualPrice) * 100)}% OFF
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
         )}
 
         {/* {product.colors && (

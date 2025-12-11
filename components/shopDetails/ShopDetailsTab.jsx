@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Testimonials from "../common/Testimonials";
 
 const tabs = [
-  { title: "Description", active: true },
-  { title: "Review", active: false },
+  { title: "Review", active: true },
+  { title: "Description", active: false },
   // { title: "Shiping", active: false },
   // { title: "Return Polocies", active: false },
 ];
@@ -27,9 +27,8 @@ export default function ShopDetailsTab({ details }) {
                   <li
                     key={i}
                     onClick={() => setCurrentTab(i + 1)}
-                    className={`item-title ${
-                      currentTab == i + 1 ? "active" : ""
-                    } `}
+                    className={`item-title ${currentTab == i + 1 ? "active" : ""
+                      } `}
                   >
                     <span className="inner">{elm?.title}</span>
                   </li>
@@ -37,9 +36,14 @@ export default function ShopDetailsTab({ details }) {
               </ul>
               <div className="widget-content-tab">
                 <div
-                  className={`widget-content-inner ${
-                    currentTab == 1 ? "active" : ""
-                  } `}
+                  className={`widget-content-inner ${currentTab == 1 ? "active" : ""
+                    } `}
+                >
+                  <Testimonials isTitle={false} />
+                </div>
+                <div
+                  className={`widget-content-inner ${currentTab == 2 ? "active" : ""
+                    } `}
                 >
                   <div className="">
                     <p className="mb_30">{details?.description}</p>
@@ -71,16 +75,8 @@ export default function ShopDetailsTab({ details }) {
                   </div>
                 </div>
                 <div
-                  className={`widget-content-inner ${
-                    currentTab == 2 ? "active" : ""
-                  } `}
-                >
-                  <Testimonials isTitle={false} />
-                </div>
-                <div
-                  className={`widget-content-inner ${
-                    currentTab == 3 ? "active" : ""
-                  } `}
+                  className={`widget-content-inner ${currentTab == 3 ? "active" : ""
+                    } `}
                 >
                   <div className="tf-page-privacy-policy">
                     <div className="title">
@@ -138,9 +134,8 @@ export default function ShopDetailsTab({ details }) {
                   </div>
                 </div>
                 <div
-                  className={`widget-content-inner ${
-                    currentTab == 4 ? "active" : ""
-                  } `}
+                  className={`widget-content-inner ${currentTab == 4 ? "active" : ""
+                    } `}
                 >
                   <ul className="d-flex justify-content-center mb_18">
                     <li className="">

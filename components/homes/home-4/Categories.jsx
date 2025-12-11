@@ -8,6 +8,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 export const categoriesWithDetails = [
+
+  {
+    name: "Super Shell Collection",
+    image:
+      "https://ik.imagekit.io/c1jhxlxiy/kidsbag.webp?updatedAt=1753772415449",
+    url: "/shop-collection-sub/Kids%20Bags",
+  },
   {
     name: "Gym Duffle Bag",
     image:
@@ -58,12 +65,6 @@ export const categoriesWithDetails = [
     url: "/shop-collection-sub/travel_duffle_bag",
   },
 
-  {
-    name: "Super Shell Collection",
-    image:
-      "https://ik.imagekit.io/c1jhxlxiy/kidsbag.webp?updatedAt=1753772415449",
-    url: "/shop-collection-sub/Kids%20Bags",
-  },
 
   // {
   //   name: "Tote Bag",

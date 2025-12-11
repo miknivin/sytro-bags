@@ -64,7 +64,7 @@ export default function Footer1({ bgColor = "" }) {
             <div className="row">
               <div className="col-xl-3 col-md-6 col-12">
                 <div className="footer-infor">
-                  <div className="footer-logo">
+                  <div className="footer-logo mb-3">
                     <Link href={`/`}>
                       <Image
                         alt="image"
@@ -74,6 +74,15 @@ export default function Footer1({ bgColor = "" }) {
                       />
                     </Link>
                   </div>
+                  <p style={{
+                    marginBottom: '20px',
+                    color: '#666',
+                    fontSize: '14px',
+                    lineHeight: '1.6',
+                    maxWidth: '300px'
+                  }}>
+                    To craft versatile bags that fit every lifestyle, from school to gym, work to travel, with unmatched style and durability.
+                  </p>
                   <ul>
                     <li>
                       <p>
@@ -181,9 +190,8 @@ export default function Footer1({ bgColor = "" }) {
                       exclusive content, events and more!
                     </div> */}
                     <div
-                      className={`tfSubscribeMsg ${
-                        showMessage ? "active" : ""
-                      }`}
+                      className={`tfSubscribeMsg ${showMessage ? "active" : ""
+                        }`}
                     >
                       {success ? (
                         <p style={{ color: "rgb(52, 168, 83)" }}>

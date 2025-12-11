@@ -4,7 +4,7 @@ import Order from "@/models/Order";
 import Product from "@/models/Products";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
-
+import { triggerAdminShipment } from "@/utlis/triggerAdminShipment";
 export async function POST(req) {
   try {
     Product;
@@ -27,7 +27,7 @@ export async function POST(req) {
       paymentMethod,
       paymentInfo,
     } = body;
- 
+
     const order = await Order.create({
       orderItems,
       shippingInfo,
@@ -40,6 +40,11 @@ export async function POST(req) {
       user: user?._id,
     });
 
+    setImmediate(() => {
+      triggerAdminShipment(order._id.toString()).catch(err =>
+        console.error("triggerAdminShipment failed (ignored):", err)
+      );
+    });
     return NextResponse.json({ success: true, order }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

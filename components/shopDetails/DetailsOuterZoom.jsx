@@ -23,15 +23,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import DetailsStatic from "./DetailsStatic";
 import { sanitizeLocalStorageImages } from "@/app/helpers/localStorageSanitizer";
 import OfferTimer from "@/utlis/OfferTimer";
+import HappyCustomers from "../common/HappyCustomers";
 
-export default function DetailsOuterZoom({ product }) {
+export default function DetailsOuterZoom({ product, details }) {
   //const kidsBagId = "67a70ca93f464380b64b05a6";
 
   const [currentColor, setCurrentColor] = useState(colors[0]);
 
   const router = useRouter();
   const uploadModalRef = useRef(null);
-  const handleColor = () => {};
+  const handleColor = () => { };
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [currentSize, setCurrentSize] = useState("Small");
   const selectedDesigns = useSelector((state) => state.cart.selectedDesigns);
@@ -181,22 +182,22 @@ export default function DetailsOuterZoom({ product }) {
                     firstImage={
                       selectedDesigns[product._id]
                         ? [
-                            {
-                              url:
-                                currentSize?.valueOf === "Large"
-                                  ? selectedDesigns[product._id]?.largeBagImage
-                                  : selectedDesigns[product._id]?.smallBagImage,
-                              _id: selectedDesigns?._id,
-                            },
-                            ...(currentSize?.valueOf === "Large"
-                              ? product?.extraImages?.slice(1) || []
-                              : product?.images?.slice(1) || []),
-                          ]
+                          {
+                            url:
+                              currentSize?.valueOf === "Large"
+                                ? selectedDesigns[product._id]?.largeBagImage
+                                : selectedDesigns[product._id]?.smallBagImage,
+                            _id: selectedDesigns?._id,
+                          },
+                          ...(currentSize?.valueOf === "Large"
+                            ? product?.extraImages?.slice(1) || []
+                            : product?.images?.slice(1) || []),
+                        ]
                         : [
-                            ...(currentSize?.valueOf === "Large"
-                              ? product?.extraImages || []
-                              : product?.images || []),
-                          ]
+                          ...(currentSize?.valueOf === "Large"
+                            ? product?.extraImages || []
+                            : product?.images || []),
+                        ]
                     }
                   />
                 </div>
@@ -206,33 +207,122 @@ export default function DetailsOuterZoom({ product }) {
               <div className="tf-product-info-wrap position-relative">
                 <div className="tf-zoom-main" />
                 <div className="tf-product-info-list other-image-zoom">
-                  <div className="tf-product-info-title">
-                    <h5>
+                  {/* Product Name - Bold */}
+                  <div className="tf-product-info-title mb-3">
+                    <h4 style={{ fontWeight: 800, fontSize: '28px', color: '#333' }}>
                       {product.name ? product.name : "Supershell collection"}{" "}
                       {selectedDesigns[product._id] && (
                         <span>({selectedDesigns[product._id].name})</span>
                       )}
-                    </h5>
+                    </h4>
                   </div>
-                  <div>
-                    {product && product.offerEndTime && (
-                      <OfferTimer offerEndTime={product.offerEndTime} />
-                    )}
+
+                  {/* Small Description */}
+                  <div className="product-description mb-3">
+                    <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5', margin: 0 }}>
+                      {(details?.description || product?.description || "").substring(0, 150)}
+                      {(details?.description || product?.description || "").length > 150 && "..."}
+                    </p>
                   </div>
-                  <div className="tf-product-info-price flex align-items-center mb-3">
-                    <div style={{ fontWeight: 600 }} className="price-on-sale">
+
+                  {/* Service Tags */}
+                  {product.category === "Kids Bags" && (
+                    <div className="service-tags-section mb-4">
+                      <div className="row">
+                        <div className="col-12">
+                          <div className="service-tag d-flex align-items-center mb-2">
+                            <div className="service-icon me-3">
+                              <img
+                                src="/images/icons/Untitled design (9).svg"
+                                alt="2 Year Warranty"
+                                width="20"
+                                height="20"
+                              />
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                                2 YEAR WARRANTY
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-12">
+                          <div className="service-tag d-flex align-items-center mb-2">
+                            <div className="service-icon me-3">
+                              <img
+                                src="/images/icons/I241123182839208168.svg"
+                                alt="Free Shipping"
+                                width="20"
+                                height="20"
+                              />
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                                ALL INDIA FREE DELIVERY
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-12">
+                          <div className="service-tag d-flex align-items-center mb-2">
+                            <div className="service-icon me-3">
+                              <img
+                                src="/images/icons/I250317133325217317.svg"
+                                alt="Limited Orders"
+                                width="20"
+                                height="20"
+                              />
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                                ONLY LIMITED ORDERS DAILY
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-12">
+                          <div className="service-tag d-flex align-items-center mb-2">
+                            <div className="service-icon me-3">
+                              <img
+                                src="/images/icons/printer_icon.3b26a3e3.svg"
+                                alt="Printing & Dispatch"
+                                width="20"
+                                height="20"
+                              />
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                                PRINT & DISPATCH IN 2-4 WORKING DAYS
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Offer Timer - Prominent Display */}
+                  {/* <div className="mb-3">
+                    <OfferTimer offerEndTime={product?.offerEndTime} />
+                  </div> */}
+
+                  {/* Pricing Section */}
+                  <div className="tf-product-info-price d-flex align-items-center gap-3 mb-4">
+                    <div style={{ fontWeight: 700, fontSize: '24px', color: '#000' }} className="price-on-sale">
                       ₹{product?.offer?.toFixed(2)}
                     </div>
                     <div>
-                      <span className=" fs-4 text-danger">
-                        {/* {(
-                          (1 - product.offer / product.actualPrice) *
-                          100
-                        ).toFixed(2)} */}
-                        <s>₹{product?.actualPrice?.toFixed(2) || 3000}</s>
+                      <span style={{ fontSize: '18px', color: '#999', textDecoration: 'line-through' }}>
+                        ₹{product?.actualPrice?.toFixed(2) || 3000}
                       </span>
                     </div>
-                    <div style={{ color: "#787878" }} className="fw-light">
+                    <div style={{ backgroundColor: '#ff4444', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: '600' }}>
+                      {((1 - product?.offer / product?.actualPrice) * 100).toFixed(0)}% OFF
+                    </div>
+                    <div style={{ color: "#5d5b5bff", fontSize: '14px' }} className="fw-light">
                       Inc. GST
                     </div>
                   </div>
@@ -293,37 +383,7 @@ export default function DetailsOuterZoom({ product }) {
                                   )}
                               </div>
                             </div>
-                          ) : (
-                            <>
-                              <div class="row">
-                                <div class="col-12">
-                                  <ul class="list-unstyled">
-                                    {[...(product?.details?.features || [])]
-                                      .reverse()
-                                      ?.map((feature, index) => (
-                                        <li className="mb-2" key={index}>
-                                          <div className="row align-items-center">
-                                            <div
-                                              className="col-auto"
-                                              style={{
-                                                color: "var(--primary)",
-                                              }}
-                                            >
-                                              <FontAwesomeIcon
-                                                icon={faCircleCheck}
-                                              />
-                                            </div>
-                                            <div className="col px-0">
-                                              {feature}
-                                            </div>
-                                          </div>
-                                        </li>
-                                      ))}
-                                  </ul>
-                                </div>
-                              </div>
-                            </>
-                          )}
+                          ) : null}
                         </div>
                       </div>
                     )}
@@ -395,15 +455,13 @@ export default function DetailsOuterZoom({ product }) {
                       <div className="w-100"></div>
                     </form>
                   </div>
-                  <>
-                    <DetailsStatic />
-                  </>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>
+      <HappyCustomers />
       <div>
         <StickyItem
           product={product}

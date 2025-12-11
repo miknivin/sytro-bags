@@ -16,9 +16,18 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
   const swiperRef = useRef(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const videoRefs = useRef({});
 
-  // Fallback for empty firstImage
-  if (!firstImage.length) {
+  // Helper to detect video URLs
+  const isVideoUrl = (url) => /\.(mp4|webm|mov|avi|mpeg|ogg)$/i.test(url);
+  
+  // Separate images and videos
+  const images = firstImage.filter(item => !isVideoUrl(item.url));
+  const videos = firstImage.filter(item => isVideoUrl(item.url));
+  const allMedia = [...images, ...videos];
+
+  // Fallback for empty media
+  if (!allMedia.length) {
     return <div>No images available</div>;
   }
 
@@ -49,23 +58,50 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
           1150: { direction: "vertical" },
         }}
       >
-        {firstImage.map((slide, index) => (
+        {allMedia.map((slide, index) => {
+          const isVideo = isVideoUrl(slide.url);
+          return (
           <SwiperSlide key={index} className="stagger-item">
             <div className="item">
-              <Image
-                src={getImageUrl(slide.url)}
-                data-src={getImageUrl(slide.url)}
-                alt="thumbnail"
-                fill
-                style={{ objectFit: "cover" }}
-                loading="lazy"
-                onError={(e) => {
-                  e.target.src = "/images/placeholder.jpg";
-                }}
-              />
+              {isVideo ? (
+                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                  <video src={getImageUrl(slide.url)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10
+                  }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                      <polygon points="5 3 19 12 5 21"/>
+                    </svg>
+                  </div>
+                </div>
+              ) : (
+                <Image
+                  src={getImageUrl(slide.url)}
+                  data-src={getImageUrl(slide.url)}
+                  alt="thumbnail"
+                  fill
+                  style={{ objectFit: "cover" }}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.src = "/images/placeholder.jpg";
+                  }}
+                />
+              )}
             </div>
           </SwiperSlide>
-        ))}
+        );
+        })}
       </Swiper>
 
       {/* Main Swiper */}
@@ -82,33 +118,58 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
         thumbs={{ swiper: thumbsSwiper }}
         modules={[Thumbs, Navigation]}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
+        onSlideChange={(swiper) => {
+          const currentIndex = swiper.activeIndex;
+          const currentSlide = allMedia[currentIndex];
+          if (currentSlide && isVideoUrl(currentSlide.url)) {
+            const video = videoRefs.current[currentIndex];
+            if (video) {
+              video.play();
+            }
+          }
+        }}
         nested={true}
         mousewheel={{ forceToAxis: true }}
         touchReleaseOnEdges={true}
       >
-        {firstImage.map((slide, index) => (
+        {allMedia.map((slide, index) => {
+          const isVideo = isVideoUrl(slide.url);
+          return (
           <SwiperSlide key={index}>
-            <div
-              className="item"
-              onClick={() => {
-                setPhotoIndex(index);
-                setLightboxOpen(true);
-              }}
-            >
-              <Image
+            {isVideo ? (
+              <video
+                ref={(el) => (videoRefs.current[index] = el)}
                 src={getImageUrl(slide.url)}
-                alt={slide.url || "product image"}
-                width={500}
-                height={700}
-                style={{ objectFit: "cover", maxHeight: "700px" }}
-                loading="lazy"
-                onError={(e) => {
-                  e.target.src = "/images/placeholder.jpg";
-                }}
+                controls
+                style={{ width: '100%', height: 'auto', minHeight: '400px', maxHeight: '700px', objectFit: 'cover', display: 'block' }}
+                preload="metadata"
               />
-            </div>
+            ) : (
+              <div
+                className="item"
+                onClick={() => {
+                  const imageIndex = images.findIndex(img => img.url === slide.url);
+                  setPhotoIndex(imageIndex);
+                  setLightboxOpen(true);
+                }}
+                style={{ cursor: 'pointer' }}
+              >
+                <Image
+                  src={getImageUrl(slide.url)}
+                  alt={slide.url || "product image"}
+                  width={500}
+                  height={700}
+                  style={{ objectFit: "cover", maxHeight: "700px" }}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.src = "/images/placeholder.jpg";
+                  }}
+                />
+              </div>
+            )}
           </SwiperSlide>
-        ))}
+        );
+        })}
         <div className="swiper-button-next swiper-nav button-style-arrow thumbs-next" />
         <div className="swiper-button-prev swiper-nav button-style-arrow thumbs-prev" />
       </Swiper>
@@ -118,7 +179,7 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
-          slides={firstImage.map((slide) => ({ src: getImageUrl(slide.url) }))}
+          slides={images.map((slide) => ({ src: getImageUrl(slide.url) }))}
           index={photoIndex}
           plugins={[Zoom]}
           zoom={{
@@ -127,7 +188,8 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
           on={{
             indexChange: ({ index }) => {
               setPhotoIndex(index);
-              swiperRef.current?.slideTo(index);
+              const allMediaIndex = allMedia.findIndex(m => m.url === images[index].url);
+              swiperRef.current?.slideTo(allMediaIndex);
             },
           }}
         />

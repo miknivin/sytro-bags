@@ -5,9 +5,11 @@ import dbConnect from "@/lib/db/connection";
 import { isAuthenticatedUser } from "@/middlewares/auth";
 import User from "@/models/User";
 import Product from "@/models/Products";
-
+import SessionStartedOrder from "@/models/SessionStartedOrder";
+import { triggerAdminShipment } from "@/utlis/triggerAdminShipment";
 export async function POST(req) {
   try {
+    SessionStartedOrder
     Product;
     User;
     const user = await isAuthenticatedUser(req);
@@ -74,6 +76,18 @@ export async function POST(req) {
       couponApplied,
     });
 
+    setImmediate(() => {
+      SessionStartedOrder.deleteOne({ razorpayOrderId: razorpay_order_id })
+        .then(() => console.log("Cleaned SessionStartedOrder:", razorpay_order_id))
+        .catch(err => console.error("Failed to cleanup SessionStartedOrder:", err));
+    });
+
+    // 2. Trigger admin shipment creation (non-blocking)
+    setImmediate(() => {
+      triggerAdminShipment(order._id.toString()).catch(err =>
+        console.error("triggerAdminShipment failed (ignored):", err)
+      );
+    });
     return NextResponse.json({
       success: true,
       message: "Order placed successfully",

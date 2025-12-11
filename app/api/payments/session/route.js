@@ -10,7 +10,6 @@ export async function POST(req) {
     const body = await req.json();
     User;
     await dbConnect();
-    console.log("DB connected");
 
     const user = await isAuthenticatedUser(req);
     if (!user) {

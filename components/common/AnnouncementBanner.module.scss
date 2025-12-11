@@ -1,0 +1,57 @@
+.announcementBanner {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 1000;
+    padding: 3px 0;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+
+    @media (max-width: 768px) {
+        font-size: 12px;
+        padding: 2px 0;
+    }
+}
+
+.bannerContent {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.scrollingText {
+    display: flex;
+    white-space: nowrap;
+    animation: scroll linear infinite;
+    will-change: transform;
+
+    &.pauseOnHover:hover {
+        animation-play-state: paused;
+    }
+}
+
+.message {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 50px;
+
+    @media (max-width: 768px) {
+        padding: 0 30px;
+    }
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-33.333%);
+    }
+}
+
+// Smooth transition for hover state
+.scrollingText {
+    transition: animation-play-state 0.3s ease;
+}

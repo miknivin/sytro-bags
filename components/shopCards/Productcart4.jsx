@@ -33,7 +33,8 @@ export default function Productcard4({ product }) {
   }, [product]);
 
   return (
-    <div className="card-product style-4 fl-item p-2 border" key={product._id}>
+    <div className="card-product style-4 fl-item p-2 border"
+      style={{ borderRadius: '10px' }} key={product._id}>
       <div className="card-product-wrapper">
         {product.images && product.images.length > 1 && (
           <Link
@@ -153,7 +154,19 @@ export default function Productcard4({ product }) {
             </div>
           </div>
         )} */}
+        {product.category === "custom_sling_bag" && (
+          <div className="limited-orders-tag">
+            <span className="limited-orders-text">Only Limited Orders Daily</span>
+          </div>
+        )}
+        {/* Limited Orders Tag for Kids Bags */}
+        {product.category === "Kids Bags" && (
+          <div className="limited-orders-tag">
+            <span className="limited-orders-text">Only Limited Orders Daily</span>
+          </div>
+        )}
       </div>
+
       <div className="card-product-info">
         <Link
           href={
@@ -165,15 +178,34 @@ export default function Productcard4({ product }) {
         >
           {product.name}
         </Link>
-       {product.actualPrice && product.offer && (
-          <span className="price d-flex gap-1">
-            ₹{product.offer.toFixed(2)}
-            {product.offer < product.actualPrice && (
-              <del style={{ fontSize: "12px" }} className="text-danger">
-                ₹{product.actualPrice}
-              </del>
-            )}
-          </span>
+        {product.category === "Kids Bags" && (
+          <p className="product-note">
+            Personalised Bags With Kid Photo and Name
+          </p>
+        )}
+        {product.category === "custom_sling_bag" && (
+          <p className="product-note">
+            Premium quality custom design with durable materials
+          </p>
+        )}
+        {product.actualPrice && product.offer && (
+          <div className="price kids-bag-price d-flex flex-column">
+            <div className="d-flex align-items-center gap-1">
+              <span className="offer-price">
+                ₹{product.offer.toFixed(2)}
+              </span>
+              {product.offer < product.actualPrice && (
+                <>
+                  <del className="original-price">
+                    ₹{product.actualPrice}
+                  </del>
+                  <span className="discount-percentage">
+                    {Math.round(((product.actualPrice - product.offer) / product.actualPrice) * 100)}% OFF
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
         )}
 
         {/* {product.colors && (

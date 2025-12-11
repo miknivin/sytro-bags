@@ -1,0 +1,93 @@
+/* Testimonial Images Section */
+.testimonial-images-section {
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-images-wrapper {
+    position: relative;
+    z-index: 2;
+}
+
+.testimonial-row {
+    display: flex;
+
+    padding: 20px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.testimonial-image-item {
+    flex: 0 0 auto;
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.testimonial-image {
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-image-item:hover .testimonial-image {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (min-width: 576px) {
+    .testimonial-row {
+
+        padding: 25px 0;
+    }
+
+    .testimonial-image-item {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+@media (min-width: 768px) {
+    .testimonial-row {
+
+        padding: 30px 0;
+    }
+
+    .testimonial-image-item {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+@media (min-width: 992px) {
+    .testimonial-row {
+
+        padding: 40px 0;
+    }
+
+    .testimonial-image-item {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

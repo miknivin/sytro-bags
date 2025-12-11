@@ -6,6 +6,8 @@
 @import "./app.scss";
 @import "./rtl.scss";
 @import "./custom.scss";
+@import "./component/testimonial-images";
+
 // @import "photoswipe/dist/photoswipe.css";
 // @import "rc-slider/assets/index.css";
 .border-none-b {
@@ -34,14 +36,17 @@
 .form-checkout .fieldset input,
 .tf-select,
 #orderNotes {
-  border: 1px solid rgba(0, 0, 0, 0.4); /* Black with 60% opacity */
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  /* Black with 60% opacity */
 }
 
 .form-checkout .fieldset input:focus,
 .tf-select:focus,
 #orderNotes:focus {
-  border: 1px solid rgba(0, 0, 0, 0.9); /* Black with 80% opacity */
-  outline: none; /* Removes default browser outline */
+  border: 1px solid rgba(0, 0, 0, 0.9);
+  /* Black with 80% opacity */
+  outline: none;
+  /* Removes default browser outline */
 }
 
 @media (max-width: 768px) {
@@ -176,7 +181,8 @@ label.non-mandatory:after {
   margin-top: 4px;
   margin-bottom: 0;
   background: none;
-  color: var(--primary); /* Changed from #007bff to CSS variable */
+  color: var(--primary);
+  /* Changed from #007bff to CSS variable */
   cursor: pointer;
 }
 
@@ -186,8 +192,10 @@ label.non-mandatory:after {
 
 .popover-content {
   position: absolute;
-  top: calc(100% + 10px); /* Places popover below the button */
-  left: 0; /* Aligns with the left of the button */
+  top: calc(100% + 10px);
+  /* Places popover below the button */
+  left: 0;
+  /* Aligns with the left of the button */
   z-index: 1000;
   background-color: white;
   border: 1px solid #e0e0e0;
@@ -229,7 +237,8 @@ label.non-mandatory:after {
   border: none;
   background: none;
   font-size: 18px;
-  color: #666; /* Gray color, adjustable */
+  color: #666;
+  /* Gray color, adjustable */
   cursor: pointer;
   padding: 0;
   width: 20px;
@@ -242,8 +251,10 @@ label.non-mandatory:after {
   background: #f0f0f0;
   border-radius: 50%;
 }
+
 .popover-close-button:hover {
-  color: #000; /* Darken on hover */
+  color: #000;
+  /* Darken on hover */
 }
 
 .tf-field-input {
@@ -257,7 +268,8 @@ label.non-mandatory:after {
   background: none;
   cursor: pointer;
   z-index: 10;
-  color: #000000; /* Optional: adjust based on your theme */
+  color: #000000;
+  /* Optional: adjust based on your theme */
 }
 
 .prev-btn {

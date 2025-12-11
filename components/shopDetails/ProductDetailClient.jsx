@@ -8,6 +8,8 @@ import Moments from "../common/Moments";
 import Features from "../common/Features";
 import GoogleReviews from "../common/GoogleReviews";
 import RelatedProducts from "./RelatedProducts";
+import TrustBanner from "@/components/common/TrustBanner";
+import TestimonialImages from "@/components/common/TestimonialImages";
 
 export default function ProductDetailsClient({ productId }) {
   const { data, error, isLoading } = useGetProductDetailsQuery(productId);
@@ -29,12 +31,14 @@ export default function ProductDetailsClient({ productId }) {
 
   return (
     <>
-      <DetailsOuterZoom product={product} />
-      <RelatedProducts product={product} />
-      <Moments />
-      <GoogleReviews />
+      <DetailsOuterZoom product={product} details={product?.details} />
       <ShopDetailsTab details={product?.details} />
+      <Moments />
+      <RelatedProducts product={product} />
+      <GoogleReviews />
       <Features />
+      <TrustBanner />
+      <TestimonialImages />
     </>
   );
 }

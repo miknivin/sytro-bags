@@ -110,47 +110,120 @@ export default function DefaultShopDetailsNoZoom({ product }) {
             <div className="col-md-6">
               <div className="tf-product-info-wrap position-relative">
                 <div className="tf-product-info-list">
-                  <div className="tf-product-info-title">
-                    <h5>{product.name}</h5>
+                  {/* Product Name - Enhanced */}
+                  <div className="tf-product-info-title mb-3">
+                    <h4 style={{ fontWeight: 800, fontSize: '28px', color: '#333' }}>
+                      {product.name}
+                    </h4>
                   </div>
-                  <div>
-                    {product && product.offerEndTime && (
-                      <OfferTimer offerEndTime={product.offerEndTime} />
-                    )}
+
+                  {/* Small Description */}
+                  <div className="product-description mb-3">
+                    <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5', margin: 0 }}>
+                      {(product?.description || product?.details?.description || "").substring(0, 150)}
+                      {(product?.description || product?.details?.description || "").length > 150 && "..."}
+                    </p>
                   </div>
-                  <div className="tf-product-info-price flex align-items-center mb-3">
-                    <div className="price-on-sale">
+
+                  {/* Service Tags with Icons */}
+                  <div className="service-tags-section mb-4">
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="service-tag d-flex align-items-center mb-2">
+                          <div className="service-icon me-3">
+                            <img
+                              src="/images/icons/Untitled design (9).svg"
+                              alt="2 Year Warranty"
+                              width="25"
+                              height="25"
+                            />
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              2 YEAR WARRANTY
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="service-tag d-flex align-items-center mb-2">
+                          <div className="service-icon me-3">
+                            <img
+                              src="/images/icons/I241123182839208168.svg"
+                              alt="Free Shipping"
+                              width="20"
+                              height="20"
+                            />
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              ALL INDIA FREE DELIVERY
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="service-tag d-flex align-items-center mb-2">
+                          <div className="service-icon me-3">
+                            <img
+                              src="/images/icons/I250317133325217317.svg"
+                              alt="Limited Orders"
+                              width="20"
+                              height="20"
+                            />
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              ONLY LIMITED ORDERS DAILY
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-12">
+                        <div className="service-tag d-flex align-items-center mb-2">
+                          <div className="service-icon me-3">
+                            <img
+                              src="/images/icons/printer_icon.3b26a3e3.svg"
+                              alt="Printing & Dispatch"
+                              width="20"
+                              height="20"
+                            />
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              PRINT & DISPATCH IN 2-4 WORKING DAYS
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Offer Timer - Prominent Display */}
+                   {/* <div className="mb-3">
+                    <OfferTimer offerEndTime={product?.offerEndTime} />
+                  </div>  */}
+
+                  {/* Enhanced Pricing Section */}
+                  <div className="tf-product-info-price d-flex align-items-center gap-3 mb-4">
+                    <div style={{ fontWeight: 700, fontSize: '24px', color: '#000' }} className="price-on-sale">
                       ₹{product.offer.toFixed(2)}
                     </div>
                     <div>
-                      <span className=" fs-4 text-danger">
-                        <s>₹{product?.price?.toFixed(2) || "3000"}</s>
+                      <span style={{ fontSize: '18px', color: '#999', textDecoration: 'line-through' }}>
+                        ₹{product?.price?.toFixed(2) || "3000"}
                       </span>
                     </div>
-                    <div style={{ color: "##787878" }} className="fw-light">
+                    <div style={{ backgroundColor: '#ff4444', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: '600' }}>
+                      {((1 - product?.offer / (product?.price || 3000)) * 100).toFixed(0)}% OFF
+                    </div>
+                    <div style={{ color: "#5d5b5bff", fontSize: '14px' }} className="fw-light">
                       Inc. GST
                     </div>
                   </div>
-                  <ul className="list-unstyled">
-                    {[...(product?.details?.features || [])]
-                      .reverse()
-                      ?.map((feature, index) => (
-                        <li className="mb-2" key={index}>
-                          <div className="row align-items-start">
-                            <div
-                              className="col-auto"
-                              style={{
-                                color: "var(--primary)",
-                                marginTop: "4px",
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faCircleCheck} />
-                            </div>
-                            <div className="col px-0">{feature}</div>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
                   {product?.category === "custom_sling_bag" ? (
                     <div className="tf-product-info-custom-name">
                       <div className="mb-1 custom-name-title fw-6">
@@ -191,7 +264,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                     </form>
                   </div>
                   <>
-                    <DetailsStaticNoZoom />
+                    {/* <DetailsStaticNoZoom /> */}
                   </>
                 </div>
               </div>

@@ -98,9 +98,8 @@ export default function Products() {
                           className="box-icon bg_white wishlist btn-icon-action"
                         >
                           <span
-                            className={`icon icon-heart ${
-                              isAddedtoWishlist(product.id) ? "added" : ""
-                            }`}
+                            className={`icon icon-heart ${isAddedtoWishlist(product.id) ? "added" : ""
+                              }`}
                           />
                           <span className="tooltip">
                             {isAddedtoWishlist(product.id)
@@ -117,9 +116,8 @@ export default function Products() {
                           className="box-icon bg_white compare btn-icon-action"
                         >
                           <span
-                            className={`icon icon-compare ${
-                              isAddedtoCompareItem(product.id) ? "added" : ""
-                            }`}
+                            className={`icon icon-compare ${isAddedtoCompareItem(product.id) ? "added" : ""
+                              }`}
                           />
                           <span className="tooltip">
                             {isAddedtoCompareItem(product.id)

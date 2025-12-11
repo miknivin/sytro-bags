@@ -6,7 +6,8 @@ import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
 import GoogleReviews from "../common/GoogleReviews";
 import FullScreenSpinner from "../common/FullScreenSpinner";
 import RelatedProducts from "./RelatedProducts";
-
+import TrustBanner from "@/components/common/TrustBanner";
+import TestimonialImages from "@/components/common/TestimonialImages";
 export default function ProductDetailsClient({ productId }) {
   const { data, error, isLoading } = useGetProductDetailsQuery(productId);
 
@@ -47,9 +48,11 @@ export default function ProductDetailsClient({ productId }) {
   return (
     <>
       <DefaultShopDetailsNoZoom product={product} />
+      <ShopDetailsTab product={product} details={product.details} />
       <RelatedProducts product={product} />
       <GoogleReviews />
-      <ShopDetailsTab product={product} details={product.details} />
+      <TrustBanner />
+      <TestimonialImages />
     </>
   );
 }

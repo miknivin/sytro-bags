@@ -12,7 +12,7 @@ import "yet-another-react-lightbox/styles.css"; // Lightbox styles
 import { replaceS3WithCloudFront } from "@/components/shopCards/Productcart4";
 
 export default function Slider1ZoomOuter({
-  handleColor = () => {},
+  handleColor = () => { },
   firstImage = [],
 }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -51,7 +51,7 @@ export default function Slider1ZoomOuter({
                 className="lazyload"
                 data-src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
                 alt={"thumbnail"}
-                 src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
+                src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
                 fill
                 style={{ objectFit: "cover" }}
               />

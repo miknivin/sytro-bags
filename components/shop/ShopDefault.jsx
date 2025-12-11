@@ -5,6 +5,8 @@ import { useState } from "react";
 import Pagination from "../common/Pagination";
 import ShopFilter from "./ShopFilter";
 import Sorting from "./Sorting";
+import TestimonialImages from "../common/TestimonialImages";
+import TrustBanner from "../common/TrustBanner";
 
 export default function ShopDefault({ id }) {
   const [gridItems, setGridItems] = useState(4);
@@ -60,6 +62,9 @@ export default function ShopDefault({ id }) {
           </div>
         </div>
       </section>
+      <TrustBanner />
+      <TestimonialImages />
+
       {/* <ShopFilter setProducts={setProducts} /> */}
     </>
   );

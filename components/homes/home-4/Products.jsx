@@ -102,6 +102,38 @@ export default function Products() {
     dispatch(setProducts(allProducts));
   }, [allProducts, dispatch]);
 
+  // Auto-scroll to products section when category is selected via URL
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam && !isLoading && !isFetching && allProducts.length > 0) {
+      // Enhanced auto-scroll with multiple attempts - only after products are loaded
+      const scrollToProducts = () => {
+        const productsSection = document.getElementById('products');
+        if (productsSection) {
+          productsSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          return true;
+        }
+        return false;
+      };
+
+      // Try immediate scroll
+      setTimeout(() => {
+        if (!scrollToProducts()) {
+          // Try again after a longer delay if first attempt fails
+          setTimeout(() => {
+            if (!scrollToProducts()) {
+              // Final attempt for stubborn cases
+              setTimeout(scrollToProducts, 300);
+            }
+          }, 150);
+        }
+      }, 100);
+    }
+  }, [selectedCategory, isLoading, isFetching, searchParams, allProducts.length]);
+
   // Handle category selection
   const handleCategorySelect = (category) => {
     const newSelectedCategory = category === selectedCategory ? null : category;
@@ -150,7 +182,7 @@ export default function Products() {
   };
 
   return (
-    <section className="flat-spacing-6">
+    <section id="products" className="flat-spacing-6">
       <div className="container">
         <div className="flat-title mb_1 gap-14 text-center">
           <span className="title wow fadeInUp" data-wow-delay="0s">
@@ -162,11 +194,10 @@ export default function Products() {
         </div>
         <div className="mb-4 d-flex flex-nowrap flex-md-wrap overflow-x-auto gap-2 justify-content-start justify-content-md-center">
           <button
-            className={`btn btn-sm rounded-pill category-pill white-space-no-break me-2 mb-2 ${
-              selectedCategory === null
-                ? "btn-warning"
-                : "btn-outline-secondary"
-            }`}
+            className={`btn btn-sm rounded-pill category-pill white-space-no-break me-2 mb-2 ${selectedCategory === null
+              ? "btn-warning"
+              : "btn-outline-secondary"
+              }`}
             onClick={() => handleCategorySelect(null)}
           >
             All
@@ -174,11 +205,10 @@ export default function Products() {
           {categoriesWithName.map(({ value, name }) => (
             <button
               key={value}
-              className={`btn btn-sm rounded-pill category-pill white-space-no-wrap me-2 mb-2 ${
-                selectedCategory === value
-                  ? "btn-warning"
-                  : "btn-outline-secondary"
-              }`}
+              className={`btn btn-sm rounded-pill category-pill white-space-no-wrap me-2 mb-2 ${selectedCategory === value
+                ? "btn-warning"
+                : "btn-outline-secondary"
+                }`}
               onClick={() => handleCategorySelect(value)}
             >
               {name}
