@@ -9,7 +9,7 @@ import SessionStartedOrder from "@/models/SessionStartedOrder";
 import { triggerAdminShipment } from "@/utlis/triggerAdminShipment";
 export async function POST(req) {
   try {
-    SessionStartedOrder
+    SessionStartedOrder;
     Product;
     User;
     const user = await isAuthenticatedUser(req);
@@ -34,7 +34,7 @@ export async function POST(req) {
       orderNotes,
       couponApplied,
     } = body;
-    console.log(cartItems, 'cartItems');
+    console.log(cartItems, "cartItems");
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return NextResponse.json(
@@ -78,13 +78,17 @@ export async function POST(req) {
 
     setImmediate(() => {
       SessionStartedOrder.deleteOne({ razorpayOrderId: razorpay_order_id })
-        .then(() => console.log("Cleaned SessionStartedOrder:", razorpay_order_id))
-        .catch(err => console.error("Failed to cleanup SessionStartedOrder:", err));
+        .then(() =>
+          console.log("Cleaned SessionStartedOrder:", razorpay_order_id)
+        )
+        .catch((err) =>
+          console.error("Failed to cleanup SessionStartedOrder:", err)
+        );
     });
 
     // 2. Trigger admin shipment creation (non-blocking)
     setImmediate(() => {
-      triggerAdminShipment(order._id.toString()).catch(err =>
+      triggerAdminShipment(order._id.toString()).catch((err) =>
         console.error("triggerAdminShipment failed (ignored):", err)
       );
     });
