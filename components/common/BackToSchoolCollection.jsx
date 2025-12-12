@@ -8,16 +8,8 @@ export default function BackToSchoolCollection() {
         <section className="back-to-school-section py-3">
             <div className="container">
                 {/* Main Heading */}
-                <div className="text-center mb-4">
-                    <h2 style={{
-                        fontSize: '25px',
-                        fontWeight: '400',
-                        color: '#122432',
-                        marginBottom: '16px',
-                        textTransform: 'none',
-                        letterSpacing: '0px',
-                        fontFamily: 'Pencil Child, pencilchild, cursive'
-                    }}>
+                <div className="flat-title mb_1 gap-14 text-center" style={{ marginBottom: '10px' }}>
+                    <h2 className="title wow fadeInUp" data-wow-delay="0s" style={{ marginTop: '50px', marginBottom: '18px' }}>
                         Back To School Collection
                     </h2>
                 </div>
