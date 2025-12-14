@@ -82,7 +82,7 @@ export async function POST(req) {
           console.log("Cleaned SessionStartedOrder:", razorpay_order_id)
         )
         .catch((err) =>
-          console.error("Failed to cleanup SessionStartedOrder:", err)
+          console.error("Failed to cleanup SessionStartedOrder::", err)
         );
     });
 
