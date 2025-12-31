@@ -98,9 +98,9 @@ export default function Footer1({ bgColor = "" }) {
                         <b>Email: </b>
                         <a
                           style={{ fontWeight: "unset" }}
-                          href="mailto:sytrobags@gmail.com"
+                          href="mailto:support@sytrobags.com"
                         >
-                          sytrobags@gmail.com
+                          support@sytrobags.com
                         </a>
                       </p>
                     </li>

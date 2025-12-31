@@ -20,6 +20,17 @@ export default function DefaultShopDetailsNoZoom({ product }) {
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const customNames = useSelector((state) => state.cart.customNames);
+  const uploadedImages = useSelector((state) => state.cart.uploadedImages);
+
+  React.useEffect(() => {
+    if (product?._id && customNames?.[product._id]) {
+      setCustomName(customNames[product._id]);
+    } else {
+      setCustomName("");
+    }
+  }, [product?._id, customNames]);
+
 
   // Ensure product exists
   if (!product) {
@@ -30,7 +41,10 @@ export default function DefaultShopDetailsNoZoom({ product }) {
     cartItems.some((item) => item.product === productId);
 
   const handleAddToCart = (productId, quantity) => {
-    if (product.category === "custom_sling_bag" && !customName.trim()) {
+    if (
+      product.category === "custom_sling_bag" &&
+      !customName.trim()
+    ) {
       setShowAlert(true);
       return;
     }
@@ -48,9 +62,8 @@ export default function DefaultShopDetailsNoZoom({ product }) {
       ...(product.category != null ? { category: product.category } : {}),
       quantity: quantity || 1,
       image: product.images[0]?.url || "/images/placeholder.jpg",
-      ...(product.category === "custom_sling_bag" && customName
-        ? { customNameToPrint: customName }
-        : {}),
+      ...(customName ? { customNameToPrint: customName } : {}),
+      uploadedImage: uploadedImages[productId] || null,
     };
 
     dispatch(setCartItem(cartItem));
@@ -182,28 +195,30 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                         </div>
                       </div>
 
-                      <div className="col-12">
-                        <div className="service-tag d-flex align-items-center mb-2">
-                          <div className="service-icon me-3">
-                            <img
-                              src="/images/icons/printer_icon.3b26a3e3.svg"
-                              alt="Printing & Dispatch"
-                              width="20"
-                              height="20"
-                            />
-                          </div>
-                          <div>
-                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
-                              PRINT & DISPATCH IN 2-4 WORKING DAYS
-                            </span>
+                      {product.category === "custom_sling_bag" && (
+                        <div className="col-12">
+                          <div className="service-tag d-flex align-items-center mb-2">
+                            <div className="service-icon me-3">
+                              <img
+                                src="/images/icons/printer_icon.3b26a3e3.svg"
+                                alt="Printing & Dispatch"
+                                width="20"
+                                height="20"
+                              />
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                                PRINT & DISPATCH IN 2-4 WORKING DAYS
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Offer Timer - Prominent Display */}
-                   {/* <div className="mb-3">
+                  {/* <div className="mb-3">
                     <OfferTimer offerEndTime={product?.offerEndTime} />
                   </div>  */}
 
@@ -241,7 +256,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                         {customName.length}/11 characters
                       </div>
                     </div>
-                  ) : (
+                  ) : product?.category === "Kids Bags" ? null : (
                     <div className="tf-product-info-quantity">
                       <div className="quantity-title fw-6">Quantity</div>
                       <Quantity setQuantity={setQuantity} quantity={quantity} />
@@ -250,7 +265,14 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()}>
                       <a
-                        onClick={() => handleAddToCart(product._id, quantity)}
+                        href={product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0) ? "#super_kidbag" : undefined}
+                        data-bs-toggle={product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0) ? "modal" : undefined}
+                        onClick={() => {
+                          if (product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0)) {
+                            return;
+                          }
+                          handleAddToCart(product._id, quantity);
+                        }}
                         className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
                         style={{ backgroundColor: "#122432" }}
                       >

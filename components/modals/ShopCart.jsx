@@ -67,8 +67,8 @@ export default function ShopCart() {
       [productId]: Array.isArray(uploadedImage)
         ? uploadedImage
         : uploadedImage
-        ? [uploadedImage]
-        : [],
+          ? [uploadedImage]
+          : [],
     }));
   };
 
@@ -105,11 +105,11 @@ export default function ShopCart() {
       const mismatchedItems = cartItems.filter(
         (item) =>
           item.category === "Kids Bags" &&
-          item.quantity !== (imageUrls[item.product]?.length || 0)
+          (imageUrls[item.product]?.length || 0) === 0
       );
       const productNames = mismatchedItems.map((item) => item.name).join(", ");
       toast.error(
-        `These Kids Bags products have mismatched image with quantity: ${productNames}`
+        `Please upload at least one image for these Kids Bags products: ${productNames}`
       );
 
       console.log("Mismatched items:", mismatchedItems);
@@ -119,9 +119,9 @@ export default function ShopCart() {
   const isQuantityValid = () => {
     if (cartItems.length === 0) return false;
     return cartItems.every((item) => {
-      if (item.category !== "Kids Bags") return true; // Skip validation for non-Kids Bags
+      if (item.category !== "Kids Bags") return true;
       const imageCount = imageUrls[item.product]?.length || 0;
-      return item.quantity === imageCount;
+      return imageCount >= 1;
     });
   };
 
@@ -178,25 +178,13 @@ export default function ShopCart() {
   const increaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) + 1;
     if (cartItem.category === "Kids Bags") {
-      const imageCount = imageUrls[cartItem.product]?.length || 0;
-      if (imageCount < newQuantity) {
-        setShowUploadInput((prev) => ({
-          ...prev,
-          [id]: true,
-        }));
-        updateQuantity(cartItem, id, newQuantity);
-        setTimeout(() => {
-          fileInputRefs.current[id]?.click();
-        }, 100);
-      } else {
-        updateQuantity(cartItem, id, newQuantity);
-      }
+      updateQuantity(cartItem, id, newQuantity);
     } else {
       updateQuantity(cartItem, id, newQuantity);
     }
   };
 
-  const handleFileUpload = async (event, productId, quantity, imageCount) => {
+  const handleFileUpload = async (event, productId, quantity, imageCount, category) => {
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
@@ -216,13 +204,15 @@ export default function ShopCart() {
       return;
     }
 
-    const remainingSlots = quantity - imageCount;
+    const remainingSlots = category === "Kids Bags" ? 1 - imageCount : quantity - imageCount;
     const filesToUpload =
       remainingSlots >= files.length ? files : files.slice(0, remainingSlots);
 
     if (filesToUpload.length === 0) {
       toast.error(
-        `No more images can be uploaded. Current image count (${imageCount}) matches or exceeds quantity (${quantity}).`
+        category === "Kids Bags"
+          ? "Only one image is allowed for Kids Bags."
+          : `No more images can be uploaded. Current image count (${imageCount}) matches or exceeds quantity (${quantity}).`
       );
       return;
     }
@@ -295,7 +285,7 @@ export default function ShopCart() {
       const currentImages = imageUrls[productId] || [];
       const updatedImages = [...currentImages, ...uploadedUrls].slice(
         0,
-        quantity
+        category === "Kids Bags" ? 1 : quantity
       );
       const newImageCount = updatedImages.length;
 
@@ -313,16 +303,14 @@ export default function ShopCart() {
       .promise(
         uploadPromise(),
         {
-          loading: `Uploading ${filesToUpload.length} image${
-            filesToUpload.length > 1 ? "s" : ""
-          }...`,
+          loading: `Uploading ${filesToUpload.length} image${filesToUpload.length > 1 ? "s" : ""
+            }...`,
           success: ({ newImageCount }) => {
             if (newImageCount > quantity) {
               return `Warning: Uploaded image count (${newImageCount}) exceeds quantity (${quantity}).`;
             } else if (newImageCount < quantity) {
-              return `Still need ${
-                quantity - newImageCount
-              } more images for product ${productId}.`;
+              return `Still need ${quantity - newImageCount
+                } more images for product ${productId}.`;
             }
             return "Uploaded image(s) successfully";
           },
@@ -334,8 +322,8 @@ export default function ShopCart() {
               newImageCount > quantity
                 ? "⚠️"
                 : newImageCount < quantity
-                ? "ℹ️"
-                : undefined,
+                  ? "ℹ️"
+                  : undefined,
           },
         }
       )
@@ -350,16 +338,7 @@ export default function ShopCart() {
   const decreaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) - 1;
     if (newQuantity >= 1) {
-      if (cartItem.category === "Kids Bags") {
-        const updatedUploadedImage = imageUrls[cartItem.product]
-          ? imageUrls[cartItem.product].length > newQuantity
-            ? imageUrls[cartItem.product].slice(0, newQuantity)
-            : imageUrls[cartItem.product]
-          : [];
-        updateQuantity(cartItem, id, newQuantity, updatedUploadedImage);
-      } else {
-        updateQuantity(cartItem, id, newQuantity);
-      }
+      updateQuantity(cartItem, id, newQuantity);
     }
   };
 
@@ -391,23 +370,25 @@ export default function ShopCart() {
   };
 
   const handleCheckoutClick = () => {
-    const invalidSlingBags = cartItems.filter(
+    const invalidCustomBags = cartItems.filter(
       (item) =>
         item.category === "custom_sling_bag" &&
         (!item.customNameToPrint || item.customNameToPrint.trim() === "")
     );
-    if (invalidSlingBags.length === 0) {
+    if (invalidCustomBags.length === 0) {
       router.push("/checkout", { scroll: false });
     } else {
-      const productNames = invalidSlingBags.map((item) => item.name).join(", ");
+      const productNames = invalidCustomBags
+        .map((item) => item.name)
+        .join(", ");
       // toast.error(
       //   `Please provide a name for the following custom sling bag products: ${productNames}`
       // );
 
       setNameErrorMessage(
-        `Please provide a name for the following custom sling bag products: ${productNames}`
+        `Please provide a name for these bags (Note: Names are optional for Kids Bags): ${productNames}`
       );
-      console.log("Invalid custom sling bags:", invalidSlingBags);
+      console.log("Invalid custom bags:", invalidCustomBags);
     }
   };
 
@@ -488,6 +469,12 @@ export default function ShopCart() {
                                 >
                                   Uploaded image(s)
                                 </button>
+                                {elm.customNameToPrint && (
+                                  <div className="uploaded-name" style={{ fontSize: '13px', color: '#666' }}>
+                                    <span className="fw-6">Name: </span>
+                                    <span>{elm.customNameToPrint}</span>
+                                  </div>
+                                )}
 
                                 {popoverStates[elm.product] &&
                                   imageUrls[elm.product] &&
@@ -524,9 +511,8 @@ export default function ShopCart() {
                                               >
                                                 <Image
                                                   src={url}
-                                                  alt={`Uploaded image ${
-                                                    index + 1
-                                                  } for ${elm.name}`}
+                                                  alt={`Uploaded image ${index + 1
+                                                    } for ${elm.name}`}
                                                   width={100}
                                                   height={100}
                                                   className="popover-image"
@@ -551,26 +537,26 @@ export default function ShopCart() {
                                                 </div>
                                                 {imageUrls[elm.product].length >
                                                   1 && (
-                                                  <button
-                                                    style={{
-                                                      fontSize: "10px",
-                                                      left: "40%",
-                                                    }}
-                                                    onClick={() =>
-                                                      handleRemoveImage(
-                                                        elm.product,
-                                                        elm,
-                                                        index
-                                                      )
-                                                    }
-                                                    className="position-absolute border-0 bg-opacity-75 text-white p-1 rounded-circle bottom-0 bg-danger"
-                                                  >
-                                                    <FontAwesomeIcon
-                                                      style={{ color: "white" }}
-                                                      icon={faTrash}
-                                                    />
-                                                  </button>
-                                                )}
+                                                    <button
+                                                      style={{
+                                                        fontSize: "10px",
+                                                        left: "40%",
+                                                      }}
+                                                      onClick={() =>
+                                                        handleRemoveImage(
+                                                          elm.product,
+                                                          elm,
+                                                          index
+                                                        )
+                                                      }
+                                                      className="position-absolute border-0 bg-opacity-75 text-white p-1 rounded-circle bottom-0 bg-danger"
+                                                    >
+                                                      <FontAwesomeIcon
+                                                        style={{ color: "white" }}
+                                                        icon={faTrash}
+                                                      />
+                                                    </button>
+                                                  )}
                                               </SwiperSlide>
                                             )
                                           )}
@@ -611,41 +597,44 @@ export default function ShopCart() {
                                     </div>
                                   )}
                               </div>
-                              {imageUrls[elm.product]?.length !==
-                                elm.quantity && (
-                                <div className="upload-input-container">
-                                  {isLoading ? (
-                                    <div
-                                      className="spinner-border spinner-border-sm text-primary"
-                                      role="status"
-                                    >
-                                      <span className="visually-hidden">
-                                        Uploading...
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <input
-                                      type="file"
-                                      className="form-control form-control-sm"
-                                      accept="image/*"
-                                      multiple
-                                      ref={(el) => {
-                                        if (el)
-                                          fileInputRefs.current[elm.product] =
-                                            el;
-                                      }}
-                                      onChange={(e) =>
-                                        handleFileUpload(
-                                          e,
-                                          elm.product,
-                                          elm.quantity,
-                                          imageUrls[elm.product]?.length || 0
-                                        )
-                                      }
-                                    />
-                                  )}
-                                </div>
-                              )}
+                              {(elm.category === "Kids Bags"
+                                ? (imageUrls[elm.product]?.length || 0) === 0
+                                : imageUrls[elm.product]?.length !==
+                                elm.quantity) && (
+                                  <div className="upload-input-container">
+                                    {isLoading ? (
+                                      <div
+                                        className="spinner-border spinner-border-sm text-primary"
+                                        role="status"
+                                      >
+                                        <span className="visually-hidden">
+                                          Uploading...
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <input
+                                        type="file"
+                                        className="form-control form-control-sm"
+                                        accept="image/*"
+                                        multiple
+                                        ref={(el) => {
+                                          if (el)
+                                            fileInputRefs.current[elm.product] =
+                                              el;
+                                        }}
+                                        onChange={(e) =>
+                                          handleFileUpload(
+                                            e,
+                                            elm.product,
+                                            elm.quantity,
+                                            imageUrls[elm.product]?.length || 0,
+                                            elm.category
+                                          )
+                                        }
+                                      />
+                                    )}
+                                  </div>
+                                )}
                             </>
                           )}
                           {elm.category !== "custom_sling_bag" && (
@@ -697,7 +686,11 @@ export default function ShopCart() {
                                 <input
                                   type="text"
                                   className="form-control py-1"
-                                  placeholder="Enter the name on bag"
+                                  placeholder={
+                                    elm.category === "Kids Bags"
+                                      ? "Enter the name on bag (Optional)"
+                                      : "Enter the name on bag"
+                                  }
                                   aria-label="Enter the name on bag"
                                   maxLength={11}
                                   value={elm.customNameToPrint}
@@ -778,21 +771,18 @@ export default function ShopCart() {
                     ) : cartItems.length > 0 ? (
                       <>
                         <span className="text-danger">
-                          These Kids Bags products have mismatched image with
-                          quantity:
+                          Please upload images for these Kids Bags:
                         </span>
                         <ul className="text-danger">
                           {cartItems
                             .filter(
                               (item) =>
                                 item.category === "Kids Bags" &&
-                                item.quantity !==
-                                  (imageUrls[item.product]?.length || 0)
+                                (imageUrls[item.product]?.length || 0) === 0
                             )
                             .map((item, index) => (
                               <li key={index}>
-                                {item.name} (Quantity: {item.quantity}, Images:{" "}
-                                {imageUrls[item.product]?.length || 0})
+                                {item.name}
                               </li>
                             ))}
                         </ul>

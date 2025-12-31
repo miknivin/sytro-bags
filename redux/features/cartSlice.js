@@ -6,6 +6,7 @@ const initialState = {
   shippingInfo: {},
   uploadedImages: {},
   selectedDesigns: {},
+  customNames: {},
   quantityChange: { isIncreasing: false, timestamp: 0 },
 };
 
@@ -24,6 +25,10 @@ if (typeof window !== "undefined") {
 
   initialState.selectedDesigns = localStorage.getItem("selectedDesigns")
     ? JSON.parse(localStorage.getItem("selectedDesigns"))
+    : {};
+
+  initialState.customNames = localStorage.getItem("customNames")
+    ? JSON.parse(localStorage.getItem("customNames"))
     : {};
 }
 
@@ -46,12 +51,12 @@ export const cartSlice = createSlice({
         state.cartItems = state.cartItems.map((i) =>
           i.product === isItemExist.product
             ? {
-                ...i,
-                ...item,
-                ...(item.category === "Kids Bags" && item.uploadedImage
-                  ? { uploadedImage: item.uploadedImage }
-                  : {}),
-              }
+              ...i,
+              ...item,
+              ...(item.category === "Kids Bags" && item.uploadedImage
+                ? { uploadedImage: item.uploadedImage }
+                : {}),
+            }
             : i
         );
       } else {
@@ -76,8 +81,8 @@ export const cartSlice = createSlice({
           const uploadedImageCount = Array.isArray(isItemExist.uploadedImage)
             ? isItemExist.uploadedImage.length
             : isItemExist.uploadedImage
-            ? 1
-            : 0;
+              ? 1
+              : 0;
 
           if (isItemExist.quantity === uploadedImageCount) {
             state.cartItems = state.cartItems.map((i) =>
@@ -106,9 +111,13 @@ export const cartSlice = createSlice({
       const productId = action.payload;
       state.cartItems = state.cartItems.filter((i) => i.product !== productId);
       delete state.uploadedImages[productId];
+      delete state.customNames[productId];
+      delete state.selectedDesigns[productId];
 
       saveToLocalStorage("cartItems", state.cartItems);
       saveToLocalStorage("uploadedImages", state.uploadedImages);
+      saveToLocalStorage("customNames", state.customNames);
+      saveToLocalStorage("selectedDesigns", state.selectedDesigns);
     },
 
     saveShippingInfo: (state, action) => {
@@ -120,10 +129,12 @@ export const cartSlice = createSlice({
       localStorage.removeItem("cartItems");
       localStorage.removeItem("uploadedImages");
       localStorage.removeItem("selectedDesigns");
+      localStorage.removeItem("customNames");
 
       state.cartItems = [];
       state.uploadedImages = {};
       state.selectedDesigns = {};
+      state.customNames = {};
     },
 
     setSelectedDesign: (state, action) => {
@@ -141,6 +152,21 @@ export const cartSlice = createSlice({
       const { productId } = action.payload;
       delete state.selectedDesigns[productId];
       saveToLocalStorage("selectedDesigns", state.selectedDesigns);
+    },
+
+    setCustomName: (state, action) => {
+      const { productId, customName } = action.payload;
+      if (!state.customNames) {
+        state.customNames = {};
+      }
+      state.customNames[productId] = customName;
+      saveToLocalStorage("customNames", state.customNames);
+    },
+
+    resetCustomName: (state, action) => {
+      const { productId } = action.payload;
+      delete state.customNames[productId];
+      saveToLocalStorage("customNames", state.customNames);
     },
 
     setUploadedImage: (state, action) => {
@@ -241,6 +267,8 @@ export const {
   updateCartItem,
   setSelectedDesign,
   resetSelectedDesign,
+  setCustomName,
+  resetCustomName,
   setUploadedImage,
   resetUploadedImage,
   removeUploadedImage,

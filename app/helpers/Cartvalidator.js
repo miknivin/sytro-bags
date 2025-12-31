@@ -3,31 +3,22 @@ import Swal from "sweetalert2";
 
 export const validateCartItems = (cartItems) => {
   const mismatchedItems = cartItems.filter((item) => {
-  if (item.category !== "Kids Bags") return false;
+    if (item.category !== "Kids Bags") return false;
     const uploadedImageArray = Array.isArray(item.uploadedImage)
       ? item.uploadedImage
       : item.uploadedImage
-      ? [item.uploadedImage]
-      : [];
-    return item.quantity !== uploadedImageArray.length;
+        ? [item.uploadedImage]
+        : [];
+    return uploadedImageArray.length === 0;
   });
 
   if (mismatchedItems.length > 0) {
     Swal.fire({
       icon: "error",
-      title: "Upload Mismatch",
-      text: `The following items have a mismatch between quantity and uploaded images: ${mismatchedItems
-        .map(
-          (item) =>
-            `${item.name} (Quantity: ${item.quantity}, Images: ${
-              Array.isArray(item.uploadedImage)
-                ? item.uploadedImage.length
-                : item.uploadedImage
-                ? 1
-                : 0
-            })`
-        )
-        .join(", ")}. Please upload the correct number of images.`,
+      title: "Image Required",
+      text: `Please upload at least one image for the following Kids Bags: ${mismatchedItems
+        .map((item) => item.name)
+        .join(", ")}.`,
       confirmButtonText: "OK",
     });
     return false;

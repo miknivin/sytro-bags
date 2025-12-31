@@ -20,7 +20,10 @@ export default function OrdinaryStickyItem({
   const cartItems = useSelector((state) => state.cart.cartItems);
 
   const handleAddToCart = () => {
-    if (product.category === "custom_sling_bag" && !customNameToPrint.trim()) {
+    if (
+      product.category === "custom_sling_bag" &&
+      !customNameToPrint.trim()
+    ) {
       triggerAlert();
       return;
     }
@@ -38,10 +41,7 @@ export default function OrdinaryStickyItem({
       price: product.offer,
       quantity: quantity,
       image: product.images[0]?.url || "/images/placeholder.jpg",
-      ...(product.category === "Kids Bags" ? { uploadedImage: [] } : {}),
-      ...(product.category === "custom_sling_bag" && customNameToPrint
-        ? { customNameToPrint: customNameToPrint }
-        : {}),
+      ...(customNameToPrint ? { customNameToPrint: customNameToPrint } : {}),
     };
 
     dispatch(setCartItem(cartItem));
@@ -76,7 +76,7 @@ export default function OrdinaryStickyItem({
               <form onSubmit={(e) => e.preventDefault()} className="">
                 <div className="tf-sticky-atc-variant-price text-center"></div>
                 <div className="tf-sticky-atc-btns">
-                  {product.category !== "custom_sling_bag" && (
+                  {product.category !== "custom_sling_bag" && product.category !== "Kids Bags" && (
                     <div className="tf-product-info-quantity">
                       <Quantity quantity={quantity} setQuantity={setQuantity} />
                     </div>

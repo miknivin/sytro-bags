@@ -12,7 +12,7 @@ import {
   useInitiateMultipartUploadMutation,
 } from "@/redux/api/multipartApi";
 
-export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
+export default function DesignUpload({ onFileUpload, getPresignedUrls, children }) {
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -112,8 +112,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     if (files.length === 0) return;
     if (files.length < quantity) {
       toast.error(
-        `You need to upload ${quantity - files.length} more image${
-          quantity - files.length > 1 ? "s" : ""
+        `You need to upload ${quantity - files.length} more image${quantity - files.length > 1 ? "s" : ""
         } to submit`
       );
       return;
@@ -168,7 +167,7 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
 
         setUploadingIndices((prev) => prev.filter((idx) => idx !== i));
       }
-      
+
       onFileUpload(uploadedUrls);
       previewUrls.forEach((url) => URL.revokeObjectURL(url));
       setPreviewUrls([]);
@@ -187,8 +186,8 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
     quantity === 1 ? "Add an image" : `Add up to ${quantity} images`;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="d-flex flex-column align-items-center pt-5">
+    <form onSubmit={handleSubmit} className="w-100">
+      <div className="d-flex flex-column align-items-center pt-0">
         <input
           id="upload-file"
           type="file"
@@ -199,67 +198,106 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
           onChange={handleFileChange}
           ref={fileInputRef}
         />
-        <div className="p-2 border border-2 border-secondary text-center bg-light shadow-lg rounded position-relative w-100">
+        <div
+          className="p-2 border-0 text-center bg-white shadow-sm rounded-4 position-relative w-100"
+          style={{ transition: 'all 0.3s ease' }}
+        >
+
+
           {previewUrls.length === 0 && (
             <label
               htmlFor="upload-file"
-              className="d-flex flex-column align-items-center justify-content-center py-5 px-3 rounded w-100"
-              style={{ cursor: "pointer", border: "2px dashed #6c757d" }}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleDrop}
+              className="d-flex flex-column align-items-center justify-content-center py-1 px-3 rounded-4 w-100 upload-dropzone"
+              style={{
+                cursor: "pointer",
+                border: "2px dashed #e2e8f0",
+                backgroundColor: "#f8fafc",
+                transition: "all 0.2s ease",
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = "#ffc720";
+                e.currentTarget.style.backgroundColor = "#fff9e6";
+              }}
+              onDragLeave={(e) => {
+                e.currentTarget.style.borderColor = "#e2e8f0";
+                e.currentTarget.style.backgroundColor = "#f8fafc";
+              }}
+              onDrop={(e) => {
+                handleDrop(e);
+                e.currentTarget.style.borderColor = "#e2e8f0";
+                e.currentTarget.style.backgroundColor = "#f8fafc";
+              }}
             >
-              <FontAwesomeIcon
-                icon={faUpload}
-                className="text-muted"
-                style={{ width: "34px", height: "34px" }}
-              />
+              <div className="mb-1 d-flex align-items-center justify-content-center" style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                backgroundColor: "#fff",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+              }}>
+                <FontAwesomeIcon
+                  icon={faUpload}
+                  style={{ width: "16px", height: "16px", color: "black" }}
+                />
+              </div>
               <h6
-                className="mb-1 fw-bold text-muted fs-3"
-                style={{ lineHeight: "25px" }}
+                className="mb-1 fw-bold text-dark"
+                style={{ fontSize: "1rem", letterSpacing: "-0.01em" }}
               >
-                Click to upload or <br /> drag & drop
+                Upload your child's photo
               </h6>
-              <p className="mb-1 text-muted px-1">
-                Now, you can upload your child’s photo and watch them transform
-                into their favorite superhero.
+              <p className="mb-2 text-dark px-2 small" style={{ maxWidth: "280px" }}>
+                Transform them into their favorite superhero!
               </p>
-              <p className="small text-muted">{uploadMessage}</p>
-              <p className="small text-muted">SVG, PNG, JPG, JPEG</p>
-              <p className="small text-warning">
-                (Max 25MB each, Max 50MB total)
-              </p>
+              <div className="d-flex flex-column gap-1 align-items-center">
+                <span className="badge rounded-pill px-3 py-2 small fw-bold" style={{ backgroundColor: "#ffc720", color: "#000" }}>
+                  {uploadMessage}
+                </span>
+                <span className="text-muted" style={{ fontSize: "11px" }}>
+                  SVG, PNG, JPG (Max 50MB)
+                </span>
+              </div>
             </label>
           )}
 
           {previewUrls.length > 0 && (
-            <div className="mt-3 row d-flex gap-3">
+            <div className="mt-2 d-flex justify-content-center">
               {previewUrls.map((url, index) => (
                 <div
                   key={index}
-                  className="col-4 col-sm-6 col-md-4 col-lg-3 position-relative border"
+                  className="position-relative"
+                  style={{ width: "160px" }}
                 >
-                  <img
-                    src={url}
-                    alt={`Preview ${index + 1}`}
-                    className="img-fluid rounded w-100"
-                    style={{ maxHeight: "150px", objectFit: "contain" }}
-                  />
+                  <div className="rounded-3 overflow-hidden shadow-sm border border-dark" style={{ height: "160px" }}>
+                    <img
+                      src={url}
+                      alt={`Preview ${index + 1}`}
+                      className="w-100 h-100"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
                   {uploadingIndices.includes(index) && (
                     <div
-                      className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                      style={{ background: "rgba(0,0,0,0.5)" }}
+                      className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center rounded-3"
+                      style={{ background: "rgba(255,255,255,0.7)", zIndex: 1 }}
                     >
-                      <div className="spinner-border text-light" role="status">
+                      <div className="spinner-border spinner-border-sm text-primary" role="status">
                         <span className="visually-hidden">Uploading...</span>
                       </div>
                     </div>
                   )}
                   <button
                     type="button"
-                    className="position-absolute top-0 end-0 btn btn-danger rounded-circle p-1"
+                    className="position-absolute top-0 end-0 btn btn-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                     style={{
-                      transform: "translate(50%, -50%)",
-                      fontSize: "9px",
+                      transform: "translate(30%, -30%)",
+                      width: "22px",
+                      height: "22px",
+                      padding: "0",
+                      fontSize: "10px",
+                      zIndex: 2,
+                      border: "2px solid #fff"
                     }}
                     onClick={() => handleDelete(index)}
                     aria-label={`Remove image ${index + 1}`}
@@ -272,29 +310,21 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls }) {
             </div>
           )}
 
+          {children}
+
           {files.length > 0 && (
-            <>
+            <div className="d-flex flex-column gap-2 mt-2">
               <button
                 type="submit"
-                className="tf-btn btn-fill w-100 mt-4 radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
+                className="tf-btn btn-fill w-100 rounded-pill justify-content-center fw-bold fs-15 shadow-sm animate-hover-btn bg-black text-white border-0"
+                style={{ height: "44px" }}
                 disabled={isSubmitting || uploadingIndices.length > 0}
               >
                 {isSubmitting || uploadingIndices.length > 0
                   ? "Uploading..."
-                  : "Submit"}
+                  : "Submit "}
               </button>
-
-              {files.length < quantity && (
-                <button
-                  type="button"
-                  className="tf-btn btn-fill w-100 mt-2 radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isSubmitting || uploadingIndices.length > 0}
-                >
-                  Upload more
-                </button>
-              )}
-            </>
+            </div>
           )}
         </div>
 
