@@ -79,7 +79,7 @@ export async function POST(req) {
     setImmediate(() => {
       SessionStartedOrder.deleteOne({ razorpayOrderId: razorpay_order_id })
         .then(() =>
-          console.log("Cleaned SessionStartedOrder:", razorpay_order_id)
+          console.log("Cleaned SessionStartedOrder-", razorpay_order_id)
         )
         .catch((err) =>
           console.error("Failed to cleanup SessionStartedOrder::", err)
