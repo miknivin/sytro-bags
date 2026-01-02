@@ -101,12 +101,12 @@ export default function BackToSchoolCollection() {
                 @media (max-width: 768px) {
                     .back-to-school-section h2 {
                         margin-top: 20px !important;
-                        margin-bottom: 10px !important;
+                        margin-bottom: 15px !important;
                         font-size: 22px !important;
                     }
                     .collection-card {
-                        height: auto !important;
-                        aspect-ratio: 2 / 1;
+                        height: 50vw !important; /* Perfect 2:1 ratio for 1600x800 images */
+                        min-height: 160px !important;
                     }
                     .collection-content {
                         display: none !important;
