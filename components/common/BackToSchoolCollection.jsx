@@ -18,91 +18,98 @@ export default function BackToSchoolCollection() {
                 <div className="row g-4">
                     {/* First Image */}
                     <div className="col-md-6">
-                        <div className="collection-card" style={{
-                            position: 'relative',
-                            overflow: 'hidden',
-                            borderRadius: '12px',
-                            height: '300px',
-                            backgroundColor: '#f5f5f5'
-                        }}>
-                            <Image
-                                src="/images/shop/kids bag.webp"
-                                alt="Back to School Collection 1"
-                                width={1600}
-                                height={800}
-                                style={{
-                                    objectFit: 'cover',
-                                    width: '100%',
-                                    height: '100%'
-                                }}
-                            />
-                            <div style={{
-                                position: 'absolute',
-                                bottom: '30px',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                zIndex: 10
+                        <Link href="/shop-collection-sub/Kids%20Bags" className="collection-card-wrapper">
+                            <div className="collection-card" style={{
+                                position: 'relative',
+                                overflow: 'hidden',
+                                borderRadius: '12px',
+                                height: '300px',
+                                backgroundColor: '#f5f5f5'
                             }}>
-                                <Link
-                                    href="/shop-collection-sub/Kids%20Bags"
-                                    className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg"
-                                >
-                                    <span>View More</span>
-                                    <i className="icon icon-arrow1-top-left" />
-                                </Link>
+                                <Image
+                                    src="/images/shop/kids bag.webp"
+                                    alt="Back to School Collection 1"
+                                    width={1600}
+                                    height={800}
+                                    style={{
+                                        objectFit: 'cover',
+                                        width: '100%',
+                                        height: '100%'
+                                    }}
+                                />
+                                <div className="collection-content" style={{
+                                    position: 'absolute',
+                                    bottom: '30px',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    zIndex: 10
+                                }}>
+                                    <div className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg">
+                                        <span>View More</span>
+                                        <i className="icon icon-arrow1-top-left" />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Second Image */}
                     <div className="col-md-6">
-                        <div className="collection-card" style={{
-                            position: 'relative',
-                            overflow: 'hidden',
-                            borderRadius: '12px',
-                            height: '300px',
-                            backgroundColor: '#f5f5f5'
-                        }}>
-                            <Image
-                                src="/images/shop/schoolbag.webp"
-                                alt="Back to School Collection 2"
-                                width={1600}
-                                height={800}
-                                style={{
-                                    objectFit: 'cover',
-                                    width: '100%',
-                                    height: '100%'
-                                }}
-                            />
-                            <div style={{
-                                position: 'absolute',
-                                bottom: '30px',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                zIndex: 10
+                        <Link href="/shop-collection-sub/laptop_backpack" className="collection-card-wrapper">
+                            <div className="collection-card" style={{
+                                position: 'relative',
+                                overflow: 'hidden',
+                                borderRadius: '12px',
+                                height: '300px',
+                                backgroundColor: '#f5f5f5'
                             }}>
-                                <Link
-                                    href="/shop-collection-sub/laptop_backpack"
-                                    className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg"
-                                >
-                                    <span>View More</span>
-                                    <i className="icon icon-arrow1-top-left" />
-                                </Link>
+                                <Image
+                                    src="/images/shop/schoolbag.webp"
+                                    alt="Back to School Collection 2"
+                                    width={1600}
+                                    height={800}
+                                    style={{
+                                        objectFit: 'cover',
+                                        width: '100%',
+                                        height: '100%'
+                                    }}
+                                />
+                                <div className="collection-content" style={{
+                                    position: 'absolute',
+                                    bottom: '30px',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    zIndex: 10
+                                }}>
+                                    <div className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg">
+                                        <span>View More</span>
+                                        <i className="icon icon-arrow1-top-left" />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
 
             <style jsx>{`
+                .collection-card-wrapper {
+                    display: block;
+                    width: 100%;
+                }
+
                 @media (max-width: 768px) {
-                    .collection-card {
-                        height: 180px !important;
+                    .back-to-school-section h2 {
+                        margin-top: 20px !important;
+                        margin-bottom: 10px !important;
+                        font-size: 22px !important;
                     }
-                    .collection-card .tf-btn {
-                        padding: 10px 24px !important;
-                        font-size: 14px !important;
-                        bottom: 20px !important;
+                    .collection-card {
+                        height: auto !important;
+                        aspect-ratio: 2 / 1;
+                    }
+                    .collection-content {
+                        display: none !important;
                     }
                 }
             `}</style>
