@@ -16,6 +16,7 @@ import CustomAlert from "@/utlis/CustomAlert";
 
 export default function DefaultShopDetailsNoZoom({ product }) {
   const [quantity, setQuantity] = useState(1);
+
   const [customName, setCustomName] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
@@ -116,7 +117,12 @@ export default function DefaultShopDetailsNoZoom({ product }) {
             <div className="col-md-6">
               <div className="tf-product-media-wrap sticky-top h-100">
                 <div className="thumbs-slider">
-                  <Slider1ZoomOuterOrdinary firstImage={product.images || []} />
+                  <Slider1ZoomOuterOrdinary
+                    firstImage={[
+                      ...(product.images || []),
+                      ...(product.youtubeUrl || []).map((url) => ({ url })),
+                    ]}
+                  />
                 </div>
               </div>
             </div>

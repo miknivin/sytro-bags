@@ -197,8 +197,8 @@ export default function DetailsOuterZoom({ product, details }) {
                   <Slider1ZoomOuter
                     handleColor={handleColor}
                     currentColor={currentColor.value}
-                    firstImage={
-                      selectedDesigns[product._id]
+                    firstImage={[
+                      ...(selectedDesigns[product._id]
                         ? [
                           {
                             url:
@@ -215,8 +215,9 @@ export default function DetailsOuterZoom({ product, details }) {
                           ...(currentSize?.valueOf === "Large"
                             ? product?.extraImages || []
                             : product?.images || []),
-                        ]
-                    }
+                        ]),
+                      ...(product.youtubeUrl || []).map((url) => ({ url })),
+                    ]}
                   />
                 </div>
               </div>

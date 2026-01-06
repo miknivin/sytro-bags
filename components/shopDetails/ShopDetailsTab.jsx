@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Testimonials from "../common/Testimonials";
 
 const tabs = [
@@ -13,22 +13,9 @@ const tabs = [
 export default function ShopDetailsTab({ product, details }) {
   const [currentTab, setCurrentTab] = useState(1);
 
-  const getEmbedUrl = (url) => {
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url?.match(regExp);
-    return match && match[2].length === 11
-      ? `https://www.youtube.com/embed/${match[2]}`
-      : null;
-  };
-
-  const youtubeUrls = product?.youtubeUrl || [];
-  const hasVideos = youtubeUrls.length > 0;
-
   const currentTabs = [
     { title: "Review", id: 1 },
     { title: "Description", id: 2 },
-    ...(hasVideos ? [{ title: "Video", id: 3 }] : []),
   ];
 
   return (
@@ -85,50 +72,6 @@ export default function ShopDetailsTab({ product, details }) {
                     </div>
                   </div>
                 </div>
-
-                {hasVideos && (
-                  <div
-                    className={`widget-content-inner ${currentTab === 3 ? "active" : ""
-                      } `}
-                  >
-                    <div className="row g-4">
-                      {youtubeUrls.map((url, index) => {
-                        const embedUrl = getEmbedUrl(url);
-                        if (!embedUrl) return null;
-                        return (
-                          <div key={index} className="col-md-6 col-12">
-                            <div
-                              className="video-container"
-                              style={{
-                                position: "relative",
-                                paddingBottom: "56.25%",
-                                height: 0,
-                                overflow: "hidden",
-                                borderRadius: "12px",
-                                boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                              }}
-                            >
-                              <iframe
-                                style={{
-                                  position: "absolute",
-                                  top: 0,
-                                  left: 0,
-                                  width: "100%",
-                                  height: "100%",
-                                  border: 0,
-                                }}
-                                src={embedUrl}
-                                title={`YouTube video player ${index + 1}`}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                              ></iframe>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>

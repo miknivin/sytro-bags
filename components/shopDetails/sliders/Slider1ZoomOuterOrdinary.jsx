@@ -21,10 +21,26 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
   // Helper to detect video URLs
   const isVideoUrl = (url) => /\.(mp4|webm|mov|avi|mpeg|ogg)$/i.test(url);
 
-  // Separate images and videos
-  const images = firstImage.filter(item => !isVideoUrl(item.url));
-  const videos = firstImage.filter(item => isVideoUrl(item.url));
-  const allMedia = [...images, ...videos];
+  // Helper to get YouTube embed URL and ID
+  const getYoutubeInfo = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url?.match(regExp);
+    if (match && match[2].length === 11) {
+      return {
+        id: match[2],
+        embedUrl: `https://www.youtube.com/embed/${match[2]}`,
+        thumbnail: `https://img.youtube.com/vi/${match[2]}/0.jpg`
+      };
+    }
+    return null;
+  };
+
+  // Separate images, local videos, and YouTube videos
+  const images = firstImage.filter(item => !isVideoUrl(item.url) && !getYoutubeInfo(item.url));
+  const localVideos = firstImage.filter(item => isVideoUrl(item.url));
+  const youtubeVideos = firstImage.filter(item => getYoutubeInfo(item.url));
+
+  const allMedia = [...images, ...localVideos, ...youtubeVideos];
 
   // Fallback for empty media
   if (!allMedia.length) {
@@ -34,6 +50,7 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
   // Ensure valid image URL
   const getImageUrl = (url) => {
     try {
+      if (!url) return "/images/placeholder.jpg";
       return replaceS3WithCloudFront(url) || "/images/placeholder.jpg";
     } catch (error) {
       console.error("Error processing image URL:", error);
@@ -59,11 +76,12 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
         }}
       >
         {allMedia.map((slide, index) => {
-          const isVideo = isVideoUrl(slide.url);
+          const isLocalVideo = isVideoUrl(slide.url);
+          const youtubeInfo = getYoutubeInfo(slide.url);
           return (
             <SwiperSlide key={index} className="stagger-item">
               <div className="item">
-                {isVideo ? (
+                {isLocalVideo ? (
                   <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <video
                       src={`${getImageUrl(slide.url)}#t=0.001`}
@@ -87,6 +105,33 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
                       zIndex: 10
                     }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <polygon points="5 3 19 12 5 21" />
+                      </svg>
+                    </div>
+                  </div>
+                ) : youtubeInfo ? (
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <Image
+                      src={youtubeInfo.thumbnail}
+                      alt="youtube thumbnail"
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                      borderRadius: '8px',
+                      width: '30px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10
+                    }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
                         <polygon points="5 3 19 12 5 21" />
                       </svg>
                     </div>
@@ -139,10 +184,11 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
         touchReleaseOnEdges={true}
       >
         {allMedia.map((slide, index) => {
-          const isVideo = isVideoUrl(slide.url);
+          const isLocalVideo = isVideoUrl(slide.url);
+          const youtubeInfo = getYoutubeInfo(slide.url);
           return (
             <SwiperSlide key={index}>
-              {isVideo ? (
+              {isLocalVideo ? (
                 <video
                   ref={(el) => (videoRefs.current[index] = el)}
                   src={`${getImageUrl(slide.url)}#t=0.001`}
@@ -151,13 +197,41 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
                   preload="metadata"
                   playsInline
                 />
+              ) : youtubeInfo ? (
+                <div
+                  className="video-container"
+                  style={{
+                    position: "relative",
+                    paddingBottom: "140%", // Matching typical product image aspect ratio
+                    height: 0,
+                    overflow: "hidden",
+                    backgroundColor: "#000"
+                  }}
+                >
+                  <iframe
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      border: 0,
+                    }}
+                    src={`${youtubeInfo.embedUrl}?autoplay=0&rel=0`}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  ></iframe>
+                </div>
               ) : (
                 <div
                   className="item"
                   onClick={() => {
                     const imageIndex = images.findIndex(img => img.url === slide.url);
-                    setPhotoIndex(imageIndex);
-                    setLightboxOpen(true);
+                    if (imageIndex !== -1) {
+                      setPhotoIndex(imageIndex);
+                      setLightboxOpen(true);
+                    }
                   }}
                   style={{ cursor: 'pointer' }}
                 >
@@ -177,8 +251,8 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
             </SwiperSlide>
           );
         })}
-        <div className="swiper-button-next swiper-nav button-style-arrow thumbs-next" />
-        <div className="swiper-button-prev swiper-nav button-style-arrow thumbs-prev" />
+        <div className="swiper-button-next swiper-nav button-style-arrow thumbs-next" style={{ zIndex: 100, pointerEvents: 'auto' }} />
+        <div className="swiper-button-prev swiper-nav button-style-arrow  thumbs-prev" style={{ zIndex: 100, pointerEvents: 'auto' }} />
       </Swiper>
 
       {/* Lightbox */}
