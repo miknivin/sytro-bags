@@ -87,7 +87,7 @@ export default function BackToSchoolCollection() {
               >
                 <Image
                   src="/images/shop/schoolbag.webp"
-                  alt="Back to School Collection 2"
+                  alt="Back to School Collection 2nd"
                   width={1600}
                   height={800}
                   style={{
@@ -117,27 +117,7 @@ export default function BackToSchoolCollection() {
         </div>
       </div>
 
-      <style jsx>{`
-        .collection-card-wrapper {
-          display: block;
-          width: 100%;
-        }
-
-                @media (max-width: 768px) {
-                    .back-to-school-section h2 {
-                        margin-top: 20px !important;
-                        margin-bottom: 10px !important;
-                        font-size: 22px !important;
-                    }
-                    .collection-card {
-                        height: auto !important;
-                        aspect-ratio: 2 / 1;
-                    }
-                    .collection-content {
-                        display: none !important;
-                    }
-                }
-            `}</style>
+ 
     </section>
   );
 }

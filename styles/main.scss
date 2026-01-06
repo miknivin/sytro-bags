@@ -322,3 +322,23 @@ label.non-mandatory:after {
     font-size: 21px !important;
   }
 }
+
+.collection-card-wrapper {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .back-to-school-section h2 {
+    margin-top: 20px !important;
+    margin-bottom: 10px !important;
+    font-size: 22px !important;
+  }
+  .collection-card {
+    height: auto !important;
+    aspect-ratio: 2 / 1;
+  }
+  .collection-content {
+    display: none !important;
+  }
+}
