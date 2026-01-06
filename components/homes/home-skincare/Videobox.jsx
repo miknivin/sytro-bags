@@ -48,10 +48,10 @@ export default function Videobox() {
           <div className="video-wrap">
             <video
               className="radius-20"
-              src="/images/slider/video-1.mp4"
-              playsInline=""
-              metadata=""
-              controls=""
+              src="/images/slider/video-1.mp4#t=0.001"
+              playsInline
+              preload="metadata"
+              controls
             />
           </div>
         </div>

@@ -89,10 +89,11 @@ export default function Moments() {
                       controls={playingVideos[i]}
                       muted
                       playsInline
+                      preload="metadata"
                       onPlay={() => handleVideoPlay(i)}
                       onPause={() => handleVideoPause(i)}
                     >
-                      <source src={url} type="video/mp4" />
+                      <source src={`${url}#t=0.001`} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                     {!playingVideos[i] && (

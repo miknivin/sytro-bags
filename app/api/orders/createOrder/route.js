@@ -26,6 +26,10 @@ export async function POST(req) {
       totalAmount,
       paymentMethod,
       paymentInfo,
+      couponCode,
+      discountAmount,
+      couponDiscountType,
+      couponDiscountValue,
     } = body;
 
     const order = await Order.create({
@@ -37,6 +41,10 @@ export async function POST(req) {
       totalAmount,
       paymentMethod,
       paymentInfo,
+      couponApplied: couponCode || "No",
+      discountAmount: discountAmount || 0,
+      couponDiscountType: couponDiscountType || "",
+      couponDiscountValue: couponDiscountValue || 0,
       user: user?._id,
     });
 

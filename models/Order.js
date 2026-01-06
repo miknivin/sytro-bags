@@ -124,6 +124,19 @@ const orderSchema = new mongoose.Schema(
       required: false,
       default: "No",
     },
+    discountAmount: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    couponDiscountType: {
+      type: String,
+      required: false,
+    },
+    couponDiscountValue: {
+      type: Number,
+      required: false,
+    },
     deliveredAt: Date,
   },
   { timestamps: true }

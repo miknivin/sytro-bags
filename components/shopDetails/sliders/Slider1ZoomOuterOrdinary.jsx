@@ -20,7 +20,7 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
 
   // Helper to detect video URLs
   const isVideoUrl = (url) => /\.(mp4|webm|mov|avi|mpeg|ogg)$/i.test(url);
-  
+
   // Separate images and videos
   const images = firstImage.filter(item => !isVideoUrl(item.url));
   const videos = firstImage.filter(item => isVideoUrl(item.url));
@@ -61,46 +61,52 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
         {allMedia.map((slide, index) => {
           const isVideo = isVideoUrl(slide.url);
           return (
-          <SwiperSlide key={index} className="stagger-item">
-            <div className="item">
-              {isVideo ? (
-                <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                  <video src={getImageUrl(slide.url)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    borderRadius: '50%',
-                    width: '40px',
-                    height: '40px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 10
-                  }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                      <polygon points="5 3 19 12 5 21"/>
-                    </svg>
+            <SwiperSlide key={index} className="stagger-item">
+              <div className="item">
+                {isVideo ? (
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <video
+                      src={`${getImageUrl(slide.url)}#t=0.001`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      preload="metadata"
+                      playsInline
+                      muted
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      borderRadius: '50%',
+                      width: '40px',
+                      height: '40px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 10
+                    }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <polygon points="5 3 19 12 5 21" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <Image
-                  src={getImageUrl(slide.url)}
-                  data-src={getImageUrl(slide.url)}
-                  alt="thumbnail"
-                  fill
-                  style={{ objectFit: "cover" }}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.target.src = "/images/placeholder.jpg";
-                  }}
-                />
-              )}
-            </div>
-          </SwiperSlide>
-        );
+                ) : (
+                  <Image
+                    src={getImageUrl(slide.url)}
+                    data-src={getImageUrl(slide.url)}
+                    alt="thumbnail"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.src = "/images/placeholder.jpg";
+                    }}
+                  />
+                )}
+              </div>
+            </SwiperSlide>
+          );
         })}
       </Swiper>
 
@@ -135,40 +141,41 @@ export default function Slider1ZoomOuterOrdinary({ firstImage = [] }) {
         {allMedia.map((slide, index) => {
           const isVideo = isVideoUrl(slide.url);
           return (
-          <SwiperSlide key={index}>
-            {isVideo ? (
-              <video
-                ref={(el) => (videoRefs.current[index] = el)}
-                src={getImageUrl(slide.url)}
-                controls
-                style={{ width: '100%', height: 'auto', minHeight: '400px', maxHeight: '700px', objectFit: 'cover', display: 'block' }}
-                preload="metadata"
-              />
-            ) : (
-              <div
-                className="item"
-                onClick={() => {
-                  const imageIndex = images.findIndex(img => img.url === slide.url);
-                  setPhotoIndex(imageIndex);
-                  setLightboxOpen(true);
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                <Image
-                  src={getImageUrl(slide.url)}
-                  alt={slide.url || "product image"}
-                  width={500}
-                  height={700}
-                  style={{ objectFit: "cover", maxHeight: "700px" }}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.target.src = "/images/placeholder.jpg";
-                  }}
+            <SwiperSlide key={index}>
+              {isVideo ? (
+                <video
+                  ref={(el) => (videoRefs.current[index] = el)}
+                  src={`${getImageUrl(slide.url)}#t=0.001`}
+                  controls
+                  style={{ width: '100%', height: 'auto', minHeight: '400px', maxHeight: '700px', objectFit: 'cover', display: 'block' }}
+                  preload="metadata"
+                  playsInline
                 />
-              </div>
-            )}
-          </SwiperSlide>
-        );
+              ) : (
+                <div
+                  className="item"
+                  onClick={() => {
+                    const imageIndex = images.findIndex(img => img.url === slide.url);
+                    setPhotoIndex(imageIndex);
+                    setLightboxOpen(true);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <Image
+                    src={getImageUrl(slide.url)}
+                    alt={slide.url || "product image"}
+                    width={500}
+                    height={700}
+                    style={{ objectFit: "cover", maxHeight: "700px" }}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.src = "/images/placeholder.jpg";
+                    }}
+                  />
+                </div>
+              )}
+            </SwiperSlide>
+          );
         })}
         <div className="swiper-button-next swiper-nav button-style-arrow thumbs-next" />
         <div className="swiper-button-prev swiper-nav button-style-arrow thumbs-prev" />

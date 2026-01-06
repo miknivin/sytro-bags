@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   useRazorpayCheckoutSessionMutation,
   useRazorpayWebhookMutation,
+  useCheckCouponMutation,
 } from "@/redux/api/orderApi";
 import Swal from "sweetalert2";
 import { clearCart } from "@/redux/features/cartSlice";
@@ -27,6 +28,10 @@ import handleCheckoutSession from "@/utlis/checkoutSession";
 const CartFooter = ({
   cartItems,
   subtotal,
+  discountAmount,
+  totalAmount,
+  appliedCoupon,
+  setAppliedCoupon,
   formData,
   email,
   handleSubmit,
@@ -42,16 +47,14 @@ const CartFooter = ({
   const router = useRouter();
   const [retryLoading, setRetryLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
-  const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState("");
-  const [discount, setDiscount] = useState(0);
-  const [discountAmount, setDiscountAmount] = useState(0);
-  const [discountedTotal, setDiscountedTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("BANK");
   const [razorpayWebhook, { isLoading: webhookLoading }] =
     useRazorpayWebhookMutation();
   const [checkoutSession, { isLoading: sessionLoading, error }] =
     useRazorpayCheckoutSessionMutation();
+  const [checkCoupon, { isLoading: isCheckingCoupon }] =
+    useCheckCouponMutation();
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const isFormValid = () => {
@@ -78,38 +81,30 @@ const CartFooter = ({
     );
   };
 
-  const handleApplyCoupon = (e) => {
+  const handleApplyCoupon = async (e) => {
     e.preventDefault();
     setCouponError("");
 
-    if (
-      couponCode.trim().toUpperCase() !== "frwet5342423Myre2" &&
-      couponCode.trim().toUpperCase() !== "254235246SiTRrO15"
-    ) {
-      setCouponError("Invalid coupon code");
+    if (!couponCode.trim()) {
+      setCouponError("Please enter a coupon code");
       return;
     }
 
-    if (couponCode.trim().toUpperCase() === "MIRI2") {
-      const totalQuantity = cartItems.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      );
-      if (totalQuantity <= 1) {
-        setCouponError(
-          "Total quantity of items must be greater than 1 to apply this coupon"
-        );
-        toast.error(
-          "Total quantity of items must be greater than 1 to apply this coupon"
-        );
-        setTimeout(() => {
-          cartModalref.current?.click();
-        }, 400);
-        return;
-      }
-    }
+    try {
+      const result = await checkCoupon({
+        code: couponCode.trim(),
+        subtotal: subtotal,
+      }).unwrap();
 
-    setCouponApplied(true);
+      if (result.success) {
+        setAppliedCoupon(result.coupon);
+        toast.success("Coupon applied successfully!");
+      } else {
+        setCouponError(result.message || "Invalid coupon code");
+      }
+    } catch (err) {
+      setCouponError(err.data?.message || "Error validating coupon");
+    }
   };
 
   const handleRazorpayPayment = async () => {
@@ -134,7 +129,7 @@ const CartFooter = ({
     }
 
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-    const finalTotal = discountedTotal || subtotal;
+    const finalTotal = totalAmount;
 
     if (!validateCartItems(cartItems)) {
       return;
@@ -181,7 +176,10 @@ const CartFooter = ({
             fullName,
           },
           cartItems,
-          couponApplied: couponCode || "No",
+          couponApplied: appliedCoupon?.code || "No",
+          discountAmount: discountAmount || 0,
+          couponDiscountType: appliedCoupon?.discountType || "",
+          couponDiscountValue: appliedCoupon?.discountValue || 0,
           itemsPrice: subtotal,
           shippingPrice: 0,
           totalPrice: Number(finalTotal.toFixed(2)),
@@ -245,9 +243,8 @@ const CartFooter = ({
               Swal.fire({
                 icon: "error",
                 title: "Payment & Retry Failed",
-                text: `Please visit the Contact page for assistance. Your order ID: ${
-                  response.razorpay_order_id || "Unavailable"
-                }`,
+                text: `Please visit the Contact page for assistance. Your order ID: ${response.razorpay_order_id || "Unavailable"
+                  }`,
                 confirmButtonText: "OK",
               });
             }
@@ -256,9 +253,8 @@ const CartFooter = ({
             Swal.fire({
               icon: "error",
               title: "Payment & Retry Failed",
-              text: `Please visit the Contact page for assistance. Your order ID: ${
-                response.razorpay_order_id || "Unavailable"
-              }`,
+              text: `Please visit the Contact page for assistance. Your order ID: ${response.razorpay_order_id || "Unavailable"
+                }`,
               confirmButtonText: "OK",
             });
           } finally {
@@ -323,21 +319,12 @@ const CartFooter = ({
     };
   }, []);
 
-  useEffect(() => {
-    let newDiscount = 0;
-    if (couponApplied) {
-      newDiscount = couponCode.trim().toUpperCase() === "SYTRO15" ? 0.15 : 0.1;
-    }
-    const newDiscountAmount = subtotal * newDiscount;
-    const newDiscountedTotal = subtotal - newDiscountAmount;
-
-    setDiscount(newDiscount);
-    setDiscountAmount(newDiscountAmount);
-    setDiscountedTotal(newDiscountedTotal);
-  }, [couponApplied, subtotal, couponCode]);
-
   const isAnyLoading =
-    isLoading || sessionLoading || webhookLoading || retryLoading;
+    isLoading ||
+    sessionLoading ||
+    webhookLoading ||
+    retryLoading ||
+    isCheckingCoupon;
 
   return (
     <>
@@ -432,9 +419,8 @@ const CartFooter = ({
                               >
                                 <Image
                                   src={url}
-                                  alt={`Uploaded image ${index + 1} for ${
-                                    elm.name
-                                  }`}
+                                  alt={`Uploaded image ${index + 1} for ${elm.name
+                                    }`}
                                   width={100}
                                   height={100}
                                   className="popover-image"
@@ -509,7 +495,7 @@ const CartFooter = ({
               </div>
             )}
             <div className="d-flex flex-column">
-              {!couponApplied && (
+              {!appliedCoupon && (
                 <div className="coupon-box">
                   <input
                     type="text"
@@ -531,10 +517,23 @@ const CartFooter = ({
                   {couponError}
                 </p>
               )}
-              {couponApplied && (
-                <p className="success" style={{ color: "green" }}>
-                  Coupon {couponCode} applied successfully!
-                </p>
+              {appliedCoupon && (
+                <div className="d-flex justify-content-between align-items-center">
+                  <p className="success mb-0" style={{ color: "green" }}>
+                    Coupon {appliedCoupon.code} applied successfully! (
+                    {appliedCoupon.description})
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-sm text-danger"
+                    onClick={() => {
+                      setAppliedCoupon(null);
+                      setCouponCode("");
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
               )}
             </div>
 
@@ -543,17 +542,21 @@ const CartFooter = ({
                 <h6 className="fw-5">Subtotal</h6>
                 <h6 className="fw-5">₹{subtotal.toFixed(2)}</h6>
               </div>
-              {couponApplied && (
+              {appliedCoupon && (
                 <div className="d-flex justify-content-between line py-4">
                   <h6 className="fw-5">
-                    Discount ({couponCode === "SYTRO15" ? "15%" : "10%"})
+                    Discount (
+                    {appliedCoupon.discountType === "percentage"
+                      ? `${appliedCoupon.discountValue}%`
+                      : `₹${appliedCoupon.discountValue}`}
+                    )
                   </h6>
                   <h6 className="fw-5">-₹{discountAmount.toFixed(2)}</h6>
                 </div>
               )}
               <div className="d-flex justify-content-between line py-4">
                 <h6 className="fw-5">Total</h6>
-                <h6 className="total fw-5">₹{discountedTotal.toFixed(2)}</h6>
+                <h6 className="total fw-5">₹{totalAmount.toFixed(2)}</h6>
               </div>
             </div>
 
@@ -608,8 +611,8 @@ const CartFooter = ({
                       !isFormValid()
                         ? "Fill all the details correctly"
                         : !cartItems.length
-                        ? "Cart is empty"
-                        : ""
+                          ? "Cart is empty"
+                          : ""
                     }
                   >
                     Place order
@@ -631,27 +634,26 @@ const CartFooter = ({
                 ref={buttonRef}
                 type="submit"
                 disabled={isLoading || !isFormValid() || !cartItems.length}
-                className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${
-                  isAnyLoading || !isFormValid() || !cartItems.length
-                    ? "disabled-btn"
-                    : ""
-                }`}
+                className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${isAnyLoading || !isFormValid() || !cartItems.length
+                  ? "disabled-btn"
+                  : ""
+                  }`}
                 data-tooltip-id="cart-tooltip"
                 data-tooltip-content={
                   isAnyLoading
                     ? "Processing..."
                     : !isFormValid()
-                    ? "Fill all the details correctly"
-                    : !cartItems.length
-                    ? "Cart is empty"
-                    : ""
+                      ? "Fill all the details correctly"
+                      : !cartItems.length
+                        ? "Cart is empty"
+                        : ""
                 }
               >
                 {isLoading
                   ? "Processing..."
                   : paymentMethod === "BANK"
-                  ? "Go to payment"
-                  : "Place order"}
+                    ? "Go to payment"
+                    : "Place order"}
               </button>
             )}
             <Tooltip id="cart-tooltip" place="top" />

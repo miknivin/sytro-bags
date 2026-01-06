@@ -19,6 +19,9 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [subtotal, setSubtotal] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [countryId, setCountryId] = useState("101");
   const [stateId, setStateId] = useState(countryId === "101" && "19");
   const [filteredStates, setFilteredStates] = useState([]);
@@ -52,6 +55,28 @@ export default function Checkout() {
       cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
     );
   }, [cartItems]);
+
+  useEffect(() => {
+    if (appliedCoupon) {
+      let discount = 0;
+      if (appliedCoupon.discountType === "percentage") {
+        discount = (subtotal * appliedCoupon.discountValue) / 100;
+        if (
+          appliedCoupon.maximumDiscount &&
+          discount > appliedCoupon.maximumDiscount
+        ) {
+          discount = appliedCoupon.maximumDiscount;
+        }
+      } else {
+        discount = appliedCoupon.discountValue;
+      }
+      setDiscountAmount(discount);
+      setTotalAmount(subtotal - discount);
+    } else {
+      setDiscountAmount(0);
+      setTotalAmount(subtotal);
+    }
+  }, [subtotal, appliedCoupon]);
 
   useEffect(() => {
     //console.log(cartItems, "cartItems");
@@ -117,7 +142,11 @@ export default function Checkout() {
       itemsPrice: subtotal,
       taxAmount: 0,
       shippingAmount: 0,
-      totalAmount: subtotal,
+      discountAmount: discountAmount,
+      totalAmount: totalAmount,
+      couponCode: appliedCoupon?.code || "",
+      couponDiscountType: appliedCoupon?.discountType || "",
+      couponDiscountValue: appliedCoupon?.discountValue || 0,
       orderNotes: formData.orderNotes || "",
     };
 
@@ -344,6 +373,10 @@ export default function Checkout() {
           <CartFooter
             cartItems={cartItems}
             subtotal={subtotal}
+            discountAmount={discountAmount}
+            totalAmount={totalAmount}
+            appliedCoupon={appliedCoupon}
+            setAppliedCoupon={setAppliedCoupon}
             formData={formData}
             // email={email}
             handleSubmit={handleSubmit}

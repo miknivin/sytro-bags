@@ -32,7 +32,7 @@ export default function ProductDetailsClient({ productId }) {
   return (
     <>
       <DetailsOuterZoom product={product} details={product?.details} />
-      <ShopDetailsTab details={product?.details} />
+      <ShopDetailsTab product={product} details={product?.details} />
       <Moments />
       <RelatedProducts product={product} />
       <GoogleReviews />

@@ -43,6 +43,7 @@ export default function ProductDetailsClient({ productId }) {
         : [{ url: "/images/placeholder.jpg" }],
     stocks: data?.productById?.stock || 0,
     details: data?.productById?.details || "No details available",
+    youtubeUrl: data?.productById?.youtubeUrl || [],
   };
 
   return (

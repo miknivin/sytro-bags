@@ -33,6 +33,9 @@ export async function POST(req) {
       taxPrice,
       orderNotes,
       couponApplied,
+      discountAmount,
+      couponDiscountType,
+      couponDiscountValue,
     } = body;
     console.log(cartItems, "cartItems");
 
@@ -74,6 +77,9 @@ export async function POST(req) {
       orderNotes: orderNotes,
       totalAmount: totalPrice,
       couponApplied,
+      discountAmount: discountAmount || 0,
+      couponDiscountType: couponDiscountType || "",
+      couponDiscountValue: couponDiscountValue || 0,
     });
 
     setImmediate(() => {
