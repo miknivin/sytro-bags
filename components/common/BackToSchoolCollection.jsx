@@ -108,7 +108,7 @@ export default function BackToSchoolCollection() {
                 >
                   <div className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg">
                     <span>View More</span>
-                    <i className="icon icon-arrow1-top-left" />
+                    <i className="icon icon-arrow1-top-left " />
                   </div>
                 </div>
               </div>
@@ -116,8 +116,6 @@ export default function BackToSchoolCollection() {
           </div>
         </div>
       </div>
-
- 
     </section>
   );
 }
