@@ -74,17 +74,17 @@ export const slides2 = [
 ];
 
 export const slides3 = [
-  
-   {
-    imgSrc:
-      "https://ik.imagekit.io/c1jhxlxiy/rakhi.webp?updatedAt=1753879700160",
-    alt: "Rakhi offer",
-    link: "",
-    heading: "Engineered for the Urban Explorer",
-    subheading: "TRAVEL COLLECTION",
-    shortDescription:
-      "Showcasing premium travel bags that adapt to your journey",
-  },
+
+  //  {
+  //   imgSrc:
+  //     "https://ik.imagekit.io/c1jhxlxiy/rakhi.webp?updatedAt=1753879700160",
+  //   alt: "Rakhi offer",
+  //   link: "",
+  //   heading: "Engineered for the Urban Explorer",
+  //   subheading: "TRAVEL COLLECTION",
+  //   shortDescription:
+  //     "Showcasing premium travel bags that adapt to your journey",
+  // },
   {
     imgSrc:
       "https://ik.imagekit.io/c1jhxlxiy/gym%20bag.jpg?updatedAt=1752560718222",
