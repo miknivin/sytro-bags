@@ -325,7 +325,9 @@ export default function DetailsOuterZoom({ product, details }) {
 
                   {/* Offer Timer - Prominent Display */}
                   <div className="mb-3">
-                    <OfferTimer offerEndTime={product && product?.offerEndTime} />
+                    {product && product?.offerEndTime && (
+                      <OfferTimer offerEndTime={product && product?.offerEndTime} />)
+                    }
                   </div>
 
                   {/* Pricing Section */}
