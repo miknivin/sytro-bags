@@ -324,9 +324,9 @@ export default function DetailsOuterZoom({ product, details }) {
                   )}
 
                   {/* Offer Timer - Prominent Display */}
-                  {/* <div className="mb-3">
-                    <OfferTimer offerEndTime={product?.offerEndTime} />
-                  </div> */}
+                  <div className="mb-3">
+                    <OfferTimer offerEndTime={product && product?.offerEndTime} />
+                  </div>
 
                   {/* Pricing Section */}
                   <div className="tf-product-info-price d-flex align-items-center gap-3 mb-4">
