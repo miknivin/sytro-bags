@@ -106,7 +106,7 @@ export default function BackToSchoolCollection() {
                     zIndex: 10,
                   }}
                 >
-                  <div className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg">
+                  <div className="tf-btn btn-line collection-other-link fw-6 bg-white p-3 rounded-lg ">
                     <span>View More</span>
                     <i className="icon icon-arrow1-top-left" />
                   </div>
