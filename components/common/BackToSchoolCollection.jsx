@@ -73,7 +73,7 @@ export default function BackToSchoolCollection() {
           <div className="col-md-6">
             <Link
               href="/shop-collection-sub/laptop_backpack"
-              className="collection-card-wrapper"
+              className="collection-card-wrapper "
             >
               <div
                 className="collection-card"
