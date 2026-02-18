@@ -90,9 +90,7 @@ const orderSchema = new mongoose.Schema(
 
     remainingAmount: {
       type: Number,
-      default: function () {
-        return this.totalAmount - (this.advancePaid || 0);
-      },
+      default: 0
     },
     codAmount: {
       type: Number,
@@ -128,6 +126,11 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    invoiceURL: {
+      type: String,
+      required: false,
+    },
+
     codChargeCollected: {
       type: Number,
       default: 100, // Default value — change here if needed

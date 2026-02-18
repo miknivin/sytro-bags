@@ -81,6 +81,7 @@ export async function POST(req) {
       totalAmount: finalTotalAmount, // ← now includes COD charge for normal COD
       paymentMethod,
       paymentInfo,
+      remainingAmount: finalTotalAmount,
       couponApplied: couponCode || "No",
       discountAmount: Number(discountAmount),
       couponDiscountType: couponDiscountType || "",
