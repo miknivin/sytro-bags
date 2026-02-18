@@ -40,6 +40,25 @@ export const orderApi = createApi({
         };
       },
     }),
+
+    razorpayAdvanceCheckoutSession: builder.mutation({
+      query(body) {
+        return {
+          url: "/payments/advance-session", // new backend route
+          method: "POST",
+          body,
+        };
+      },
+    }),
+    razorpayAdvanceWebhook: builder.mutation({
+      query(body) {
+        return {
+          url: "/payments/advance-webhook",   // new backend route
+          method: "POST",
+          body,
+        };
+      },
+    }),
     getAdminOrders: builder.query({
       query: () => `/admin/orders`,
       providesTags: ["AdminOrders"],
@@ -132,6 +151,8 @@ export const {
   useCreateNewOrderMutation,
   useRazorpayCheckoutSessionMutation,
   useRazorpayWebhookMutation,
+  useRazorpayAdvanceCheckoutSessionMutation,
+  useRazorpayAdvanceWebhookMutation,
   useMyOrdersQuery,
   useOrderDetailsQuery,
   useGetAdminOrdersQuery,

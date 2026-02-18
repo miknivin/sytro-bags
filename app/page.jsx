@@ -1,7 +1,6 @@
 import Features from "@/components/common/Features";
 import ShopGram from "@/components/common/ShopGram";
 import Testimonials from "@/components/homes/home-4/Testimonials";
-import Footer1 from "@/components/footers/Footer1";
 // import Header1 from "@/components/headers/Header4";
 import Topbar1 from "@/components/headers/Topbar4";
 import Brands from "@/components/homes/home-1/Brands";
@@ -21,6 +20,7 @@ import Moments from "@/components/common/Moments";
 import GoogleReviews from "@/components/common/GoogleReviews";
 import TrustBanner from "@/components/common/TrustBanner";
 import AnnouncementBanner from "@/components/common/AnnouncementBanner";
+import Footer1 from "@/components/footers/Footer1";
 export const metadata = {
   title: "Home || Sytro",
   description: "Sytro",

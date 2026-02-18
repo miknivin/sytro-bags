@@ -79,13 +79,38 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please select payment method"],
       enum: {
-        values: ["COD", "Online"],
+        values: ["COD", "Online", "Partial-COD"],
         message: "Please select COD or Online Payments",
+      },
+    },
+    advancePaidAt: {
+      type: Date,
+      default: null,
+    },
+
+    remainingAmount: {
+      type: Number,
+      default: function () {
+        return this.totalAmount - (this.advancePaid || 0);
+      },
+    },
+    codAmount: {
+      type: Number,
+      default: function () {
+        if (this.paymentMethod === "Partial-COD") {
+          return this.remainingAmount;
+        }
+        return this.paymentMethod === "COD" ? this.totalAmount : 0;
       },
     },
     paymentInfo: {
       id: String,
       status: String,
+    },
+    advancePaid: {
+      type: Number,
+      default: 0,
+      min: [0, "Advance paid cannot be negative"],
     },
     itemsPrice: {
       type: Number,
@@ -102,6 +127,11 @@ const orderSchema = new mongoose.Schema(
     totalAmount: {
       type: Number,
       required: true,
+    },
+    codChargeCollected: {
+      type: Number,
+      default: 100, // Default value — change here if needed
+      min: [0, "COD charge cannot be negative"],
     },
     orderStatus: {
       type: String,
@@ -139,7 +169,7 @@ const orderSchema = new mongoose.Schema(
     },
     deliveredAt: Date,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);

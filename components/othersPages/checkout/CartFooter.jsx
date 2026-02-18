@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   useRazorpayCheckoutSessionMutation,
   useRazorpayWebhookMutation,
+  useRazorpayAdvanceCheckoutSessionMutation,
+  useRazorpayAdvanceWebhookMutation,
   useCheckCouponMutation,
 } from "@/redux/api/orderApi";
 import Swal from "sweetalert2";
@@ -25,11 +26,14 @@ import { validateCartItems } from "@/app/helpers/Cartvalidator";
 import toast from "react-hot-toast";
 import handleCheckoutSession from "@/utlis/checkoutSession";
 
+// Import COD_CHARGE
+import { COD_CHARGE } from "@/lib/constants/constants";
+
 const CartFooter = ({
   cartItems,
   subtotal,
   discountAmount,
-  totalAmount,
+  totalAmount: baseTotalAmount, // renamed to avoid confusion
   appliedCoupon,
   setAppliedCoupon,
   formData,
@@ -42,27 +46,36 @@ const CartFooter = ({
   const buttonRef = useRef(null);
   const cartModalref = useRef(null);
   const hasClickedRef = useRef(false);
+
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
   const router = useRouter();
-  const [retryLoading, setRetryLoading] = useState(false);
+  const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("BANK");
-  const [razorpayWebhook, { isLoading: webhookLoading }] =
-    useRazorpayWebhookMutation();
-  const [checkoutSession, { isLoading: sessionLoading, error }] =
+
+  // RTK Query hooks
+  const [createFullSession, { isLoading: fullSessionLoading }] =
     useRazorpayCheckoutSessionMutation();
+  const [verifyFullPayment, { isLoading: fullWebhookLoading }] =
+    useRazorpayWebhookMutation();
+  const [createAdvanceSession, { isLoading: advanceSessionLoading }] =
+    useRazorpayAdvanceCheckoutSessionMutation();
+  const [verifyAdvancePayment, { isLoading: advanceWebhookLoading }] =
+    useRazorpayAdvanceWebhookMutation();
   const [checkCoupon, { isLoading: isCheckingCoupon }] =
     useCheckCouponMutation();
-  const dispatch = useDispatch();
-  const searchParams = useSearchParams();
+
+  // Calculate final totalAmount based on payment method
+
   const isFormValid = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
     const uaePhoneRegex =
       /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/;
-
     const trimmedEmail = formData.email?.trim() || "";
     const trimmedPhoneNo = formData.phoneNo?.trim() || "";
     const trimmedZipCode = formData.zipCode?.trim() || "";
@@ -81,21 +94,47 @@ const CartFooter = ({
     );
   };
 
+  const hasRestrictedCategory = cartItems.some(
+    (item) =>
+      item.category === "Kids Bags" || item.category === "custom_sling_bag",
+  );
+
+  const finalTotalAmount = (() => {
+    let base = baseTotalAmount - (discountAmount || 0);
+
+    // Add COD charge ONLY for normal COD (not Partial-COD or Online)
+    if (paymentMethod === "COD" && !hasRestrictedCategory) {
+      base += COD_CHARGE;
+    }
+
+    return base;
+  })();
+
+  // Rounding logic for Partial-COD only
+  const half = baseTotalAmount * 0.5;
+  const roundedAdvanceBase = Math.ceil(half);
+  const advanceAmount = hasRestrictedCategory
+    ? roundedAdvanceBase + COD_CHARGE
+    : 0;
+
+  const remainingAmount = hasRestrictedCategory
+    ? baseTotalAmount - roundedAdvanceBase
+    : 0;
+
+  const roundOffAdded = roundedAdvanceBase - half;
+
   const handleApplyCoupon = async (e) => {
     e.preventDefault();
     setCouponError("");
-
     if (!couponCode.trim()) {
       setCouponError("Please enter a coupon code");
       return;
     }
-
     try {
       const result = await checkCoupon({
         code: couponCode.trim(),
-        subtotal: subtotal,
+        subtotal,
       }).unwrap();
-
       if (result.success) {
         setAppliedCoupon(result.coupon);
         toast.success("Coupon applied successfully!");
@@ -108,39 +147,34 @@ const CartFooter = ({
   };
 
   const handleRazorpayPayment = async () => {
+    // Validation for custom sling bags
     const invalidSlingBags = cartItems.filter(
       (item) =>
         item.category === "custom_sling_bag" &&
-        (!item.customNameToPrint || item.customNameToPrint.trim() === "")
+        (!item.customNameToPrint || item.customNameToPrint.trim() === ""),
     );
     if (invalidSlingBags.length > 0) {
-      const productNames = invalidSlingBags.map((item) => item.name).join(", ");
+      const names = invalidSlingBags.map((item) => item.name).join(", ");
       Swal.fire({
         icon: "error",
-        title: "Invalid Order!",
-        text: `Please provide a name for the following custom sling bag products: ${productNames}`,
+        title: "Invalid Order",
+        text: `Please provide a name for: ${names}`,
         confirmButtonText: "OK",
       });
-
-      if (cartModalref && cartModalref.current) {
-        cartModalref.current?.click();
-      }
+      cartModalref.current?.click();
       return;
     }
+
+    if (!validateCartItems(cartItems)) return;
 
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-    const finalTotal = totalAmount;
-
-    if (!validateCartItems(cartItems)) {
-      return;
-    }
+    const finalTotal = finalTotalAmount; // Use the updated total
+    const isPartial = paymentMethod === "Partial-COD";
+    const razorpayAmount = isPartial ? advanceAmount : finalTotal;
 
     const orderData = {
       orderItems: cartItems,
-      shippingInfo: {
-        ...formData,
-        fullName,
-      },
+      shippingInfo: { ...formData, fullName },
       totalPrice: Number(finalTotal.toFixed(2)),
       currency: "INR",
       itemsPrice: Number(finalTotal.toFixed(2)),
@@ -150,31 +184,39 @@ const CartFooter = ({
 
     let checkoutData;
     try {
-      checkoutData = await handleCheckoutSession(orderData, checkoutSession);
-      console.log(checkoutData, "checkoutData");
-    } catch (error) {
+      if (isPartial) {
+        checkoutData = await createAdvanceSession({ orderData }).unwrap();
+      } else {
+        checkoutData = await createFullSession({ orderData }).unwrap();
+      }
+    } catch (err) {
+      console.error("Session creation failed:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Payment Initialization Failed",
+        text: "Could not start payment. Please try again or contact support.",
+        confirmButtonText: "OK",
+      });
       return;
     }
 
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
-      amount: Number(finalTotal.toFixed(2)) * 100,
+      amount: razorpayAmount * 100,
       currency: "INR",
       name: "Sytro",
       order_id: checkoutData.id,
-      description: "Order Payment",
+      description: isPartial
+        ? `Advance Payment (50% rounded + ₹${COD_CHARGE} COD charge)`
+        : "Full Order Payment",
       image:
         "https://ik.imagekit.io/c1jhxlxiy/logo@2x%20(1).png?updatedAt=1741333514217",
       handler: async function (response) {
-        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
         const paymentData = {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,
-          shippingInfo: {
-            ...formData,
-            fullName,
-          },
+          shippingInfo: { ...formData, fullName },
           cartItems,
           couponApplied: appliedCoupon?.code || "No",
           discountAmount: discountAmount || 0,
@@ -185,81 +227,48 @@ const CartFooter = ({
           totalPrice: Number(finalTotal.toFixed(2)),
           taxPrice: 0,
           orderNotes: formData.orderNotes || "",
+          paymentMethod: isPartial ? "Partial-COD" : "Online",
+          advanceAmount: isPartial ? advanceAmount : finalTotal,
         };
 
         try {
-          const serverResponse = await razorpayWebhook(paymentData).unwrap();
+          let serverResponse;
+          if (isPartial) {
+            serverResponse = await verifyAdvancePayment(paymentData).unwrap();
+          } else {
+            serverResponse = await verifyFullPayment(paymentData).unwrap();
+          }
 
           if (serverResponse.success) {
-            console.log("Payment verified. Order placed");
+            const roundOffText =
+              roundOffAdded > 0
+                ? ` (incl. ₹${roundOffAdded.toFixed(2)} round-off)`
+                : "";
+
             Swal.fire({
               icon: "success",
-              title: "Order Placed Successfully!",
-              text: "Thank you for your purchase. Your order has been placed.",
+              title: isPartial
+                ? "Advance Paid Successfully!"
+                : "Order Placed Successfully!",
+              text: isPartial
+                ? `₹${advanceAmount.toFixed(0)} paid now (includes ₹${COD_CHARGE} COD charge${roundOffText}). Remaining ₹${remainingAmount.toFixed(0)} on delivery.`
+                : "Thank you for your purchase. Your order has been placed.",
               confirmButtonText: "OK",
             }).then(() => {
               dispatch(clearCart());
               router.push("/my-account-orders");
             });
           } else {
-            console.error("Payment verification failed:", serverResponse.error);
-            alert("Payment verification failed. Please contact support.");
+            throw new Error("Verification failed");
           }
-        } catch (error) {
-          try {
-            setRetryLoading(true);
-            const backupPaymentData = {
-              ...paymentData,
-              userId: user?._id,
-            };
-
-            const apiResponse = await fetch(
-              `${process.env.NEXT_PUBLIC_PAYMENT_URL}/api/order`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(backupPaymentData),
-              }
-            );
-
-            const result = await apiResponse.json();
-            setRetryLoading(false);
-            if (result.success) {
-              console.log("retried");
-              Swal.fire({
-                icon: "success",
-                title: "Order Created Successfully!",
-                text: "Your order has been placed.",
-                confirmButtonText: "OK",
-              }).then(() => {
-                dispatch(clearCart());
-                router.push("/my-account-orders");
-              });
-            } else {
-              console.error("Retry failed:", result.error);
-              Swal.fire({
-                icon: "error",
-                title: "Payment & Retry Failed",
-                text: `Please visit the Contact page for assistance. Your order ID: ${response.razorpay_order_id || "Unavailable"
-                  }`,
-                confirmButtonText: "OK",
-              });
-            }
-          } catch (apiError) {
-            console.error("Error calling retry API:", apiError);
-            Swal.fire({
-              icon: "error",
-              title: "Payment & Retry Failed",
-              text: `Please visit the Contact page for assistance. Your order ID: ${response.razorpay_order_id || "Unavailable"
-                }`,
-              confirmButtonText: "OK",
-            });
-          } finally {
-            setRetryLoading(false);
-          }
+        } catch (err) {
+          console.error("Payment verification failed:", err);
+          Swal.fire({
+            icon: "error",
+            title: "Payment Failed",
+            text: `Payment could not be verified. Please contact support.\nRazorpay Order ID: ${response.razorpay_order_id || "N/A"}`,
+            confirmButtonText: "OK",
+          });
         }
       },
       prefill: {
@@ -267,25 +276,22 @@ const CartFooter = ({
         email: formData?.email,
         contact: formData?.phoneNo,
       },
-      theme: {
-        color: "#fbb52b",
-      },
+      theme: { color: "#fbb52b" },
     };
 
     const razor = new window.Razorpay(options);
     razor.open();
   };
 
+  // Login redirect logic (unchanged)
   const handleLoginClick = (e) => {
     e.preventDefault();
-    // Add toclickplaceorder query parameter to the current URL
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("toclickplaceorder", "true");
     router.push(`?${newSearchParams.toString()}`);
   };
 
   useEffect(() => {
-    console.log("use effect called");
     if (
       isAuthenticated &&
       searchParams.get("toclickplaceorder") === "true" &&
@@ -300,51 +306,50 @@ const CartFooter = ({
         router.replace(`?${newSearchParams.toString()}`);
       }
     }
-  }, [
-    isAuthenticated,
-    searchParams,
-    isLoading,
-    isFormValid,
-    cartItems,
-    router,
-  ]);
+  }, [isAuthenticated, searchParams, isLoading, cartItems, router]);
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
+    return () => document.body.removeChild(script);
   }, []);
 
   const isAnyLoading =
     isLoading ||
-    sessionLoading ||
-    webhookLoading ||
-    retryLoading ||
+    fullSessionLoading ||
+    fullWebhookLoading ||
+    advanceSessionLoading ||
+    advanceWebhookLoading ||
     isCheckingCoupon;
 
   return (
     <>
       {isAnyLoading && <FullScreenSpinner />}
+
       <div className="tf-page-cart-footer">
         <div className="tf-cart-footer-inner">
           <h5 className="fw-5 mb_20">Your order</h5>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              paymentMethod === "BANK"
-                ? handleRazorpayPayment()
-                : handleSubmit();
+              if (paymentMethod === "BANK" || paymentMethod === "Partial-COD") {
+                handleRazorpayPayment();
+              } else {
+                // For normal COD, pass the updated finalTotalAmount to handleSubmit
+                handleSubmit(e, paymentMethod, finalTotalAmount);
+              }
             }}
             className="tf-page-cart-checkout widget-wrap-checkout"
           >
+            {/* Product list */}
             <ul className="wrap-checkout-product">
               {cartItems.map((elm, i) => {
                 prevRefs.current[i] = prevRefs.current[i] || React.createRef();
                 nextRefs.current[i] = nextRefs.current[i] || React.createRef();
+
                 return (
                   <li
                     key={i}
@@ -361,9 +366,9 @@ const CartFooter = ({
                           src={elm.image || "/images/placeholder.jpg"}
                           width={720}
                           height={1005}
-                          onError={(e) => {
-                            e.target.src = "/images/placeholder.jpg";
-                          }}
+                          onError={(e) =>
+                            (e.target.src = "/images/placeholder.jpg")
+                          }
                         />
                         <span className="quantity bg-warning">
                           {elm.quantity}
@@ -376,7 +381,7 @@ const CartFooter = ({
                           </p>
                           {elm.customNameToPrint && (
                             <p>
-                              Name on bag : <b>{elm.customNameToPrint}</b>
+                              Name on bag: <b>{elm.customNameToPrint}</b>
                             </p>
                           )}
                         </div>
@@ -385,6 +390,7 @@ const CartFooter = ({
                         </span>
                       </div>
                     </div>
+
                     {elm.category === "Kids Bags" &&
                       elm.uploadedImage &&
                       Array.isArray(elm.uploadedImage) &&
@@ -407,10 +413,7 @@ const CartFooter = ({
                               swiper.params.navigation.nextEl =
                                 nextRefs.current[i].current;
                             }}
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                            }}
+                            style={{ width: "100px", height: "100px" }}
                           >
                             {elm.uploadedImage.map((url, index) => (
                               <SwiperSlide
@@ -419,8 +422,7 @@ const CartFooter = ({
                               >
                                 <Image
                                   src={url}
-                                  alt={`Uploaded image ${index + 1} for ${elm.name
-                                    }`}
+                                  alt={`Uploaded image ${index + 1} for ${elm.name}`}
                                   width={100}
                                   height={100}
                                   className="popover-image"
@@ -429,9 +431,9 @@ const CartFooter = ({
                                     width: "100%",
                                     height: "100%",
                                   }}
-                                  onError={(e) => {
-                                    e.target.src = "/images/placeholder.jpg";
-                                  }}
+                                  onError={(e) =>
+                                    (e.target.src = "/images/placeholder.jpg")
+                                  }
                                 />
                                 <div
                                   style={{
@@ -494,6 +496,8 @@ const CartFooter = ({
                 </div>
               </div>
             )}
+
+            {/* Coupon section */}
             <div className="d-flex flex-column">
               {!appliedCoupon && (
                 <div className="coupon-box">
@@ -537,11 +541,13 @@ const CartFooter = ({
               )}
             </div>
 
+            {/* Order summary */}
             <div className="order-summary">
               <div className="d-flex justify-content-between line py-4">
                 <h6 className="fw-5">Subtotal</h6>
                 <h6 className="fw-5">₹{subtotal.toFixed(2)}</h6>
               </div>
+
               {appliedCoupon && (
                 <div className="d-flex justify-content-between line py-4">
                   <h6 className="fw-5">
@@ -554,52 +560,98 @@ const CartFooter = ({
                   <h6 className="fw-5">-₹{discountAmount.toFixed(2)}</h6>
                 </div>
               )}
+
+              {/* Show COD charge line when normal COD is selected */}
+              {!hasRestrictedCategory && paymentMethod === "COD" && (
+                <div className="d-flex justify-content-between line py-4 text-muted">
+                  <h6>COD Charge</h6>
+                  <h6>+₹{COD_CHARGE.toFixed(0)}</h6>
+                </div>
+              )}
+
               <div className="d-flex justify-content-between line py-4">
                 <h6 className="fw-5">Total</h6>
-                <h6 className="total fw-5">₹{totalAmount.toFixed(2)}</h6>
+                <h6 className="total fw-5">₹{finalTotalAmount.toFixed(2)}</h6>
               </div>
-            </div>
 
-            <div className="wd-check-payment">
-              {cartItems.some(
-                (item) =>
-                  item.category === "Kids Bags" ||
-                  item.category === "custom_sling_bag"
-              ) ? (
-                <div className="alert alert-warning" role="alert">
-                  Cash on Delivery is not available for custom bags. Please
-                  proceed with online transfer.
+              {/* Round-off display (Partial-COD only) */}
+              {hasRestrictedCategory &&
+                paymentMethod === "Partial-COD" &&
+                roundOffAdded > 0 && (
+                  <div className="d-flex justify-content-between line py-4 text-muted">
+                    <h6 className="fw-5">Round-off added to Advance</h6>
+                    <h6 className="total fw-5">+₹{roundOffAdded.toFixed(2)}</h6>
+                  </div>
+                )}
+
+              {/* Final advance display (Partial-COD only) */}
+              {hasRestrictedCategory && paymentMethod === "Partial-COD" && (
+                <div className="d-flex justify-content-between line py-4 fw-6">
+                  <h6>Advance (incl. ₹{COD_CHARGE} COD charge)</h6>
+                  <h6>₹{advanceAmount.toFixed(2)}</h6>
                 </div>
-              ) : (
-                <>
-                  <div className="fieldset-radio mb_20">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      id="bank"
-                      value="BANK"
-                      className="tf-check d-flex align-items-center"
-                      checked={paymentMethod === "BANK"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <label htmlFor="bank">Online transfer</label>
-                  </div>
-                  <div className="fieldset-radio mb_20">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      id="cod"
-                      value="COD"
-                      className="tf-check d-flex align-items-center"
-                      checked={paymentMethod === "COD"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <label htmlFor="cod">Cash on Delivery</label>
-                  </div>
-                </>
               )}
             </div>
 
+            {/* Payment methods */}
+            <div className="wd-check-payment">
+              {hasRestrictedCategory && (
+                <div className="alert alert-warning" role="alert">
+                  Cash on Delivery is not available for custom bags. Pay 50%
+                  (rounded up) + ₹{COD_CHARGE} COD charge now – rest on
+                  delivery.
+                </div>
+              )}
+
+              <div className="fieldset-radio mb_20">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  id="bank"
+                  value="BANK"
+                  checked={paymentMethod === "BANK"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <label htmlFor="bank">Online transfer (Full payment)</label>
+              </div>
+
+              {hasRestrictedCategory ? (
+                <div className="fieldset-radio mb_20">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    id="partial-cod"
+                    value="Partial-COD"
+                    checked={paymentMethod === "Partial-COD"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  <label htmlFor="partial-cod">
+                    Pay ₹{advanceAmount.toFixed(0)} now (incl. ₹{COD_CHARGE} COD
+                    charge + round-off)
+                    <br />
+                    <small>
+                      Remaining: ₹{remainingAmount.toFixed(0)} on delivery
+                    </small>
+                  </label>
+                </div>
+              ) : (
+                <div className="fieldset-radio mb_20">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    id="cod"
+                    value="COD"
+                    checked={paymentMethod === "COD"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  <label htmlFor="cod">
+                    Cash on Delivery (+ ₹{COD_CHARGE} charge)
+                  </label>
+                </div>
+              )}
+            </div>
+
+            {/* Submit button */}
             {!isAuthenticated ? (
               <>
                 {!isFormValid() || !cartItems.length ? (
@@ -633,11 +685,12 @@ const CartFooter = ({
               <button
                 ref={buttonRef}
                 type="submit"
-                disabled={isLoading || !isFormValid() || !cartItems.length}
-                className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${isAnyLoading || !isFormValid() || !cartItems.length
-                  ? "disabled-btn"
-                  : ""
-                  }`}
+                disabled={isAnyLoading || !isFormValid() || !cartItems.length}
+                className={`tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center ${
+                  isAnyLoading || !isFormValid() || !cartItems.length
+                    ? "disabled-btn"
+                    : ""
+                }`}
                 data-tooltip-id="cart-tooltip"
                 data-tooltip-content={
                   isAnyLoading
@@ -649,15 +702,19 @@ const CartFooter = ({
                         : ""
                 }
               >
-                {isLoading
+                {isAnyLoading
                   ? "Processing..."
-                  : paymentMethod === "BANK"
-                    ? "Go to payment"
-                    : "Place order"}
+                  : paymentMethod === "Partial-COD"
+                    ? `Pay ₹${advanceAmount.toFixed(0)} Now`
+                    : paymentMethod === "BANK"
+                      ? "Go to payment"
+                      : `Place order (COD + ₹${COD_CHARGE})`}
               </button>
             )}
+
             <Tooltip id="cart-tooltip" place="top" />
           </form>
+
           <a
             ref={cartModalref}
             href="#shoppingCart"

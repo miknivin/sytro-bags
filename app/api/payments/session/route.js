@@ -18,7 +18,6 @@ export async function POST(req) {
         { status: 401 }
       );
     }
-
     const { orderData } = body;
     const { itemsPrice, shippingInfo, orderItems } = orderData;
 
