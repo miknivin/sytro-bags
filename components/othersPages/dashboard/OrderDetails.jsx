@@ -314,7 +314,7 @@ export default function OrderDetails() {
 
                 {discountAmount > 0 && (
                   <li className="d-flex justify-content-between text-2 text-success">
-                    <span>Discount ({couponApplied || "Coupon"})</span>
+                    <span>Discount</span>
                     <span>- ₹{discountAmount.toFixed(2)}</span>
                   </li>
                 )}
