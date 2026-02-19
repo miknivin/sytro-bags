@@ -6,7 +6,7 @@ export default function Hero() {
       <div className="banner-wrapper">
         <Image
           className="lazyload"
-          src="https://ecomusnext-themesflat.vercel.app/images/slider/about-banner-01.jpg"
+          src="/images/slider/about banner.jpeg"
           data-=""
           alt="image-collection"
           width={2000}
@@ -14,10 +14,7 @@ export default function Hero() {
         />
         <div className="box-content text-center">
           <div className="container">
-            <div className="text text-white">
-              Crafting Excellence <br className="d-xl-block d-none" />
-              Since 1995
-            </div>
+
           </div>
         </div>
       </div>

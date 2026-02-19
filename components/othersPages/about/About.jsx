@@ -9,9 +9,9 @@ export default function About() {
             <div className="tf-image-wrap">
               <Image
                 className="lazyload w-100"
-                data-src="/images/collections/collection-69.webp"
+                data-src="/images/collections/about 2.jpeg"
                 alt="collection-img"
-                src="/images/collections/collection-69.webp"
+                src="/images/collections/about 2.jpeg"
                 width={600}
                 height={499}
               />
@@ -20,9 +20,9 @@ export default function About() {
               <div>
                 <div className="heading">Established - 1995</div>
                 <div className="text ">
-                    <p className="abt-text">
+                  <p className="abt-text">
                     Founded by visionary entrepreneur Nazar T M, what started as a modest workshop in Ernakulam Broadway has grown into one of India's most trusted bag manufacturers. Our 35-year legacy in bag manufacturing, coupled with our modern brand identity established in 2019, represents the perfect fusion of experience and innovation.
-                    </p>
+                  </p>
                 </div>
               </div>
             </div>
@@ -37,9 +37,9 @@ export default function About() {
                 <div className="heading">Our Mission</div>
                 <div className="text">
                   <p >
-                  To provide every customer with bags that exceed expectations in quality, durability, and style while maintaining affordability and sustainable practices. We aim to be the benchmark in Indian bag manufacturing, creating products that make every journey memorable.
+                    To provide every customer with bags that exceed expectations in quality, durability, and style while maintaining affordability and sustainable practices. We aim to be the benchmark in Indian bag manufacturing, creating products that make every journey memorable.
                   </p>
-                
+
                 </div>
               </div>
             </div>
@@ -48,7 +48,7 @@ export default function About() {
                 <div className="img-style">
                   <Image
                     className="lazyload"
-                    src="/images/collections/collection-71.jpg"
+                    src="/images/collections/about 3.jpeg"
                     data-=""
                     alt="img-slider"
                     width={337}
@@ -60,7 +60,7 @@ export default function About() {
                 <div className="img-style">
                   <Image
                     className="lazyload"
-                    src="/images/collections/collection-70.webp"
+                    src="/images/collections/about 1.jpeg"
                     data-=""
                     alt="img-slider"
                     width={400}
