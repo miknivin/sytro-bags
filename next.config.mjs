@@ -18,6 +18,13 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@smithy", "util-stream"],
   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Mark these as externals so webpack doesn't try to bundle the huge binaries
+      config.externals.push("puppeteer-core", "@sparticuz/chromium");
+    }
+    return config;
+  },
   sassOptions: {
     includePaths: ["./styles"], // Add the path to your SCSS files
   },
