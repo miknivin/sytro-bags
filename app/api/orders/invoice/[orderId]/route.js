@@ -37,7 +37,7 @@ export async function GET(request, { params }) {
     }
 
     // 3. Render EJS to HTML
-    const templatePath = path.join(process.cwd(), "src/lib/others/invoice.ejs");
+    const templatePath = path.join(process.cwd(), "lib/others/invoice.ejs");
     const html = await ejs.renderFile(templatePath, { order }, { async: true });
 
     // 4. Launch browser (Vercel/serverless compatible only)
