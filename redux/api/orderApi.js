@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const orderApi = createApi({
   reducerPath: "orderApi",
+  tagTypes: ['Order', 'AdminOrders', 'Coupons', 'UserOrders'],
   baseQuery: fetchBaseQuery({
     baseUrl: "/api",
   }),
@@ -53,7 +54,7 @@ export const orderApi = createApi({
     razorpayAdvanceWebhook: builder.mutation({
       query(body) {
         return {
-          url: "/payments/advance-webhook",   // new backend route
+          url: "/payments/advance-webhook", // new backend route
           method: "POST",
           body,
         };
@@ -144,6 +145,11 @@ export const orderApi = createApi({
         };
       },
     }),
+    getInvoiceUrl: builder.query({
+      query: (orderId) => `/orders/invoice/${orderId}`,
+      providesTags: ["Order"],
+      transformResponse: (response) => response.invoiceUrl || response,
+    }),
   }),
 });
 
@@ -165,4 +171,5 @@ export const {
   useCheckCouponMutation,
   useApplyCouponMutation,
   useUploadKidsImageMutation,
+  useLazyGetInvoiceUrlQuery
 } = orderApi;

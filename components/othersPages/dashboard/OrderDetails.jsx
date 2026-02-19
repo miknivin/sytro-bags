@@ -2,7 +2,10 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useOrderDetailsQuery } from "@/redux/api/orderApi";
+import {
+  useOrderDetailsQuery,
+  useLazyGetInvoiceUrlQuery,
+} from "@/redux/api/orderApi";
 import ImageModal from "@/components/modals/ImageModal";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +18,8 @@ export default function OrderDetails() {
   const { data, isLoading, error } = useOrderDetailsQuery(orderId, {
     skip: !orderId,
   });
+  const [triggerGetInvoice, { isLoading: isInvoiceLoading }] =
+    useLazyGetInvoiceUrlQuery();
 
   const [orderDetails, setOrderDetails] = useState(null);
   const [activeTab, setActiveTab] = useState("Order History");
@@ -125,16 +130,65 @@ export default function OrderDetails() {
   } = orderDetails;
 
   const orderIdShort = _id?.slice(-6) || "N/A";
+  const handleDownloadInvoice = async (orderId) => {
+    try {
+      // 1. Get temporary/signed invoice URL
+      const result = await triggerGetInvoice(orderId).unwrap();
+
+      const pdfUrl = typeof result === "string" ? result : result?.invoiceUrl;
+
+      if (!pdfUrl) {
+        throw new Error("No invoice URL received");
+      }
+
+      // 2. Fetch the actual PDF file
+      const response = await fetch(pdfUrl);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `invoice-${orderId.slice(-6)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+
+      toast.success("Invoice downloaded");
+    } catch (err) {
+      console.error("Invoice download failed:", err);
+      toast.error(
+        err?.data?.message ||
+          err?.message ||
+          "Could not download invoice. Please try again.",
+      );
+    }
+  };
 
   return (
     <>
-      <div className="w-100 mb-4">
+      <div className="w-100 mb-4 d-flex justify-content-between align-items-center">
         <Link
+          style={{height:"30px"}}
           className="tf-btn rounded-circle btn-fill animate-hover-btn rounded-0 justify-content-center p-2"
           href="/my-account-orders"
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </Link>
+        <button
+          type="button"
+          onClick={() => handleDownloadInvoice(_id)}
+          disabled={isInvoiceLoading}
+          className="tf-btn border-black animate-hover-btn rounded-0 justify-content-center"
+        >
+          {isInvoiceLoading ? "Downloading..." : "Invoice"}
+        </button>
       </div>
 
       <div className="wd-form-order">
@@ -293,11 +347,11 @@ export default function OrderDetails() {
                   <span>Items Total</span>
                   <span>₹{itemsPrice.toFixed(2)}</span>
                 </li>
-                {paymentMethod==="COD"&&(
+                {paymentMethod === "COD" && (
                   <li className="d-flex justify-content-between text-2">
-                  <span>COD Charge</span>
-                  <span>₹{codChargeCollected.toFixed(0)}</span>
-                </li>
+                    <span>COD Charge</span>
+                    <span>₹{codChargeCollected.toFixed(0)}</span>
+                  </li>
                 )}
                 <li className="d-flex justify-content-between text-2 mt-3 fw-bold">
                   <span>Order Total</span>
@@ -306,54 +360,50 @@ export default function OrderDetails() {
               </ul>
 
               {/* Payment Info Section – Added here for user side */}
-              {paymentMethod==="Partial-COD"&&(
+              {paymentMethod === "Partial-COD" && (
                 <div className="mt-5 pt-4 border-top">
-                <h6 className="fw-6 mb-3">Payment Information</h6>
+                  <h6 className="fw-6 mb-3">Payment Information</h6>
 
-                <div className="d-flex justify-content-between mb-2">
-                  <span>Advance Paid</span>
-                  <span className="fw-5">
-                    ₹{advancePaid.toFixed(2)}
-                  </span>
-                </div>
-
-                {paymentMethod === "Partial-COD" && (
-                  <>
-                    <div className="d-flex justify-content-between mb-2">
-                      <span>COD Charge (included in advance)</span>
-                      <span>₹{codChargeCollected.toFixed(0)}</span>
-                    </div>
-
-                    <div className="d-flex justify-content-between fw-bold border-top pt-3 mt-3">
-                      <span>Remaining Amount to Pay</span>
-                      <span >
-                        ₹{remainingAmount.toFixed(2)}
-                      </span>
-                    </div>
-
-                    <p className="text-muted small mt-3">
-                      You have already paid ₹{advancePaid.toFixed(2)} in advance
-                      (including ₹{codChargeCollected.toFixed(0)} COD charge).
-                    </p>
-                  </>
-                )}
-
-                {paymentMethod === "Online" && (
                   <div className="d-flex justify-content-between mb-2">
-                    <span>Full Amount Paid Online</span>
-                    <span className="fw-5">₹{totalAmount.toFixed(2)}</span>
+                    <span>Advance Paid</span>
+                    <span className="fw-5">₹{advancePaid.toFixed(2)}</span>
                   </div>
-                )}
 
-                {paymentMethod === "COD" && (
-                  <div className="d-flex justify-content-between mb-2 text-primary">
-                    <span>Full Amount to Pay on Delivery</span>
-                    <span className="fw-5">₹{totalAmount.toFixed(2)}</span>
-                  </div>
-                )}
-              </div>
+                  {paymentMethod === "Partial-COD" && (
+                    <>
+                      <div className="d-flex justify-content-between mb-2">
+                        <span>COD Charge (included in advance)</span>
+                        <span>₹{codChargeCollected.toFixed(0)}</span>
+                      </div>
+
+                      <div className="d-flex justify-content-between fw-bold border-top pt-3 mt-3">
+                        <span>Remaining Amount to Pay</span>
+                        <span>₹{remainingAmount.toFixed(2)}</span>
+                      </div>
+
+                      <p className="text-muted small mt-3">
+                        You have already paid ₹{advancePaid.toFixed(2)} in
+                        advance (including ₹{codChargeCollected.toFixed(0)} COD
+                        charge).
+                      </p>
+                    </>
+                  )}
+
+                  {paymentMethod === "Online" && (
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Full Amount Paid Online</span>
+                      <span className="fw-5">₹{totalAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  {paymentMethod === "COD" && (
+                    <div className="d-flex justify-content-between mb-2 text-primary">
+                      <span>Full Amount to Pay on Delivery</span>
+                      <span className="fw-5">₹{totalAmount.toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
               )}
-              
             </div>
           </div>
         </div>
