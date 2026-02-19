@@ -98,10 +98,9 @@ export async function POST(req) {
     const baseTotal = totalPrice; // product value only
     const overallTotal = baseTotal + codCharge; // totalAmount = base + extra COD charge
 
-    const remainingProductValue = baseTotal - (advanceAmount - codCharge); // remaining product value
-    const codAmountToCollect = remainingProductValue; // delivery collects only remaining product
+    const remainingProductValue = baseTotal - (advanceAmount - codCharge); 
+    const codAmountToCollect = remainingProductValue;
 
-    // Sanity check
     if (remainingProductValue < 0 || codAmountToCollect < 0) {
       return NextResponse.json(
         {

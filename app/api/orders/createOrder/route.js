@@ -88,7 +88,6 @@ export async function POST(req) {
       couponDiscountValue: Number(couponDiscountValue || 0),
       user: user?._id,
 
-      // Store the COD charge used (useful for reports / auditing)
       codChargeCollected: finalCodCharge,
     });
 

@@ -90,7 +90,7 @@ const orderSchema = new mongoose.Schema(
 
     remainingAmount: {
       type: Number,
-      default: 0
+      default: 0,
     },
     codAmount: {
       type: Number,
@@ -133,7 +133,7 @@ const orderSchema = new mongoose.Schema(
 
     codChargeCollected: {
       type: Number,
-      default: 100, // Default value — change here if needed
+      default: 0, // Default value — change here if needed
       min: [0, "COD charge cannot be negative"],
     },
     orderStatus: {
