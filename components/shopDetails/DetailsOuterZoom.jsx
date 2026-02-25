@@ -33,14 +33,16 @@ export default function DetailsOuterZoom({ product, details }) {
 
   const router = useRouter();
   const uploadModalRef = useRef(null);
-  const handleColor = () => { };
+  const handleColor = () => {};
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [currentSize, setCurrentSize] = useState("Small");
   const selectedDesigns = useSelector((state) => state.cart.selectedDesigns);
   const uploadedImages = useSelector((state) => state.cart.uploadedImages);
   const customNames = useSelector((state) => state.cart.customNames);
   const [quantity, setQuantity] = useState(
-    product.category === "Kids Bags" ? 1 : uploadedImages?.[product._id]?.length || 1
+    product.category === "Kids Bags"
+      ? 1
+      : uploadedImages?.[product._id]?.length || 1,
   );
   const [customName, setCustomName] = useState("");
 
@@ -127,8 +129,6 @@ export default function DetailsOuterZoom({ product, details }) {
     }
   }, [searchParams]);
 
-
-
   useEffect(() => {
     if (product.category !== "Kids Bags") {
       setQuantity(uploadedImages?.[product._id]?.length || 1);
@@ -149,7 +149,7 @@ export default function DetailsOuterZoom({ product, details }) {
       }).toString();
       router.push(`${currentPath}?${query}`, { scroll: false });
       const isProductInCart = cartItems.some(
-        (item) => item.product === product._id
+        (item) => item.product === product._id,
       );
       if (isProductInCart) {
         uploadModalRef.current?.click();
@@ -162,7 +162,7 @@ export default function DetailsOuterZoom({ product, details }) {
           removeUploadedImage({
             productId: product?._id,
             imageIndex: lastImageIndex,
-          })
+          }),
         );
       }
     }
@@ -199,22 +199,22 @@ export default function DetailsOuterZoom({ product, details }) {
                     firstImage={[
                       ...(selectedDesigns[product._id]
                         ? [
-                          {
-                            url:
-                              currentSize?.valueOf === "Large"
-                                ? selectedDesigns[product._id]?.largeBagImage
-                                : selectedDesigns[product._id]?.smallBagImage,
-                            _id: selectedDesigns?._id,
-                          },
-                          ...(currentSize?.valueOf === "Large"
-                            ? product?.extraImages?.slice(1) || []
-                            : product?.images?.slice(1) || []),
-                        ]
+                            {
+                              url:
+                                currentSize?.valueOf === "Large"
+                                  ? selectedDesigns[product._id]?.largeBagImage
+                                  : selectedDesigns[product._id]?.smallBagImage,
+                              _id: selectedDesigns?._id,
+                            },
+                            ...(currentSize?.valueOf === "Large"
+                              ? product?.extraImages?.slice(1) || []
+                              : product?.images?.slice(1) || []),
+                          ]
                         : [
-                          ...(currentSize?.valueOf === "Large"
-                            ? product?.extraImages || []
-                            : product?.images || []),
-                        ]),
+                            ...(currentSize?.valueOf === "Large"
+                              ? product?.extraImages || []
+                              : product?.images || []),
+                          ]),
                       ...(product.youtubeUrl || []).map((url) => ({ url })),
                     ]}
                   />
@@ -227,7 +227,13 @@ export default function DetailsOuterZoom({ product, details }) {
                 <div className="tf-product-info-list other-image-zoom">
                   {/* Product Name - Bold */}
                   <div className="tf-product-info-title mb-3">
-                    <h4 style={{ fontWeight: 800, fontSize: '28px', color: '#333' }}>
+                    <h4
+                      style={{
+                        fontWeight: 800,
+                        fontSize: "28px",
+                        color: "#333",
+                      }}
+                    >
                       {product.name ? product.name : "Supershell collection"}{" "}
                       {selectedDesigns[product._id] && (
                         <span>({selectedDesigns[product._id].name})</span>
@@ -237,9 +243,21 @@ export default function DetailsOuterZoom({ product, details }) {
 
                   {/* Small Description */}
                   <div className="product-description mb-3">
-                    <p style={{ fontSize: '14px', color: '#666', lineHeight: '1.5', margin: 0 }}>
-                      {(details?.description || product?.description || "").substring(0, 150)}
-                      {(details?.description || product?.description || "").length > 150 && "..."}
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        color: "#666",
+                        lineHeight: "1.5",
+                        margin: 0,
+                      }}
+                    >
+                      {(
+                        details?.description ||
+                        product?.description ||
+                        ""
+                      ).substring(0, 150)}
+                      {(details?.description || product?.description || "")
+                        .length > 150 && "..."}
                     </p>
                   </div>
 
@@ -258,7 +276,13 @@ export default function DetailsOuterZoom({ product, details }) {
                               />
                             </div>
                             <div>
-                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: "500",
+                                  color: "#333",
+                                }}
+                              >
                                 2 YEAR WARRANTY
                               </span>
                             </div>
@@ -276,7 +300,13 @@ export default function DetailsOuterZoom({ product, details }) {
                               />
                             </div>
                             <div>
-                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: "500",
+                                  color: "#333",
+                                }}
+                              >
                                 ALL INDIA FREE DELIVERY
                               </span>
                             </div>
@@ -294,7 +324,13 @@ export default function DetailsOuterZoom({ product, details }) {
                               />
                             </div>
                             <div>
-                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: "500",
+                                  color: "#333",
+                                }}
+                              >
                                 ONLY LIMITED ORDERS DAILY
                               </span>
                             </div>
@@ -312,7 +348,13 @@ export default function DetailsOuterZoom({ product, details }) {
                               />
                             </div>
                             <div>
-                              <span style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: "500",
+                                  color: "#333",
+                                }}
+                              >
                                 PRINT & DISPATCH IN 2-4 WORKING DAYS
                               </span>
                             </div>
@@ -325,24 +367,55 @@ export default function DetailsOuterZoom({ product, details }) {
                   {/* Offer Timer - Prominent Display */}
                   <div className="mb-3">
                     {product && product?.offerEndTime && (
-                      <OfferTimer offerEndTime={product && product?.offerEndTime} />)
-                    }
+                      <OfferTimer
+                        offerEndTime={product && product?.offerEndTime}
+                      />
+                    )}
                   </div>
 
                   {/* Pricing Section */}
                   <div className="tf-product-info-price d-flex align-items-center gap-3 mb-4">
-                    <div style={{ fontWeight: 700, fontSize: '24px', color: '#000' }} className="price-on-sale">
+                    <div
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "24px",
+                        color: "#000",
+                      }}
+                      className="price-on-sale"
+                    >
                       ₹{product?.offer?.toFixed(2)}
                     </div>
                     <div>
-                      <span style={{ fontSize: '18px', color: '#999', textDecoration: 'line-through' }}>
+                      <span
+                        style={{
+                          fontSize: "18px",
+                          color: "#999",
+                          textDecoration: "line-through",
+                        }}
+                      >
                         ₹{product?.actualPrice?.toFixed(2) || 3000}
                       </span>
                     </div>
-                    <div style={{ backgroundColor: '#ff4444', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: '600' }}>
-                      {((1 - product?.offer / product?.actualPrice) * 100).toFixed(0)}% OFF
+                    <div
+                      style={{
+                        backgroundColor: "#ff4444",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "10px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {(
+                        (1 - product?.offer / product?.actualPrice) *
+                        100
+                      ).toFixed(0)}
+                      % OFF
                     </div>
-                    <div style={{ color: "#5d5b5bff", fontSize: '14px' }} className="fw-light">
+                    <div
+                      style={{ color: "#5d5b5bff", fontSize: "14px" }}
+                      className="fw-light"
+                    >
                       Inc. GST
                     </div>
                   </div>
@@ -356,7 +429,9 @@ export default function DetailsOuterZoom({ product, details }) {
                       <Quantity
                         setQuantity={setQuantity}
                         quantity={quantity}
-                        imagesLength={uploadedImages?.[product._id]?.length || 0}
+                        imagesLength={
+                          uploadedImages?.[product._id]?.length || 0
+                        }
                       />
                     </div>
                   )}
