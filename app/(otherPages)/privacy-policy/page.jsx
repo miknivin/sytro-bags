@@ -60,7 +60,16 @@ export default function page() {
                   </li>
                   <li>Order history</li>
                   <li>
-                  Sytro Bags collects Instagram direct messages sent to @sytro_bags via a webhook at https://webhook.sytrobags.com/api/webhook for customer support on our e-commerce platform selling custom bags. We collect sender ID, message text, timestamp, and echo status to extract phone numbers and send automated WhatsApp responses via AiSensy, using the Sytro Bags WhatsApp Business Cloud API. We do not store or share this data after processing, except to send WhatsApp messages, and comply with Meta's data policies.
+                    Sytro Bags collects Instagram direct messages sent to
+                    @sytro_bags via a webhook at
+                    https://webhook.sytrobags.com/api/webhook for customer
+                    support on our e-commerce platform selling custom bags. We
+                    collect sender ID, message text, timestamp, and echo status
+                    to extract phone numbers and send automated WhatsApp
+                    responses via AiSensy, using the Sytro Bags WhatsApp
+                    Business Cloud API. We do not store or share this data after
+                    processing, except to send WhatsApp messages, and comply
+                    with Meta's data policies.
                   </li>
                 </ul>
                 <h4

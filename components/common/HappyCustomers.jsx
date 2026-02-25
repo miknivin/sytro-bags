@@ -90,22 +90,6 @@ export default function HappyCustomers() {
                 </div>
             </div>
 
-            <style jsx>{`
-                .happy-customers-row::-webkit-scrollbar {
-                    height: 6px;
-                }
-                .happy-customers-row::-webkit-scrollbar-track {
-                    background: #f1f1f1;
-                    border-radius: 10px;
-                }
-                .happy-customers-row::-webkit-scrollbar-thumb {
-                    background: #d1d5db;
-                    border-radius: 10px;
-                }
-                .happy-customers-row::-webkit-scrollbar-thumb:hover {
-                    background: #9ca3af;
-                }
-            `}</style>
         </section>
     );
 }

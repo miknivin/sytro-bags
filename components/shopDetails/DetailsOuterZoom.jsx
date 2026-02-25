@@ -136,7 +136,6 @@ export default function DetailsOuterZoom({ product, details }) {
   }, [uploadedImages, product._id]);
 
   useEffect(() => {
-    // console.log(quantityChange);
     if (product.category === "Kids Bags") return; // Disable for Kids Bags
 
     const currentImageCount = uploadedImages?.[product._id]?.length || 0;
@@ -400,7 +399,6 @@ export default function DetailsOuterZoom({ product, details }) {
                         <a
                           onClick={() => {
                             openCartModal();
-
                             setItemToCart();
                           }}
                           className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
