@@ -184,7 +184,7 @@ export default function InvoiceSection({ orderId }) {
                   className="sub"
                   style={{ fontSize: "16px", marginBottom: "5px" }}
                 >
-                  Sytro bags
+                  Hifi Bags
                 </div>
                 <p
                   className="desc"
