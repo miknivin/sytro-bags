@@ -1,7 +1,6 @@
 // app/api/github-webhook/route.js
 import { NextResponse } from "next/server";
-import { verifySignature } from "@/utlis/verifySignature";
-import Order from "@/models/Order";
+import { createHmac, timingSafeEqual } from "crypto";
 
 const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET;
 
