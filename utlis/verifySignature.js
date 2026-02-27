@@ -7,7 +7,7 @@ export function verifySignature(payload, receivedSignature) {
 
   const signature = receivedSignature.slice(7); // remove "sha256="
 
-  const expected = createHmac("sha256", GITHUB_WEBHOOK_SECRET)
+  const expected = createHmac("sha256", process.env.GITHUB_WEBHOOK_SECRET)
     .update(payload)
     .digest("hex");
 
