@@ -73,6 +73,10 @@ export async function POST(request) {
     } catch (err) {
       console.error("Failed to invalidate invoice URLs:", err);
     }
+  } else {
+    console.log(
+      `[${new Date().toISOString()}] Invoice template unchanged → no need to invalidate invoiceURLs`,
+    );
   }
 
   return NextResponse.json({ received: true, ok: true });
