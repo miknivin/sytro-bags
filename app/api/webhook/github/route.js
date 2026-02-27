@@ -1,7 +1,8 @@
 // app/api/github-webhook/route.js
 import { NextResponse } from "next/server";
-import { verifySignature } from "@/utlis/verifySignature";
+
 import Order from "@/models/Order";
+import { verifySignature } from '@/utlis/triggerAdminShipment';
 
 const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET;
 
