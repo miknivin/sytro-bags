@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 
 import Order from "@/models/Order";
-import { verifySignature } from "@/utlis/triggerAdminShipment";
+import { verifySignature } from "@/utlis/verifySignature";
 
 const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET;
 
