@@ -46,6 +46,9 @@ export default function Products() {
   const [isCategoryChanging, setIsCategoryChanging] = useState(false);
   const dispatch = useDispatch();
   const observerRef = useRef(null);
+  const intersectionObserverRef = useRef(null);
+  const hasTriggeredForPageRef = useRef(false);
+  const scrollTimeoutRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -55,7 +58,7 @@ export default function Products() {
       resPerPage: 8,
       page,
       ...(selectedCategory && { category: selectedCategory }),
-    }
+    },
   );
 
   const filteredProductsCount = data?.filteredProductsCount || 0;
@@ -84,13 +87,14 @@ export default function Products() {
   useEffect(() => {
     if (!isSuccess) return;
     setIsCategoryChanging(false);
+    hasTriggeredForPageRef.current = false;
     if (products.length > 0) {
       setAllProducts((prev) => {
         if (page === 1) {
           return [...products];
         }
         const newProducts = products.filter(
-          (p) => !prev.some((existing) => existing._id === p._id)
+          (p) => !prev.some((existing) => existing._id === p._id),
         );
         return [...prev, ...newProducts];
       });
@@ -106,33 +110,30 @@ export default function Products() {
   useEffect(() => {
     const categoryParam = searchParams.get("category");
     if (categoryParam && !isLoading && !isFetching && allProducts.length > 0) {
-      // Enhanced auto-scroll with multiple attempts - only after products are loaded
-      const scrollToProducts = () => {
-        const productsSection = document.getElementById('products');
+      scrollTimeoutRef.current = setTimeout(() => {
+        const productsSection = document.getElementById("products");
         if (productsSection) {
           productsSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+            behavior: "smooth",
+            block: "start",
           });
-          return true;
         }
-        return false;
-      };
-
-      // Try immediate scroll
-      setTimeout(() => {
-        if (!scrollToProducts()) {
-          // Try again after a longer delay if first attempt fails
-          setTimeout(() => {
-            if (!scrollToProducts()) {
-              // Final attempt for stubborn cases
-              setTimeout(scrollToProducts, 300);
-            }
-          }, 150);
-        }
-      }, 100);
+      }, 150);
     }
-  }, [selectedCategory, isLoading, isFetching, searchParams, allProducts.length]);
+
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = null;
+      }
+    };
+  }, [
+    selectedCategory,
+    isLoading,
+    isFetching,
+    searchParams,
+    allProducts.length,
+  ]);
 
   // Handle category selection
   const handleCategorySelect = (category) => {
@@ -152,52 +153,69 @@ export default function Products() {
 
   // Infinite scroll observer
   useEffect(() => {
-    if (isFetching || page >= totalPages || isCategoryChanging) return;
+    if (intersectionObserverRef.current) {
+      intersectionObserverRef.current.disconnect();
+      intersectionObserverRef.current = null;
+    }
+
+    if (
+      isFetching ||
+      !isSuccess ||
+      page >= totalPages ||
+      isCategoryChanging ||
+      allProducts.length === 0
+    ) {
+      return;
+    }
+
+    const currentObserverRef = observerRef.current;
+    if (!currentObserverRef) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !isFetching) {
-          setPage((prev) => prev + 1);
-        }
+        const entry = entries[0];
+        if (!entry?.isIntersecting || hasTriggeredForPageRef.current) return;
+
+        hasTriggeredForPageRef.current = true;
+        observer.unobserve(entry.target);
+        observer.disconnect();
+        intersectionObserverRef.current = null;
+        setPage((prev) => (prev >= totalPages ? prev : prev + 1));
       },
-      { threshold: 0.1 }
+      {
+        rootMargin: "0px 0px 300px 0px",
+        threshold: 0,
+      },
     );
 
-    const currentObserverRef = observerRef.current;
-    if (currentObserverRef) {
-      observer.observe(currentObserverRef);
-    }
+    intersectionObserverRef.current = observer;
+    observer.observe(currentObserverRef);
 
     return () => {
-      if (currentObserverRef) {
-        observer.unobserve(currentObserverRef);
+      observer.disconnect();
+      if (intersectionObserverRef.current === observer) {
+        intersectionObserverRef.current = null;
       }
     };
-  }, [isFetching, page, totalPages, isCategoryChanging]);
-
-  const handleLoadMore = () => {
-    if (selectedCategory === null && page < totalPages && !isFetching) {
-      setPage((prev) => prev + 1);
-    }
-  };
+  }, [
+    isFetching,
+    isSuccess,
+    page,
+    totalPages,
+    isCategoryChanging,
+    allProducts.length,
+  ]);
 
   return (
     <section id="products" className="flat-spacing-6">
       <div className="container">
-        <div className="flat-title mb_1 gap-14 text-center">
-          <span className="title wow fadeInUp" data-wow-delay="0s">
-            Where Quality Meets Innovation
-          </span>
-          <p className="sub-title wow fadeInUp" data-wow-delay="0s">
-            Crafting excellence into every stitch since 1995
-          </p>
-        </div>
         <div className="mb-4 d-flex flex-nowrap flex-md-wrap overflow-x-auto gap-2 justify-content-start justify-content-md-center">
           <button
-            className={`btn btn-sm rounded-pill category-pill white-space-no-break me-2 mb-2 ${selectedCategory === null
-              ? "btn-warning"
-              : "btn-outline-secondary"
-              }`}
+            className={`btn btn-sm rounded-pill category-pill white-space-no-break me-2 mb-2 ${
+              selectedCategory === null
+                ? "btn-warning"
+                : "btn-outline-secondary"
+            }`}
             onClick={() => handleCategorySelect(null)}
           >
             All
@@ -205,10 +223,11 @@ export default function Products() {
           {categoriesWithName.map(({ value, name }) => (
             <button
               key={value}
-              className={`btn btn-sm rounded-pill category-pill white-space-no-wrap me-2 mb-2 ${selectedCategory === value
-                ? "btn-warning"
-                : "btn-outline-secondary"
-                }`}
+              className={`btn btn-sm rounded-pill category-pill white-space-no-wrap me-2 mb-2 ${
+                selectedCategory === value
+                  ? "btn-warning"
+                  : "btn-outline-secondary"
+              }`}
               onClick={() => handleCategorySelect(value)}
             >
               {name}
@@ -243,17 +262,6 @@ export default function Products() {
                   <div className="spinner-border text-warning" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                </div>
-              )}
-              {selectedCategory === null && page < totalPages && (
-                <div className="text-center mt-4">
-                  <button
-                    className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
-                    onClick={handleLoadMore}
-                    disabled={isFetching}
-                  >
-                    Load More
-                  </button>
                 </div>
               )}
               {page < totalPages && (
