@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 
 import Order from "@/models/Order";
-import { verifySignature } from '@/utlis/triggerAdminShipment';
+import { verifySignature } from "@/utlis/triggerAdminShipment";
 
 const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET;
 
@@ -78,10 +78,3 @@ export async function POST(request) {
 
   return NextResponse.json({ received: true, ok: true });
 }
-
-// Important: disable Next.js bodyParser so we can get raw body
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
