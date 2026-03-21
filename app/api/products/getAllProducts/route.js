@@ -4,6 +4,8 @@ import products from "@/models/Products";
 import APIFilters from "@/utlis/apiFilters";
 import User from "@/models/User";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req) {
   try {
     await dbConnect();

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const placeId = process.env.PLACE_ID; // Stored in .env.local
   const apiKey = process.env.GOOGLE_MAPS_API_KEY; // Stored in .env.local
