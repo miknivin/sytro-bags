@@ -32,6 +32,8 @@ export default function DefaultShopDetailsNoZoom({ product }) {
     }
   }, [product?._id, customNames]);
 
+  const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
+
 
   // Ensure product exists
   if (!product) {
@@ -42,6 +44,11 @@ export default function DefaultShopDetailsNoZoom({ product }) {
     cartItems.some((item) => item.product === productId);
 
   const handleAddToCart = (productId, quantity) => {
+    if (isOutOfStock) {
+      toast.error("This product is out of stock");
+      return;
+    }
+
     if (
       product.category === "custom_sling_bag" &&
       !customName.trim()
@@ -73,6 +80,12 @@ export default function DefaultShopDetailsNoZoom({ product }) {
   };
 
   const handleAlertConfirm = (value) => {
+    if (isOutOfStock) {
+      toast.error("This product is out of stock");
+      setShowAlert(false);
+      return;
+    }
+
     setCustomName(value);
     setShowAlert(false);
     const cartItem = {
@@ -134,6 +147,23 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                     <h4 style={{ fontWeight: 800, fontSize: '28px', color: '#333' }}>
                       {product.name}
                     </h4>
+                    {isOutOfStock && (
+                      <div
+                        className="mt-2 d-inline-flex align-items-center"
+                        style={{
+                          backgroundColor: "#dc2626",
+                          color: "#fff",
+                          padding: "6px 12px",
+                          borderRadius: "999px",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        Out of stock
+                      </div>
+                    )}
                   </div>
 
                   {/* Small Description */}
@@ -270,6 +300,11 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                   )}
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()}>
+                      {isOutOfStock ? (
+                        <a className="tf-btn btns-sold-out cursor-not-allowed justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn">
+                          <span>Sold out</span>
+                        </a>
+                      ) : (
                       <a
                         href={product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0) ? "#super_kidbag" : undefined}
                         data-bs-toggle={product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0) ? "modal" : undefined}
@@ -289,6 +324,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                           - ₹{(product.offer * quantity).toFixed(2)}
                         </span>
                       </a>
+                      )}
                     </form>
                   </div>
                   <>
@@ -306,7 +342,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
         isAddedToCartProducts={isAddedToCartProducts}
         setQuantity={setQuantity}
         quantity={quantity}
-        soldOut={product.stocks <= 0}
+        soldOut={isOutOfStock}
         triggerAlert={triggerAlert}
       />
     </section>

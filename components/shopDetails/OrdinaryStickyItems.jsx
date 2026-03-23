@@ -81,7 +81,7 @@ export default function OrdinaryStickyItem({
                       <Quantity quantity={quantity} setQuantity={setQuantity} />
                     </div>
                   )}
-                  {product.stocks <= 0 ? (
+                  {soldOut ? (
                     <a className="tf-btn btns-sold-out cursor-not-allowed btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn">
                       <span>Sold out</span>
                     </a>

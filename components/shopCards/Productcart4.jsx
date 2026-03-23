@@ -27,6 +27,7 @@ export const replaceS3WithCloudFront = (url) => {
 
 export default function Productcard4({ product }) {
   const [currentImage, setCurrentImage] = useState(product.imgSrc);
+  const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
 
   useEffect(() => {
     setCurrentImage(product.imgSrc);
@@ -36,6 +37,13 @@ export default function Productcard4({ product }) {
     <div className="card-product style-4 fl-item p-2 border"
       style={{ borderRadius: '10px' }} key={product._id}>
       <div className="card-product-wrapper">
+        {isOutOfStock && (
+          <div className="on-sale-wrap text-end">
+            <div className="on-sale-item" style={{ backgroundColor: "#dc2626" }}>
+              Out of stock
+            </div>
+          </div>
+        )}
         {product.images && product.images.length > 1 && (
           <Link
             href={
@@ -154,13 +162,13 @@ export default function Productcard4({ product }) {
             </div>
           </div>
         )} */}
-        {product.category === "custom_sling_bag" && (
+        {product.category === "custom_sling_bag" && !isOutOfStock && (
           <div className="limited-orders-tag">
             <span className="limited-orders-text">Only Limited Orders Daily</span>
           </div>
         )}
         {/* Limited Orders Tag for Kids Bags */}
-        {product.category === "Kids Bags" && (
+        {product.category === "Kids Bags" && !isOutOfStock && (
           <div className="limited-orders-tag">
             <span className="limited-orders-text">Only Limited Orders Daily</span>
           </div>

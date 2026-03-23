@@ -45,6 +45,7 @@ export default function DetailsOuterZoom({ product, details }) {
       : uploadedImages?.[product._id]?.length || 1,
   );
   const [customName, setCustomName] = useState("");
+  const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
 
   useEffect(() => {
     if (product?._id && customNames?.[product._id]) {
@@ -69,6 +70,11 @@ export default function DetailsOuterZoom({ product, details }) {
   const dispatch = useDispatch();
 
   const setItemToCart = (forcedName = null) => {
+    if (isOutOfStock) {
+      toast.error("This product is out of stock");
+      return;
+    }
+
     const nameToUse = forcedName !== null ? forcedName : customName;
 
     // Name is now optional for Kids Bags
@@ -121,13 +127,13 @@ export default function DetailsOuterZoom({ product, details }) {
 
   useEffect(() => {
     const isUploadImage = searchParams.get("isUploadImage");
-    if (isUploadImage === "true" && hasCustomDesign) {
+    if (isUploadImage === "true" && hasCustomDesign && !isOutOfStock) {
       if (!isAddedToCartProducts(product._id)) {
         setItemToCart();
       }
       openCartModal();
     }
-  }, [searchParams]);
+  }, [searchParams, hasCustomDesign, isOutOfStock, product._id]);
 
   useEffect(() => {
     if (product.category !== "Kids Bags") {
@@ -239,6 +245,23 @@ export default function DetailsOuterZoom({ product, details }) {
                         <span>({selectedDesigns[product._id].name})</span>
                       )}
                     </h4>
+                    {isOutOfStock && (
+                      <div
+                        className="mt-2 d-inline-flex align-items-center"
+                        style={{
+                          backgroundColor: "#dc2626",
+                          color: "#fff",
+                          padding: "6px 12px",
+                          borderRadius: "999px",
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        Out of stock
+                      </div>
+                    )}
                   </div>
 
                   {/* Small Description */}
@@ -441,7 +464,11 @@ export default function DetailsOuterZoom({ product, details }) {
                   </div>
                   <div className="tf-product-info-buy-button">
                     <form onSubmit={(e) => e.preventDefault()} className="">
-                      {!hasCustomDesign ? (
+                      {isOutOfStock ? (
+                        <a className="tf-btn btns-sold-out cursor-not-allowed btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn mb-2">
+                          <span>Sold out</span>
+                        </a>
+                      ) : !hasCustomDesign ? (
                         <>
                           <a
                             href="#super_kidbag"
@@ -502,6 +529,7 @@ export default function DetailsOuterZoom({ product, details }) {
       <div>
         <StickyItem
           product={product}
+          soldOut={isOutOfStock}
           isAddedToCartProducts={isAddedToCartProducts}
           openUploadModal={() => uploadModal.current.click()}
           setItemsTocart={setItemToCart}
