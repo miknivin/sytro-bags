@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useContextElement } from "@/context/Context";
-import { setSingleProductForQuickAdd } from "@/redux/features/productSlice";
-import { useDispatch } from "react-redux";
+import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
 
 // Utility function to replace S3 URL with CloudFront URL
 const getCloudFrontUrl = (s3Url) => {
@@ -16,10 +15,7 @@ const getCloudFrontUrl = (s3Url) => {
 };
 
 export const ProductCard = ({ product }) => {
-  const dispatch = useDispatch();
-  const [currentImage, setCurrentImage] = useState(
-    getCloudFrontUrl(product?.images[0]?.url)
-  );
+  const [isAppleTouch, setIsAppleTouch] = useState(false);
   const { setQuickViewItem } = useContextElement();
   const {
     setQuickAddItem,
@@ -30,8 +26,14 @@ export const ProductCard = ({ product }) => {
   } = useContextElement();
 
   useEffect(() => {
-    setCurrentImage(getCloudFrontUrl(product?.images[0]?.url));
-  }, [product]);
+    setIsAppleTouch(isAppleTouchDevice());
+  }, []);
+
+  const primaryImage =
+    getCloudFrontUrl(product?.images?.[0]?.url) || "/fallback.png";
+  const secondaryImage = getCloudFrontUrl(product?.images?.[1]?.url);
+  const shouldRenderHoverImage =
+    !isAppleTouch && secondaryImage && secondaryImage !== primaryImage;
 
   return (
     <div className="card-product fl-item" key={product._id}>
@@ -46,28 +48,24 @@ export const ProductCard = ({ product }) => {
         >
           <Image
             className="lazyload img-product"
-            data-src={getCloudFrontUrl(product?.images[0]?.url)}
-            src={currentImage}
+            data-src={primaryImage}
+            src={primaryImage}
             alt="image-product"
             width={720}
             height={1005}
+            sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
           />
-          <Image
-            className="lazyload img-hover"
-            data-src={getCloudFrontUrl(
-              product?.images[1]?.url
-                ? product?.images[1]?.url
-                : product?.images[0]?.url
-            )}
-            src={getCloudFrontUrl(
-              product?.images[1]?.url
-                ? product?.images[1]?.url
-                : product?.images[0]?.url
-            )}
-            alt="image-product"
-            width={720}
-            height={1005}
-          />
+          {shouldRenderHoverImage && (
+            <Image
+              className="lazyload img-hover"
+              data-src={secondaryImage}
+              src={secondaryImage}
+              alt="image-product"
+              width={720}
+              height={1005}
+              sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
+            />
+          )}
         </Link>
         <div className="list-product-btn">
           {/* <button

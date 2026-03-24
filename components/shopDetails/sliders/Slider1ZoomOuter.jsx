@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,6 +10,7 @@ import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "yet-another-react-lightbox/styles.css"; // Lightbox styles
 import { replaceS3WithCloudFront } from "@/components/shopCards/Productcart4";
+import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
 
 export default function Slider1ZoomOuter({
   handleColor = () => { },
@@ -19,6 +20,12 @@ export default function Slider1ZoomOuter({
   const swiperRef = useRef(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [isAppleTouch, setIsAppleTouch] = useState(false);
+  const [loadedYoutubeSlides, setLoadedYoutubeSlides] = useState({});
+
+  useEffect(() => {
+    setIsAppleTouch(isAppleTouchDevice());
+  }, []);
 
   // Helper to get YouTube embed URL and ID
   const getYoutubeInfo = (url) => {
@@ -38,6 +45,19 @@ export default function Slider1ZoomOuter({
   const images = firstImage.filter(item => !getYoutubeInfo(item.url));
   const youtubeVideos = firstImage.filter(item => getYoutubeInfo(item.url));
   const allMedia = [...images, ...youtubeVideos];
+
+  const openYoutubeSlide = (index) => {
+    setLoadedYoutubeSlides((current) => {
+      if (current[index]) {
+        return current;
+      }
+
+      return {
+        ...current,
+        [index]: true,
+      };
+    });
+  };
 
   // Fallback for empty media
   if (!allMedia.length) {
@@ -120,12 +140,10 @@ export default function Slider1ZoomOuter({
         }}
         className="tf-product-media-main"
         id="gallery-swiper-started"
-        thumbs={{ swiper: thumbsSwiper }}
+        thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
         modules={[Thumbs, Navigation]}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
         nested={true}
-        mousewheel={{ forceToAxis: true }}
-        touchReleaseOnEdges={true}
       >
         {allMedia.map((slide, index) => {
           const youtubeInfo = getYoutubeInfo(slide.url);
@@ -142,25 +160,71 @@ export default function Slider1ZoomOuter({
                     backgroundColor: "#000"
                   }}
                 >
-                  <iframe
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      border: 0,
-                    }}
-                    src={`${youtubeInfo.embedUrl}?autoplay=0&rel=0`}
-                    title="YouTube video player"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
+                  {loadedYoutubeSlides[index] ? (
+                    <iframe
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        border: 0,
+                      }}
+                      src={`${youtubeInfo.embedUrl}?autoplay=1&rel=0&playsinline=1`}
+                      title="YouTube video player"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => openYoutubeSlide(index)}
+                      aria-label="Play product video"
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        border: 0,
+                        padding: 0,
+                        background: "transparent",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <Image
+                        src={youtubeInfo.thumbnail}
+                        alt="youtube thumbnail"
+                        fill
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          backgroundColor: "rgba(255, 0, 0, 0.85)",
+                          borderRadius: "10px",
+                          width: "56px",
+                          height: "40px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          zIndex: 10,
+                        }}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                          <polygon points="5 3 19 12 5 21" />
+                        </svg>
+                      </div>
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div
                   className="item"
                   onClick={() => {
+                    if (isAppleTouch) {
+                      return;
+                    }
                     const imageIndex = images.findIndex(img => img.url === slide.url);
                     if (imageIndex !== -1) {
                       setPhotoIndex(imageIndex);
@@ -192,12 +256,12 @@ export default function Slider1ZoomOuter({
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
-          slides={images.map((slide) => ({ src: slide.url }))}
+          slides={images.map((slide) => ({
+            src: replaceS3WithCloudFront(slide.url) || "/fallback.png",
+          }))}
           index={photoIndex}
-          plugins={[Zoom]}
-          zoom={{
-            maxZoomPixelRatio: 3,
-          }}
+          plugins={isAppleTouch ? [] : [Zoom]}
+          zoom={isAppleTouch ? undefined : { maxZoomPixelRatio: 3 }}
           on={{
             indexChange: ({ index }) => {
               setPhotoIndex(index);

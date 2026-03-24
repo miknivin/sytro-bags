@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import React from "react";
-import { useContextElement } from "@/context/Context";
 import Image from "next/image";
 import Link from "next/link";
-import CountdownComponent from "../common/Countdown";
+import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
 
 export const replaceS3WithCloudFront = (url) => {
   if (!url) return url;
@@ -26,12 +24,18 @@ export const replaceS3WithCloudFront = (url) => {
 };
 
 export default function Productcard4({ product }) {
-  const [currentImage, setCurrentImage] = useState(product.imgSrc);
+  const [isAppleTouch, setIsAppleTouch] = useState(false);
   const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
 
   useEffect(() => {
-    setCurrentImage(product.imgSrc);
-  }, [product]);
+    setIsAppleTouch(isAppleTouchDevice());
+  }, []);
+
+  const primaryImage =
+    replaceS3WithCloudFront(product?.images?.[0]?.url) || "/fallback.png";
+  const secondaryImage = replaceS3WithCloudFront(product?.images?.[1]?.url);
+  const shouldRenderHoverImage =
+    !isAppleTouch && secondaryImage && secondaryImage !== primaryImage;
 
   return (
     <div className="card-product style-4 fl-item p-2 border"
@@ -44,7 +48,7 @@ export default function Productcard4({ product }) {
             </div>
           </div>
         )}
-        {product.images && product.images.length > 1 && (
+        {product.images && product.images.length > 0 && (
           <Link
             href={
               product.category !== "Kids Bags"
@@ -55,32 +59,24 @@ export default function Productcard4({ product }) {
           >
             <Image
               className="lazyload img-product bg-light"
-              data-src={
-                replaceS3WithCloudFront(product.images[0].url) ||
-                "/fallback.png"
-              }
-              src={
-                replaceS3WithCloudFront(product.images[0].url) ||
-                "/fallback.png"
-              }
+              data-src={primaryImage}
+              src={primaryImage}
               alt="image-product"
               width="720"
               height="1005"
+              sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
             />
-            <Image
-              className="lazyload img-hover"
-              data-src={
-                replaceS3WithCloudFront(product.images[0].url) ||
-                "/fallback.png"
-              }
-              src={
-                replaceS3WithCloudFront(product.images[0].url) ||
-                "/fallback.png"
-              }
-              alt="image-product"
-              width="720"
-              height="1005"
-            />
+            {shouldRenderHoverImage && (
+              <Image
+                className="lazyload img-hover"
+                data-src={secondaryImage}
+                src={secondaryImage}
+                alt="image-product"
+                width="720"
+                height="1005"
+                sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
+              />
+            )}
           </Link>
         )}
 
