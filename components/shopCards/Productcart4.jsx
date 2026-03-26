@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
@@ -23,7 +23,7 @@ export const replaceS3WithCloudFront = (url) => {
   return newUrl;
 };
 
-export default function Productcard4({ product }) {
+function Productcard4({ product }) {
   const [isAppleTouch, setIsAppleTouch] = useState(false);
   const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
 
@@ -64,6 +64,7 @@ export default function Productcard4({ product }) {
               alt="image-product"
               width="720"
               height="1005"
+              loading="lazy"
               sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
             />
             {shouldRenderHoverImage && (
@@ -74,6 +75,7 @@ export default function Productcard4({ product }) {
                 alt="image-product"
                 width="720"
                 height="1005"
+                loading="lazy"
                 sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
               />
             )}
@@ -240,3 +242,5 @@ export default function Productcard4({ product }) {
     </div>
   );
 }
+
+export default memo(Productcard4);

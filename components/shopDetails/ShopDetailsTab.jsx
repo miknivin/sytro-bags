@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import Testimonials from "../common/Testimonials";
 
 const tabs = [
@@ -10,8 +10,8 @@ const tabs = [
   // { title: "Return Polocies", active: false },
 ];
 
-export default function ShopDetailsTab({ product, details }) {
-  const [currentTab, setCurrentTab] = useState(1);
+function ShopDetailsTab({ details, defaultTab = 1 }) {
+  const [currentTab, setCurrentTab] = useState(defaultTab);
 
   const currentTabs = [
     { title: "Review", id: 1 },
@@ -40,38 +40,36 @@ export default function ShopDetailsTab({ product, details }) {
                 ))}
               </ul>
               <div className="widget-content-tab">
-                <div
-                  className={`widget-content-inner ${currentTab === 1 ? "active" : ""
-                    } `}
-                >
-                  <Testimonials isTitle={false} />
-                </div>
-                <div
-                  className={`widget-content-inner ${currentTab === 2 ? "active" : ""
-                    } `}
-                >
-                  <div className="">
-                    <p className="mb_30">{details?.description}</p>
-                    <div className="tf-product-des-demo">
-                      <div className="right">
-                        <h3 className="fs-16 fw-5">Features</h3>
-                        <ul>
-                          {details?.features?.map((item) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="left">
-                        <h3 className="fs-16 fw-5">Materials Care</h3>
-                        <ul>
-                          {details?.materialUsed?.map((item) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                        </ul>
+                {currentTab === 1 && (
+                  <div className="widget-content-inner active">
+                    <Testimonials isTitle={false} />
+                  </div>
+                )}
+                {currentTab === 2 && (
+                  <div className="widget-content-inner active">
+                    <div className="">
+                      <p className="mb_30">{details?.description}</p>
+                      <div className="tf-product-des-demo">
+                        <div className="right">
+                          <h3 className="fs-16 fw-5">Features</h3>
+                          <ul>
+                            {details?.features?.map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="left">
+                          <h3 className="fs-16 fw-5">Materials Care</h3>
+                          <ul>
+                            {details?.materialUsed?.map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -80,3 +78,5 @@ export default function ShopDetailsTab({ product, details }) {
     </section>
   );
 }
+
+export default memo(ShopDetailsTab);

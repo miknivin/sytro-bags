@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { memo, useRef, useState } from "react";
 import { Autoplay, FreeMode, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -8,7 +8,7 @@ import "swiper/css/free-mode";
 import { useGetMomentsQuery } from "@/redux/api/websiteSettings";
 
 export const dynamic = "force-dynamic";
-export default function Moments() {
+function Moments() {
   const { data, error, isLoading } = useGetMomentsQuery();
   const [playingVideos, setPlayingVideos] = useState({});
   const videoRefs = useRef({});
@@ -150,3 +150,5 @@ export default function Moments() {
     </section>
   );
 }
+
+export default memo(Moments);

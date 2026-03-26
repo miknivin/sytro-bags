@@ -7,8 +7,6 @@ import StickyItem from "./StickyItem";
 import Quantity from "./Quantity";
 import Slider1ZoomOuter from "./sliders/Slider1ZoomOuter";
 import { openCartModal } from "@/utlis/openCartModal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,7 +24,7 @@ import OfferTimer from "@/utlis/OfferTimer";
 import HappyCustomers from "../common/HappyCustomers";
 import CustomAlert from "@/utlis/CustomAlert";
 
-export default function DetailsOuterZoom({ product, details }) {
+function DetailsOuterZoom({ product, details }) {
   //const kidsBagId = "67a70ca93f464380b64b05a6";
 
   const [currentColor, setCurrentColor] = useState(colors[0]);
@@ -548,3 +546,5 @@ export default function DetailsOuterZoom({ product, details }) {
     </section>
   );
 }
+
+export default React.memo(DetailsOuterZoom);

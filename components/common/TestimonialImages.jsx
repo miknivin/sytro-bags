@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import { memo } from "react";
 import Image from "next/image";
 
 const testimonialImages = [
@@ -44,7 +44,7 @@ const gradients = [
     'linear-gradient(135deg, rgba(113, 255, 159, 0.3) 0%, rgba(72, 209, 204, 0.3) 100%)', // Green to Teal
 ];
 
-export default function TestimonialImages() {
+function TestimonialImages() {
     return (
         <section className="testimonial-images-section py-2">
             <div className="container-fluid px-0">
@@ -90,3 +90,5 @@ export default function TestimonialImages() {
         </section>
     );
 }
+
+export default memo(TestimonialImages);

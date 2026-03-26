@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import { memo } from "react";
 import Link from "next/link";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,7 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-export default function GoogleReviews({ isTitle = true }) {
+function GoogleReviews({ isTitle = true }) {
   const { data: reviewsData, isLoading, error } = useGoogleReviewsQuery();
   
   if (isLoading) {
@@ -148,3 +148,5 @@ export default function GoogleReviews({ isTitle = true }) {
     </section>
   );
 }
+
+export default memo(GoogleReviews);

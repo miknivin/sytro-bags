@@ -1,9 +1,10 @@
 "use client";
+import { memo } from "react";
 import { iconBoxData } from "@/data/features";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-export default function Features() {
+function Features() {
   return (
     <section
       className="flat-spacing-7 flat-iconbox wow fadeInUp pt-5"
@@ -55,3 +56,5 @@ export default function Features() {
     </section>
   );
 }
+
+export default memo(Features);

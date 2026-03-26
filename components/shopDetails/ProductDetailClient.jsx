@@ -1,17 +1,45 @@
 "use client";
-import React from "react";
+import dynamic from "next/dynamic";
+import { memo } from "react";
 import { useGetProductDetailsQuery } from "@/redux/api/productsApi";
 import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import DetailsOuterZoom from "@/components/shopDetails/DetailsOuterZoom";
 import ShopDetailsTab from "@/components/shopDetails/ShopDetailsTab";
-import Moments from "../common/Moments";
-import Features from "../common/Features";
-import GoogleReviews from "../common/GoogleReviews";
-import RelatedProducts from "./RelatedProducts";
-import TrustBanner from "@/components/common/TrustBanner";
-import TestimonialImages from "@/components/common/TestimonialImages";
 
-export default function ProductDetailsClient({ productId }) {
+const Moments = dynamic(() => import("../common/Moments"), {
+  loading: () => null,
+  ssr: false,
+});
+
+const Features = dynamic(() => import("../common/Features"), {
+  loading: () => null,
+  ssr: false,
+});
+
+const GoogleReviews = dynamic(() => import("../common/GoogleReviews"), {
+  loading: () => null,
+  ssr: false,
+});
+
+const RelatedProducts = dynamic(() => import("./RelatedProducts"), {
+  loading: () => null,
+  ssr: false,
+});
+
+const TrustBanner = dynamic(() => import("@/components/common/TrustBanner"), {
+  loading: () => null,
+  ssr: false,
+});
+
+const TestimonialImages = dynamic(
+  () => import("@/components/common/TestimonialImages"),
+  {
+    loading: () => null,
+    ssr: false,
+  },
+);
+
+function ProductDetailsClient({ productId }) {
   const { data, error, isLoading } = useGetProductDetailsQuery(productId);
 
   let product = null;
@@ -32,7 +60,7 @@ export default function ProductDetailsClient({ productId }) {
   return (
     <>
       <DetailsOuterZoom product={product} details={product?.details} />
-      <ShopDetailsTab product={product} details={product?.details} />
+      <ShopDetailsTab details={product?.details} />
       <Moments />
       <RelatedProducts product={product} />
       <GoogleReviews />
@@ -42,3 +70,5 @@ export default function ProductDetailsClient({ productId }) {
     </>
   );
 }
+
+export default memo(ProductDetailsClient);

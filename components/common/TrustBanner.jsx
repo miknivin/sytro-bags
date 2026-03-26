@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import { memo } from "react";
 import Image from "next/image";
 
 const TrustBanner = () => {
@@ -99,4 +99,4 @@ const TrustBanner = () => {
     );
 };
 
-export default TrustBanner;
+export default memo(TrustBanner);

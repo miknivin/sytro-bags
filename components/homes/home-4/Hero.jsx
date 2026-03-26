@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import { slides3 } from "@/data/heroslides";
-import React from "react";
+import { memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
 import { Autoplay, Pagination } from "swiper/modules";
 
-export default function Hero() {
+function Hero() {
   return (
     <div className="tf-slideshow slider-home-4 slider-effect-fade position-relative">
       <Swiper
@@ -82,3 +82,5 @@ export default function Hero() {
     </div>
   );
 }
+
+export default memo(Hero);

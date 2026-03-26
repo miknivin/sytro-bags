@@ -1,4 +1,5 @@
 "use client";
+import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -74,7 +75,7 @@ export const categoriesWithDetails = [
   // },
 ];
 
-export default function Categories() {
+function Categories() {
   return (
     <section className="flat-spacing-13 position-relative">
       <div className="container-full">
@@ -137,3 +138,5 @@ export default function Categories() {
     </section>
   );
 }
+
+export default memo(Categories);

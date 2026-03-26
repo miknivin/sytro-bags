@@ -1,11 +1,12 @@
 "use client";
+import { memo } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ProductCard } from "../shopCards/ProductCard";
 import { Navigation, Pagination } from "swiper/modules";
 import { useGetProductsQuery } from "@/redux/api/productsApi";
 
-export default function RelatedProducts({ product }) {
+function RelatedProducts({ product }) {
   const { data, error, isLoading } = useGetProductsQuery({
     category: product?.category,
   });
@@ -71,3 +72,5 @@ export default function RelatedProducts({ product }) {
     </section>
   );
 }
+
+export default memo(RelatedProducts);
