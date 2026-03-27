@@ -77,7 +77,7 @@ export default function VideoPlayer() {
     >
       <video
         ref={videoRef}
-        src="https://ik.imagekit.io/c1jhxlxiy/SYTRO%203%20(1).mp4?updatedAt=1744783201611"
+        src="/videos/sytro.mp4"
         autoPlay
         muted
         loop
