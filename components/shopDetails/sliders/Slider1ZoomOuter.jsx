@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Navigation, Thumbs } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Lightbox from "yet-another-react-lightbox"; // Using installed library
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
@@ -16,10 +16,10 @@ export default function Slider1ZoomOuter({
   handleColor = () => {},
   firstImage = [],
 }) {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const swiperRef = useRef(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [isAppleTouch, setIsAppleTouch] = useState(false);
   const [loadedYoutubeSlides, setLoadedYoutubeSlides] = useState({});
 
@@ -46,6 +46,8 @@ export default function Slider1ZoomOuter({
   const images = firstImage.filter((item) => !getYoutubeInfo(item.url));
   const youtubeVideos = firstImage.filter((item) => getYoutubeInfo(item.url));
   const allMedia = [...images, ...youtubeVideos];
+  const visibleThumbs = allMedia.slice(0, 4);
+  const hasOverflowMedia = allMedia.length > 4;
 
   const openYoutubeSlide = (index) => {
     setLoadedYoutubeSlides((current) => {
@@ -60,6 +62,20 @@ export default function Slider1ZoomOuter({
     });
   };
 
+  const openOverflowLightbox = () => {
+    if (!images.length) {
+      return;
+    }
+
+    const hiddenMedia = allMedia.slice(4);
+    const firstHiddenImageIndex = images.findIndex((image) =>
+      hiddenMedia.some((media) => media.url === image.url),
+    );
+
+    setPhotoIndex(firstHiddenImageIndex >= 0 ? firstHiddenImageIndex : 0);
+    setLightboxOpen(true);
+  };
+
   // Fallback for empty media
   if (!allMedia.length) {
     return <div>No images available</div>;
@@ -67,38 +83,54 @@ export default function Slider1ZoomOuter({
 
   return (
     <>
-      {/* Thumbs Swiper */}
+      {/*
       <Swiper
         dir="ltr"
         direction="vertical"
         spaceBetween={10}
         slidesPerView={6}
         className="tf-product-media-thumbs other-image-zoom"
-        onSwiper={setThumbsSwiper}
-        modules={[Thumbs]}
-        watchSlidesProgress
+        preloadImages={false}
+        lazyPreloadPrevNext={1}
         breakpoints={{
           0: { direction: "horizontal" },
           1150: { direction: "vertical" },
         }}
       >
-        {allMedia.map((slide, index) => {
+        {visibleThumbs.map((slide, index) => {
           const youtubeInfo = getYoutubeInfo(slide.url);
           return (
             <SwiperSlide key={index} className="stagger-item">
-              <div className="item">
+              <button
+                type="button"
+                className="item border-0 bg-transparent p-0 w-100"
+                onClick={() => {
+                  swiperRef.current?.slideTo(index);
+                  setActiveMediaIndex(index);
+                }}
+                style={{
+                  outline: "none",
+                }}
+              >
                 {youtubeInfo ? (
                   <div
                     style={{
                       position: "relative",
                       width: "100%",
                       height: "100%",
+                      border:
+                        activeMediaIndex === index
+                          ? "2px solid #000"
+                          : "2px solid transparent",
+                      borderRadius: "5px",
+                      overflow: "hidden",
                     }}
                   >
                     <Image
                       src={youtubeInfo.thumbnail}
                       alt="youtube thumbnail"
                       fill
+                      loading="lazy"
                       style={{ objectFit: "cover" }}
                     />
                     <div
@@ -128,22 +160,55 @@ export default function Slider1ZoomOuter({
                     </div>
                   </div>
                 ) : (
-                  <Image
-                    className="lazyload"
-                    data-src={
-                      replaceS3WithCloudFront(slide.url) || "/fallback.png"
-                    }
-                    alt={"thumbnail"}
-                    src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                      border:
+                        activeMediaIndex === index
+                          ? "2px solid #000"
+                          : "2px solid transparent",
+                      borderRadius: "5px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      className="lazyload"
+                      data-src={
+                        replaceS3WithCloudFront(slide.url) || "/fallback.png"
+                      }
+                      alt={"thumbnail"}
+                      src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
+                      fill
+                      loading="lazy"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
                 )}
-              </div>
+              </button>
             </SwiperSlide>
           );
         })}
+        {hasOverflowMedia && (
+          <SwiperSlide className="stagger-item">
+            <button
+              type="button"
+              className="item border-0 bg-light p-0 w-100 d-flex align-items-center justify-content-center"
+              onClick={openOverflowLightbox}
+              aria-label="Open gallery lightbox"
+              style={{
+                fontSize: "28px",
+                fontWeight: 700,
+                color: "#333",
+              }}
+            >
+              ..
+            </button>
+          </SwiperSlide>
+        )}
       </Swiper>
+      */}
 
       {/* Main Swiper */}
       <Swiper
@@ -156,11 +221,14 @@ export default function Slider1ZoomOuter({
         }}
         className="tf-product-media-main"
         id="gallery-swiper-started"
-        thumbs={{
-          swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+        modules={[Navigation]}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+          setActiveMediaIndex(swiper.realIndex || 0);
         }}
-        modules={[Thumbs, Navigation]}
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
+        onSlideChange={(swiper) => {
+          setActiveMediaIndex(swiper.realIndex);
+        }}
         nested={true}
       >
         {allMedia.map((slide, index) => {
@@ -180,6 +248,7 @@ export default function Slider1ZoomOuter({
                 >
                   {loadedYoutubeSlides[index] ? (
                     <iframe
+                      loading="lazy"
                       style={{
                         position: "absolute",
                         top: 0,
@@ -211,6 +280,7 @@ export default function Slider1ZoomOuter({
                         src={youtubeInfo.thumbnail}
                         alt="youtube thumbnail"
                         fill
+                        loading="lazy"
                         style={{ objectFit: "cover" }}
                       />
                       <div
@@ -266,6 +336,7 @@ export default function Slider1ZoomOuter({
                     alt={slide.url || "image"}
                     width={250}
                     height={320}
+                    loading="lazy"
                     style={{ objectFit: "cover", maxHeight: "700px" }}
                     src={replaceS3WithCloudFront(slide.url) || "/fallback.png"}
                   />
