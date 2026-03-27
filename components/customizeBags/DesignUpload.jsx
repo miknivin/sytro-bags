@@ -12,7 +12,12 @@ import {
   useInitiateMultipartUploadMutation,
 } from "@/redux/api/multipartApi";
 
-export default function DesignUpload({ onFileUpload, getPresignedUrls, children }) {
+export default function DesignUpload({
+  onFileUpload,
+  getPresignedUrls,
+  children,
+  maxFiles,
+}) {
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -20,7 +25,13 @@ export default function DesignUpload({ onFileUpload, getPresignedUrls, children 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef();
   const searchParams = useSearchParams();
-  const quantity = parseInt(searchParams.get("quantity") || "1");
+  const searchQuantity = parseInt(searchParams.get("quantity") || "1", 10);
+  const quantity =
+    typeof maxFiles === "number"
+      ? maxFiles
+      : Number.isNaN(searchQuantity)
+        ? 1
+        : searchQuantity;
 
   const [initiateMultipartUpload] = useInitiateMultipartUploadMutation();
   const [completeMultipartUpload] = useCompleteMultipartUploadMutation();

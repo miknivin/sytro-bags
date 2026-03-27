@@ -41,6 +41,25 @@ export const cartSlice = createSlice({
   name: "cartSlice",
   initialState,
   reducers: {
+    upsertCartItem: (state, action) => {
+      const item = action.payload;
+      const normalizedItem =
+        item.category === "Kids Bags"
+          ? item
+          : { ...item, uploadedImage: undefined };
+      const itemIndex = state.cartItems.findIndex(
+        (cartItem) => cartItem.product === item.product
+      );
+
+      if (itemIndex >= 0) {
+        state.cartItems[itemIndex] = normalizedItem;
+      } else {
+        state.cartItems.push(normalizedItem);
+      }
+
+      saveToLocalStorage("cartItems", state.cartItems);
+    },
+
     updateCartItem: (state, action) => {
       const item = action.payload;
       const isItemExist = state.cartItems.find(
@@ -188,6 +207,23 @@ export const cartSlice = createSlice({
       saveToLocalStorage("uploadedImages", state.uploadedImages);
     },
 
+    replaceUploadedImage: (state, action) => {
+      const { productId, uploadedImage } = action.payload;
+      const normalizedImages = Array.isArray(uploadedImage)
+        ? uploadedImage.filter(Boolean)
+        : uploadedImage
+          ? [uploadedImage]
+          : [];
+
+      if (normalizedImages.length > 0) {
+        state.uploadedImages[productId] = normalizedImages;
+      } else {
+        delete state.uploadedImages[productId];
+      }
+
+      saveToLocalStorage("uploadedImages", state.uploadedImages);
+    },
+
     resetUploadedImage: (state, action) => {
       const { productId } = action.payload;
       const isInCart = state.cartItems.some(
@@ -260,6 +296,7 @@ export const cartSlice = createSlice({
 export default cartSlice.reducer;
 
 export const {
+  upsertCartItem,
   setCartItem,
   removeCartItem,
   saveShippingInfo,
@@ -270,6 +307,7 @@ export const {
   setCustomName,
   resetCustomName,
   setUploadedImage,
+  replaceUploadedImage,
   resetUploadedImage,
   removeUploadedImage,
   mergeCartData,

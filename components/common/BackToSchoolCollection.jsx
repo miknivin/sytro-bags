@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
+import React, { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function BackToSchoolCollection() {
+function BackToSchoolCollection() {
   return (
     <section className="back-to-school-section py-3">
       <div className="container">
@@ -119,3 +119,5 @@ export default function BackToSchoolCollection() {
     </section>
   );
 }
+
+export default memo(BackToSchoolCollection);

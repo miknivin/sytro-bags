@@ -1,25 +1,13 @@
 "use client";
-import { options } from "@/data/singleProductOptions";
+
 import Image from "next/image";
 import React from "react";
-import Quantity from "./Quantity";
-import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import { openCartModal } from "@/utlis/openCartModal";
-import { useRouter } from "next/navigation";
+
 export default function StickyItem({
   soldOut = false,
   product,
-  isAddedToCartProducts,
-  setItemsTocart,
-  openUploadModal,
-  setQuantity,
-  quantity,
+  onOrderNow,
 }) {
-  const uploadedImages = useSelector((state) => state.cart.uploadedImages);
-  const router = useRouter();
-  const hasCustomDesign = uploadedImages?.[product._id];
-  // const { addProductToCart, isAddedToCartProducts } = useContextElement();
   return (
     <div className="tf-sticky-btn-atc">
       <div className="container">
@@ -40,61 +28,24 @@ export default function StickyItem({
             </div>
           </div>
           <div className="tf-sticky-atc-infos">
-            <form onSubmit={(e) => e.preventDefault()} className="">
+            <form onSubmit={(event) => event.preventDefault()} className="">
               <div className="tf-sticky-atc-variant-price text-center"></div>
               <div className="tf-sticky-atc-btns">
-                {product.category !== "Kids Bags" && (
-                  <div className="tf-product-info-quantity">
-                    <Quantity quantity={quantity} setQuantity={setQuantity} />
-                  </div>
-                )}
                 {soldOut ? (
-                  <a className="tf-btn btns-sold-out cursor-not-allowed btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn ">
+                  <button
+                    type="button"
+                    className="tf-btn btns-sold-out cursor-not-allowed btn-fill radius-3 justify-content-center fw-6 fs-14 flex-grow-1 animate-hover-btn border-0"
+                  >
                     <span>Sold out</span>
-                  </a>
+                  </button>
                 ) : (
-                  <>
-                    {!hasCustomDesign ? (
-                      <>
-                        <a
-                          href="#super_kidbag"
-                          data-bs-toggle="modal"
-                          onClick={() => {
-                            const currentPath = window.location.pathname;
-                            const query = new URLSearchParams({
-                              isUploadImage: "proceeding",
-                              quantity: quantity.toString(),
-                            }).toString();
-                            router.push(`${currentPath}?${query}`, {
-                              scroll: false,
-                            });
-                            //toast.error("You need to upload your image");
-                          }}
-                          className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
-                        >
-                          <span>
-                            {isAddedToCartProducts(product._id)
-                              ? "Already Added"
-                              : "Order now"}{" "}
-                          </span>
-                        </a>
-                      </>
-                    ) : (
-                      <a
-                        onClick={() => {
-                          openCartModal();
-                          setItemsTocart();
-                        }}
-                        className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
-                      >
-                        <span>
-                          {isAddedToCartProducts(product._id)
-                            ? "Already Added"
-                            : "Add to cart"}{" "}
-                        </span>
-                      </a>
-                    )}
-                  </>
+                  <button
+                    type="button"
+                    onClick={onOrderNow}
+                    className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn border-0"
+                  >
+                    <span>Order now</span>
+                  </button>
                 )}
               </div>
             </form>
