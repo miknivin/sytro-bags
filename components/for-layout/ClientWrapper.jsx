@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Context from "@/context/Context";
 import { usePathname } from "next/navigation";
@@ -9,7 +9,6 @@ import { Toaster } from "react-hot-toast";
 import WhatsAppButton from "../modals/WhatsAppButton";
 export default function ClientWrapper({ children }) {
   const pathname = usePathname();
-  const [scrollDirection, setScrollDirection] = useState("down");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -18,64 +17,63 @@ export default function ClientWrapper({ children }) {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+    let frameId = null;
+    let lastScrollY = window.scrollY;
+
+    const updateHeaderState = () => {
       const header = document.querySelector("header");
-      if (window.scrollY > 100) {
-        header.classList.add("header-bg");
-      } else {
-        header.classList.remove("header-bg");
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setScrollDirection("up");
-    const lastScrollY = { current: window.scrollY };
-
-    const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY > 250) {
-        setScrollDirection(
-          currentScrollY > lastScrollY.current ? "down" : "up"
-        );
-      } else {
-        setScrollDirection("down");
+      if (header) {
+        header.classList.toggle("header-bg", currentScrollY > 100);
+
+        const nextDirection =
+          currentScrollY > 250 && currentScrollY <= lastScrollY ? "up" : "down";
+        header.style.top = nextDirection === "up" ? "0px" : "-185px";
       }
 
-      lastScrollY.current = currentScrollY;
+      lastScrollY = currentScrollY;
+      ticking = false;
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        frameId = window.requestAnimationFrame(updateHeaderState);
+      }
+    };
+
+    updateHeaderState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, [pathname]);
 
   useEffect(() => {
     const closeBootstrapComponents = async () => {
-      const bootstrap = await import("bootstrap");
-      document.querySelectorAll(".modal.show").forEach((modal) => {
-        const modalInstance = bootstrap.Modal.getInstance(modal);
-        if (modalInstance) modalInstance.hide();
-      });
+      try {
+        const bootstrap = await import("bootstrap");
+        document.querySelectorAll(".modal.show").forEach((modal) => {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) modalInstance.hide();
+        });
 
-      document.querySelectorAll(".offcanvas.show").forEach((offcanvas) => {
-        const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
-        if (offcanvasInstance) offcanvasInstance.hide();
-      });
+        document.querySelectorAll(".offcanvas.show").forEach((offcanvas) => {
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
+          if (offcanvasInstance) offcanvasInstance.hide();
+        });
+      } catch (error) {
+        console.error("Failed to close Bootstrap components:", error);
+      }
     };
 
     closeBootstrapComponents();
   }, [pathname]);
-
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) {
-      header.style.top = scrollDirection === "up" ? "0px" : "-185px";
-    }
-  }, [scrollDirection]);
 
   useEffect(() => {
     const initializeWOW = async () => {

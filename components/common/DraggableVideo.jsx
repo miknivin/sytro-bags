@@ -14,6 +14,7 @@ export default function VideoPlayer() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [show, setShow] = useState(true);
   const [position, setPosition] = useState({ x: 10, y: 10 });
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   const playerWidth = 180;
   const playerHeight = 320;
@@ -23,6 +24,28 @@ export default function VideoPlayer() {
       x: 10,
       y: window.innerHeight - playerHeight - 20,
     });
+  }, []);
+
+  useEffect(() => {
+    let timeoutId = null;
+    let idleId = null;
+
+    const loadVideo = () => setShouldLoadVideo(true);
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(loadVideo, { timeout: 800 });
+    } else {
+      timeoutId = window.setTimeout(loadVideo, 300);
+    }
+
+    return () => {
+      if (idleId !== null && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const bind = useDrag(({ movement: [mx, my], memo }) => {
@@ -77,11 +100,12 @@ export default function VideoPlayer() {
     >
       <video
         ref={videoRef}
-        src="/videos/sytro.mp4"
+        src={shouldLoadVideo ? "/videos/sytro.mp4" : undefined}
         autoPlay
         muted
         loop
         playsInline
+        preload="none"
         className="card-img-top w-100 h-100"
         style={{
           objectFit: isFullscreen ? "contain" : "cover",
