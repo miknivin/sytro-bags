@@ -6,6 +6,8 @@ import { useDispatch } from "react-redux";
 import { setProducts } from "@/redux/features/productSlice";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
+const ENABLE_INTERSECTION_OBSERVER = false;
+
 export const categoriesWithName = [
   { value: "Kids Bags", name: "Kids Bags" },
   { value: "gym_duffle_bag", name: "Gym Duffle Bag" },
@@ -151,8 +153,16 @@ export default function Products() {
     }
   };
 
-  // Infinite scroll observer
+  // Optional infinite scroll observer
   useEffect(() => {
+    if (!ENABLE_INTERSECTION_OBSERVER) {
+      if (intersectionObserverRef.current) {
+        intersectionObserverRef.current.disconnect();
+        intersectionObserverRef.current = null;
+      }
+      return;
+    }
+
     if (intersectionObserverRef.current) {
       intersectionObserverRef.current.disconnect();
       intersectionObserverRef.current = null;
@@ -206,8 +216,13 @@ export default function Products() {
     allProducts.length,
   ]);
 
+  const handleLoadMore = () => {
+    if (isFetching || page >= totalPages) return;
+    setPage((prev) => prev + 1);
+  };
+
   return (
-    <section id="products" className="flat-spacing-6">
+    <section id="products" className="flat-spacing-6 pt-2">
       <div className="container">
         <div className="mb-4 d-flex flex-nowrap flex-md-wrap overflow-x-auto gap-2 justify-content-start justify-content-md-center">
           <button
@@ -264,7 +279,19 @@ export default function Products() {
                   </div>
                 </div>
               )}
-              {page < totalPages && (
+              {!ENABLE_INTERSECTION_OBSERVER && page < totalPages && (
+                <div className="text-center mt-4">
+                  <button
+                    type="button"
+                    className="tf-btn btn-fill animate-hover-btn radius-3"
+                    onClick={handleLoadMore}
+                    disabled={isFetching}
+                  >
+                    <span>{isFetching ? "Loading..." : "Load More"}</span>
+                  </button>
+                </div>
+              )}
+              {ENABLE_INTERSECTION_OBSERVER && page < totalPages && (
                 <div
                   ref={observerRef}
                   style={{

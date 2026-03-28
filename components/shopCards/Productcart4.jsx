@@ -1,8 +1,7 @@
 "use client";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
 
 export const replaceS3WithCloudFront = (url) => {
   if (!url) return url;
@@ -24,21 +23,13 @@ export const replaceS3WithCloudFront = (url) => {
 };
 
 function Productcard4({ product }) {
-  const [isAppleTouch, setIsAppleTouch] = useState(false);
   const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
-
-  useEffect(() => {
-    setIsAppleTouch(isAppleTouchDevice());
-  }, []);
 
   const primaryImage =
     replaceS3WithCloudFront(product?.images?.[0]?.url) || "/fallback.png";
-  const secondaryImage = replaceS3WithCloudFront(product?.images?.[1]?.url);
-  const shouldRenderHoverImage =
-    !isAppleTouch && secondaryImage && secondaryImage !== primaryImage;
 
   return (
-    <div className="card-product style-4 fl-item p-2 border"
+    <div className="card-product style-4 single-image-hover fl-item p-2 border"
       style={{ borderRadius: '10px' }} key={product._id}>
       <div className="card-product-wrapper">
         {isOutOfStock && (
@@ -67,18 +58,6 @@ function Productcard4({ product }) {
               loading="lazy"
               sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
             />
-            {shouldRenderHoverImage && (
-              <Image
-                className="lazyload img-hover"
-                data-src={secondaryImage}
-                src={secondaryImage}
-                alt="image-product"
-                width="720"
-                height="1005"
-                loading="lazy"
-                sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
-              />
-            )}
           </Link>
         )}
 

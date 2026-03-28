@@ -9,7 +9,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 export const categoriesWithDetails = [
-
   {
     name: "Super Shell Collection",
     image:
@@ -66,7 +65,6 @@ export const categoriesWithDetails = [
     url: "/shop-collection-sub/travel_duffle_bag",
   },
 
-
   // {
   //   name: "Tote Bag",
   //   image:
@@ -77,7 +75,7 @@ export const categoriesWithDetails = [
 
 function Categories() {
   return (
-    <section className="flat-spacing-13 position-relative">
+    <section className="flat-spacing-13 position-relative pb-3">
       <div className="container-full">
         <div className="wrap-carousel">
           <Swiper
