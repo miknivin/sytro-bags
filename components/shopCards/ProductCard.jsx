@@ -1,9 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContextElement } from "@/context/Context";
-import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
 
 // Utility function to replace S3 URL with CloudFront URL
 const getCloudFrontUrl = (s3Url) => {
@@ -15,28 +12,11 @@ const getCloudFrontUrl = (s3Url) => {
 };
 
 export const ProductCard = ({ product }) => {
-  const [isAppleTouch, setIsAppleTouch] = useState(false);
-  const { setQuickViewItem } = useContextElement();
-  const {
-    setQuickAddItem,
-    addToWishlist,
-    isAddedtoWishlist,
-    addToCompareItem,
-    isAddedtoCompareItem,
-  } = useContextElement();
-
-  useEffect(() => {
-    setIsAppleTouch(isAppleTouchDevice());
-  }, []);
-
   const primaryImage =
     getCloudFrontUrl(product?.images?.[0]?.url) || "/fallback.png";
-  const secondaryImage = getCloudFrontUrl(product?.images?.[1]?.url);
-  const shouldRenderHoverImage =
-    !isAppleTouch && secondaryImage && secondaryImage !== primaryImage;
 
   return (
-    <div className="card-product fl-item" key={product._id}>
+    <div className="card-product single-image-hover fl-item" key={product._id}>
       <div className="card-product-wrapper">
         <Link
           href={
@@ -55,17 +35,6 @@ export const ProductCard = ({ product }) => {
             height={1005}
             sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
           />
-          {shouldRenderHoverImage && (
-            <Image
-              className="lazyload img-hover"
-              data-src={secondaryImage}
-              src={secondaryImage}
-              alt="image-product"
-              width={720}
-              height={1005}
-              sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 25vw"
-            />
-          )}
         </Link>
         <div className="list-product-btn">
           {/* <button

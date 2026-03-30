@@ -1,16 +1,13 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { ProductCard } from "../shopCards/ProductCard";
 import { useGetProductsQuery } from "@/redux/api/productsApi";
 import { categories } from "../homes/home-4/Products";
-import { isAppleTouchDevice } from "@/utlis/isAppleTouchDevice";
 
 export default function ProductGrid({ gridItems = 4, id }) {
   const [page, setPage] = useState(1);
   const [allProducts, setAllProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  const loaderRef = useRef(null);
-  const [isAppleTouch, setIsAppleTouch] = useState(false);
 
   // Decode the id to handle URL-encoded spaces (e.g., Kids%20Bags -> Kids Bags)
   const decodedId = id ? decodeURIComponent(id) : null;
@@ -25,10 +22,6 @@ export default function ProductGrid({ gridItems = 4, id }) {
     category,
   });
 
-  useEffect(() => {
-    setIsAppleTouch(isAppleTouchDevice());
-  }, []);
-
   // Append new products when data changes
   useEffect(() => {
     if (data?.filteredProducts) {
@@ -36,32 +29,6 @@ export default function ProductGrid({ gridItems = 4, id }) {
       setHasMore(data.filteredProducts.length === 8); // Check if there’s more to load
     }
   }, [data]);
-
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    if (isAppleTouch) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isFetching) {
-          setPage((prev) => prev + 1);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
-    }
-
-    return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
-      }
-    };
-  }, [hasMore, isFetching, isAppleTouch]);
 
   // Handle Load More button click
   const handleLoadMore = () => {
@@ -124,17 +91,14 @@ export default function ProductGrid({ gridItems = 4, id }) {
         ))}
       </div>
       {hasMore && (
-        <div ref={loaderRef} style={{ textAlign: "center", padding: "20px" }}>
-          {isFetching ? (
-            "Loading..."
-          ) : (
-            <button
-              onClick={handleLoadMore}
-              className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
-            >
-              Load More
-            </button>
-          )}
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <button
+            onClick={handleLoadMore}
+            disabled={isFetching}
+            className="tf-btn btn-fill justify-content-center fw-6 fs-16 flex-grow-1 animate-hover-btn"
+          >
+            {isFetching ? "Loading..." : "Load More"}
+          </button>
         </div>
       )}
     </>
