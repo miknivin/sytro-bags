@@ -80,7 +80,7 @@ function BackToSchoolCollection() {
                 style={{
                   position: "relative",
                   overflow: "hidden",
-                  borderRadius: "11px",
+                  borderRadius: "12px",
                   height: "300px",
                   backgroundColor: "#f5f5f5",
                 }}
