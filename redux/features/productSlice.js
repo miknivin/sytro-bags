@@ -4,13 +4,15 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     items: [], 
+    page: 1,
+    category: null,
     singleProduct: null,
     productById: {}, // Added productById state
     selectedTemplate: null, // New selectedTemplate state
   },
   reducers: {
     setProducts: (state, action) => {
-      state.items = [...state.items, ...action.payload];
+      state.items = action.payload;
     },
     resetProducts: (state) => {
       state.items = []; 
@@ -33,6 +35,12 @@ const productsSlice = createSlice({
     resetSelectedTemplate: (state) => {
       state.selectedTemplate = null; // Resets the selected template
     },
+    setPage: (state, action) => {
+      state.page = action.payload;
+    },
+    setCategory: (state, action) => {
+      state.category = action.payload;
+    },
   },
 });
 
@@ -45,6 +53,8 @@ export const {
   resetProductById, 
   setSelectedTemplate, // Exporting new action
   resetSelectedTemplate, // Exporting reset action
+  setPage,
+  setCategory,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;

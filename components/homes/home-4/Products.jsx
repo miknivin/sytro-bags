@@ -2,8 +2,8 @@
 import Productcard4 from "@/components/shopCards/Productcart4";
 import { useGetProductsQuery } from "@/redux/api/productsApi";
 import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { setProducts } from "@/redux/features/productSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setProducts, setPage as setReduxPage, setCategory as setReduxCategory } from "@/redux/features/productSlice";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 const ENABLE_INTERSECTION_OBSERVER = false;
@@ -42,11 +42,14 @@ const formatCategory = (category) =>
     .join(" ");
 
 export default function Products() {
-  const [page, setPage] = useState(1);
-  const [allProducts, setAllProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isCategoryChanging, setIsCategoryChanging] = useState(false);
   const dispatch = useDispatch();
+  const reduxState = useSelector((state) => state.product);
+  
+  const [page, setPage] = useState(reduxState?.page || 1);
+  const [allProducts, setAllProducts] = useState(reduxState?.items || []);
+  const [selectedCategory, setSelectedCategory] = useState(reduxState?.category);
+  const [isCategoryChanging, setIsCategoryChanging] = useState(false);
+  
   const observerRef = useRef(null);
   const intersectionObserverRef = useRef(null);
   const hasTriggeredForPageRef = useRef(false);
@@ -108,19 +111,35 @@ export default function Products() {
     dispatch(setProducts(allProducts));
   }, [allProducts, dispatch]);
 
+  useEffect(() => {
+    dispatch(setReduxPage(page));
+  }, [page, dispatch]);
+
+  useEffect(() => {
+    dispatch(setReduxCategory(selectedCategory));
+  }, [selectedCategory, dispatch]);
+
   // Auto-scroll to products section when category is selected via URL
   useEffect(() => {
     const categoryParam = searchParams.get("category");
     if (categoryParam && !isLoading && !isFetching && allProducts.length > 0) {
-      scrollTimeoutRef.current = setTimeout(() => {
-        const productsSection = document.getElementById("products");
-        if (productsSection) {
-          productsSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-      }, 150);
+      // 1. Detect if this is a back/forward navigation
+      const navigationType = window.performance?.getEntriesByType("navigation")[0]?.type;
+      const isBackNavigation = navigationType === "back_forward";
+
+      // 2. Only auto-scroll if it's a NEW navigation and we are at the top
+      // This prevents overriding the browser's scroll restoration on back-button
+      if (!isBackNavigation && window.scrollY < 150) {
+        scrollTimeoutRef.current = setTimeout(() => {
+          const productsSection = document.getElementById("products");
+          if (productsSection) {
+            productsSection.scrollIntoView({
+              behavior: "auto",
+              block: "start",
+            });
+          }
+        }, 150);
+      }
     }
 
     return () => {
@@ -250,7 +269,7 @@ export default function Products() {
           ))}
         </div>
         {isLoading || (isFetching && !isSuccess) || isCategoryChanging ? (
-          <div className="text-center">
+          <div className="text-center" style={{ minHeight: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="spinner-border text-warning" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
