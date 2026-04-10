@@ -57,7 +57,7 @@ export default function ShoppingBanner() {
               >
                 <FontAwesomeIcon icon={copied ? faSquareCheck : faCopy} />
               </button>
-              at checkout.
+              at checkout .
             </span>
           </p>
         </div>
