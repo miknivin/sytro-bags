@@ -3,18 +3,43 @@ import React, { useEffect, useState } from "react";
 import { ProductCard } from "../shopCards/ProductCard";
 import { useGetProductsQuery } from "@/redux/api/productsApi";
 import { categories } from "../homes/home-4/Products";
+import { useDispatch, useSelector } from "react-redux";
+import { setGridProducts, setGridPage, setGridCategory } from "@/redux/features/productSlice";
 
 export default function ProductGrid({ gridItems = 4, id }) {
-  const [page, setPage] = useState(1);
-  const [allProducts, setAllProducts] = useState([]);
+  const dispatch = useDispatch();
+  const reduxGrid = useSelector((state) => state.product);
+
+  const decodedId = id ? decodeURIComponent(id) : null;
+  const category = decodedId && categories.includes(decodedId) ? decodedId : "Kids Bags";
+
+  // Initialize from Redux only if it's the same category
+  const isSameCategory = reduxGrid.gridCategory === category;
+  
+  const [page, setPage] = useState(isSameCategory ? reduxGrid.gridPage : 1);
+  const [allProducts, setAllProducts] = useState(isSameCategory ? reduxGrid.gridItems : []);
   const [hasMore, setHasMore] = useState(true);
 
-  // Decode the id to handle URL-encoded spaces (e.g., Kids%20Bags -> Kids Bags)
-  const decodedId = id ? decodeURIComponent(id) : null;
+  // Sync back to Redux
+  useEffect(() => {
+    dispatch(setGridProducts(allProducts));
+  }, [allProducts, dispatch]);
 
-  // Validate the decoded id against categories; fallback to "Kids Bags" if invalid
-  const category =
-    decodedId && categories.includes(decodedId) ? decodedId : "Kids Bags";
+  useEffect(() => {
+    dispatch(setGridPage(page));
+  }, [page, dispatch]);
+
+  useEffect(() => {
+    dispatch(setGridCategory(category));
+  }, [category, dispatch]);
+
+  // Reset if category changes manually
+  useEffect(() => {
+    if (!isSameCategory) {
+      setPage(1);
+      setAllProducts([]);
+    }
+  }, [category]);
 
   const { data, isLoading, isError, error, isFetching } = useGetProductsQuery({
     page,
@@ -25,7 +50,12 @@ export default function ProductGrid({ gridItems = 4, id }) {
   // Append new products when data changes
   useEffect(() => {
     if (data?.filteredProducts) {
-      setAllProducts((prev) => [...prev, ...data.filteredProducts]);
+      setAllProducts((prev) => {
+        const newProducts = data.filteredProducts.filter(
+          (p) => !prev.some((existing) => existing._id === p._id)
+        );
+        return [...prev, ...newProducts];
+      });
       setHasMore(data.filteredProducts.length === 8); // Check if there’s more to load
     }
   }, [data]);
@@ -47,9 +77,9 @@ export default function ProductGrid({ gridItems = 4, id }) {
     );
   }
 
-  if (isLoading && page === 1) {
+  if (isLoading && allProducts.length === 0) {
     return (
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '600px' }}>
         <div className="spinner-border text-warning" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>

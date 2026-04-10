@@ -6,6 +6,9 @@ const productsSlice = createSlice({
     items: [], 
     page: 1,
     category: null,
+    gridItems: [],
+    gridPage: 1,
+    gridCategory: null,
     singleProduct: null,
     productById: {}, // Added productById state
     selectedTemplate: null, // New selectedTemplate state
@@ -41,6 +44,15 @@ const productsSlice = createSlice({
     setCategory: (state, action) => {
       state.category = action.payload;
     },
+    setGridProducts: (state, action) => {
+      state.gridItems = action.payload;
+    },
+    setGridPage: (state, action) => {
+      state.gridPage = action.payload;
+    },
+    setGridCategory: (state, action) => {
+      state.gridCategory = action.payload;
+    },
   },
 });
 
@@ -55,6 +67,9 @@ export const {
   resetSelectedTemplate, // Exporting reset action
   setPage,
   setCategory,
+  setGridProducts,
+  setGridPage,
+  setGridCategory,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
