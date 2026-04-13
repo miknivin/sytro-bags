@@ -28,7 +28,7 @@ export default function Checkout() {
 
   const [touched, setTouched] = useState({});
   const user = useSelector((state) => state.auth.user);
-  const zipCodeRegex = /^\d+$/;
+  const indianPinCodeRegex = /^[1-9][0-9]{5}$/;
   // const [email, setEmail] = useState(user.email || "");
   const [formData, setFormData] = useState({
     firstName: "",
@@ -91,15 +91,22 @@ export default function Checkout() {
   };
 
   const handleZipCodeChange = async (e) => {
-    const { value } = e.target;
-    handleChange(e);
+    let { value } = e.target;
+    // Automatically remove non-numeric characters while typing
+    value = value.replace(/\D/g, "");
+    // Prevent user from entering more than 6 digits
+    if (value.length > 6) {
+      value = value.slice(0, 6);
+    }
 
-    if (/^\d{6}$/.test(value)) {
+    setFormData({ ...formData, zipCode: value });
+
+    if (indianPinCodeRegex.test(value)) {
       const location = await getLocationByPincode(value);
       if (location) {
         setFormData((prev) => ({
           ...prev,
-          country: location.country,
+          country: "India",
           state: location.state,
           city: location.city,
         }));
@@ -113,6 +120,54 @@ export default function Checkout() {
 
   const handleSubmit = async (e = null, paymentMode = "COD") => {
     if (e && paymentMode === "COD") e?.preventDefault();
+
+    // --- Form Validation ---
+    if (!formData.firstName || !formData.address || !formData.city) {
+      Swal.fire({
+        icon: "error",
+        title: "Missing Information!",
+        text: "Please fill in all required fields (Name, Address, City).",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    if (!emailRegex.test(formData.email)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Email!",
+        text: "Please enter a valid email address.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    if (
+      !(
+        indiaPhoneRegex.test(formData.phoneNo.trim()) ||
+        uaePhoneRegex.test(formData.phoneNo.trim())
+      )
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Phone Number!",
+        text: "Please enter a valid phone number format.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    if (!indianPinCodeRegex.test(formData.zipCode.trim())) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid PIN Code!",
+        text: "Please enter a valid 6-digit Indian PIN code.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+    // -----------------------
+
     const invalidSlingBags = cartItems.filter(
       (item) =>
         item.category === "custom_sling_bag" &&
@@ -256,6 +311,7 @@ export default function Checkout() {
                   required
                   type="text"
                   id="zipCode"
+                  maxLength="6"
                   value={formData.zipCode}
                   onChange={handleZipCodeChange}
                   onBlur={() => setTouched({ ...touched, zipCode: true })}
@@ -263,11 +319,15 @@ export default function Checkout() {
                 {touched.zipCode && !formData.zipCode && (
                   <div className="text-danger">Pin Code is required</div>
                 )}
+                {touched.zipCode && formData.zipCode && formData.zipCode.length !== 6 && (
+                  <div className="text-danger">PIN code must be 6 digits</div>
+                )}
                 {touched.zipCode &&
                   formData.zipCode &&
-                  !zipCodeRegex.test(formData.zipCode.trim()) && (
+                  formData.zipCode.length === 6 &&
+                  !indianPinCodeRegex.test(formData.zipCode) && (
                     <div className="text-danger">
-                      Pin Code must contain only numbers
+                      Enter a valid Indian PIN code
                     </div>
                   )}
               </fieldset>

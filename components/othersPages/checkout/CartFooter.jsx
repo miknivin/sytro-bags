@@ -76,10 +76,11 @@ const CartFooter = ({
     const indiaPhoneRegex = /^[6-9][0-9]{9}$/;
     const uaePhoneRegex =
       /^(50|52|54|55|56|58|3[235678]|6[24578]|7[0245689]|9[2456789])[0-9]{7}$/;
+    const indianPinCodeRegex = /^[1-9][0-9]{5}$/; // Strict 6-digit Indian PIN code regex
+
     const trimmedEmail = formData.email?.trim() || "";
     const trimmedPhoneNo = formData.phoneNo?.trim() || "";
     const trimmedZipCode = formData.zipCode?.trim() || "";
-    const zipCodeRegex = /^\d+$/;
 
     return (
       formData.firstName &&
@@ -90,7 +91,7 @@ const CartFooter = ({
       emailRegex.test(trimmedEmail) &&
       (uaePhoneRegex.test(trimmedPhoneNo) ||
         indiaPhoneRegex.test(trimmedPhoneNo)) &&
-      zipCodeRegex.test(trimmedZipCode)
+      indianPinCodeRegex.test(trimmedZipCode)
     );
   };
 
