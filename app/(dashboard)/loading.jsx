@@ -1,7 +1,5 @@
-import  FullScreenSpinner  from "@/components/common/FullScreenSpinner";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 
 export default function Loading() {
-    return (
-      <FullScreenSpinner/>
-    );
-  }
+  return <FullScreenSpinner />;
+}
