@@ -1,47 +1,49 @@
 export function sanitizeLocalStorageImages() {
-  const keysToSanitize = ["uploadedImage", "uploadedImages"];
+  if (typeof window === "undefined" || !window.localStorage) return;
 
-  keysToSanitize.forEach((key) => {
-    const rawData = localStorage.getItem(key);
-    if (rawData) {
-      try {
-        const parsed = JSON.parse(rawData);
+  try {
+    const keysToSanitize = ["uploadedImage", "uploadedImages"];
 
-        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-          const updated = {};
+    keysToSanitize.forEach((key) => {
+      const rawData = localStorage.getItem(key);
+      if (rawData) {
+        try {
+          const parsed = JSON.parse(rawData);
 
-          for (const [productId, value] of Object.entries(parsed)) {
-            updated[productId] = Array.isArray(value) ? value : [value];
+          if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+            const updated = {};
+
+            for (const [productId, value] of Object.entries(parsed)) {
+              updated[productId] = Array.isArray(value) ? value : [value];
+            }
+
+            localStorage.setItem(key, JSON.stringify(updated));
           }
-
-          localStorage.setItem(key, JSON.stringify(updated));
-        } else {
-          console.warn(`Skipping ${key}: Parsed data is not a valid object`, {
-            parsed,
-          });
+        } catch (e) {
+          console.error(`Local storage parse error for ${key}:`, e);
         }
-      } catch (error) {
-        console.error(
-          `Failed to parse localStorage key "${key}":`,
-          error.message,
-          { rawData }
-        );
-        // Optionally, remove invalid data
-        // localStorage.removeItem(key);
+      }
+    });
+
+    // --- Sanitize uploadedImage in cartItems array --- //
+    const cartItemsRaw = localStorage.getItem("cartItems");
+    if (cartItemsRaw) {
+      let cartItems = JSON.parse(cartItemsRaw || "[]");
+      let changed = false;
+
+      cartItems = cartItems.map((item) => {
+        if (!Array.isArray(item.uploadedImage)) {
+          item.uploadedImage = item.uploadedImage ? [item.uploadedImage] : [];
+          changed = true;
+        }
+        return item;
+      });
+
+      if (changed) {
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
       }
     }
-  });
-
-  // --- Sanitize uploadedImage in cartItems array --- //
-  let cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
-
-  cartItems = cartItems.map((item) => {
-    if (!Array.isArray(item.uploadedImage)) {
-      item.uploadedImage = item.uploadedImage ? [item.uploadedImage] : [];
-    }
-    return item;
-  });
-
-  localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  console.log("Sanitization complete");
+  } catch (globalError) {
+    console.warn("Storage sanitization failed (likely restricted browser):", globalError);
+  }
 }
