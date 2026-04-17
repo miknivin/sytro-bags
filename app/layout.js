@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
           />
         </noscript>
 
-        {isProduction && (
+        {/* {isProduction && (
           <Script id="microsoft-clarity" strategy="afterInteractive">
             {`
               (function(c,l,a,r,i,t,y){
@@ -52,7 +52,33 @@ export default function RootLayout({ children }) {
      })(window, document, "clarity", "script", "qq5qu3wvx2");
            `}
           </Script>
-        )}
+        )} */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var hidePreloader = function() {
+                  var p = document.getElementById('preloader');
+                  if (p) {
+                    p.style.setProperty('display', 'none', 'important');
+                    p.style.opacity = '0';
+                    p.style.visibility = 'hidden';
+                  }
+                  document.body.classList.remove('preload-wrapper');
+                  document.body.style.overflow = 'auto';
+                };
+                // Initial attempt as soon as possible
+                if (document.readyState === 'complete') {
+                  hidePreloader();
+                } else {
+                  window.addEventListener('load', hidePreloader);
+                }
+                // Ironclad safety timeout: definitely hide after 6 seconds
+                setTimeout(hidePreloader, 6000);
+              })();
+            `,
+          }}
+        />
       </head>
       <body className="preload-wrapper">
         <div 
