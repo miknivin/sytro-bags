@@ -1,44 +1,27 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 import { useOtpLoginMutation } from "@/redux/api/authApi";
-import Swal from "sweetalert2";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import OTPAuthentication from "./OtpAuthentication";
+import ModalShell from "@/components/modals/shared/ModalShell";
 
-export default function Login() {
+export default function Login({ isOpen = false, onClose, onSwitchToRegister }) {
   const router = useRouter();
   const [otpLogin, { isLoading, error }] = useOtpLoginMutation();
   const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      import("bootstrap");
-    }
-  }, []);
-
   const handlePhoneVerified = async (phone, otp) => {
     try {
       await otpLogin({ phone, otp }).unwrap();
-
-      // Close the modal
-      if (typeof document !== "undefined") {
-        const modalElement = document.getElementById("login");
-        if (modalElement) {
-          import("bootstrap").then(({ Modal }) => {
-            const modalInstance =
-              Modal.getInstance(modalElement) || new Modal(modalElement);
-            modalInstance.hide();
-          });
-        }
-      }
+      onClose?.();
 
       toast.success("You have successfully logged in!");
       const queryParams = new URLSearchParams(window.location.search);
       if (queryParams.get("toCheckout") === "proceeding") {
         router.push("/checkout");
-        console.log("Navigating to checkout");
       }
     } catch (err) {
       console.error(err);
@@ -46,51 +29,51 @@ export default function Login() {
     }
   };
 
-  const closeModal = () => {
-    if (typeof document !== "undefined") {
-      const modalElement = document.getElementById("login");
-      if (modalElement) {
-        import("bootstrap").then(({ Modal }) => {
-          const modalInstance =
-            Modal.getInstance(modalElement) || new Modal(modalElement);
-          modalInstance.hide();
-        });
-      }
-    }
-  };
-
   return (
-    <div
-      className="modal modalCentered fade form-sign-in modal-part-content"
-      id="login"
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      className="modalCentered form-sign-in modal-part-content"
     >
-      <div
-        className="modal-dialog modal-dialog-centered"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <div className="modal-content">
-          <div className="header">
-            <div className="demo-title">Enter Your Phone Number</div>
-            <span
-              className="icon-close icon-close-popup"
-              data-bs-dismiss="modal"
-            />
-          </div>
-          <div className="tf-login-form">
-            <OTPAuthentication
-              onPhoneVerified={handlePhoneVerified}
-              closeModal={closeModal}
-            />
-            <p className="text-center">OR</p>
-            <GoogleSigninButton />
-            {error && (
-              <p className="error-message text-danger">
-                {error.data?.message || errorMessage}
-              </p>
-            )}
-          </div>
+      <div className="modal-content">
+        <div className="header">
+          <div className="demo-title">Enter Your Phone Number</div>
+          <span
+            className="icon-close icon-close-popup"
+            onClick={onClose}
+            role="button"
+            tabIndex={0}
+          />
+        </div>
+        <div className="tf-login-form">
+          <OTPAuthentication
+            onPhoneVerified={handlePhoneVerified}
+            closeModal={onClose}
+          />
+          <p className="text-center">OR</p>
+          <GoogleSigninButton />
+          {onSwitchToRegister && (
+            <div className="bottom mt-3">
+              <div className="w-100">
+                <button
+                  type="button"
+                  className="btn-link fw-6 w-100 link"
+                  onClick={onSwitchToRegister}
+                >
+                  Create an account
+                  <i className="icon icon-arrow1-top-left" />
+                </button>
+              </div>
+            </div>
+          )}
+          {(error || errorMessage) && (
+            <p className="error-message text-danger">
+              {error?.data?.message || errorMessage}
+            </p>
+          )}
+          {isLoading && <p className="text-center mt-2">Verifying...</p>}
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

@@ -13,7 +13,7 @@ import {
   setCustomName,
   upsertCartItem,
 } from "@/redux/features/cartSlice";
-import { openCartModal } from "@/utlis/openCartModal";
+import ShopCart from "@/components/modals/ShopCart";
 
 const Moments = dynamic(() => import("../common/Moments"), {
   loading: () => null,
@@ -52,6 +52,7 @@ function ProductDetailsClient({ productId }) {
   const { data, error, isLoading } = useGetProductDetailsQuery(productId);
   const dispatch = useDispatch();
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const customNames = useSelector((state) => state.cart.customNames);
 
@@ -137,7 +138,7 @@ function ProductDetailsClient({ productId }) {
     );
 
     setIsCustomizerOpen(false);
-    void openCartModal();
+    setIsCartOpen(true);
   };
 
   return (
@@ -163,6 +164,7 @@ function ProductDetailsClient({ productId }) {
         initialCustomName={initialCustomName}
         maxFiles={1}
       />
+      <ShopCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 }

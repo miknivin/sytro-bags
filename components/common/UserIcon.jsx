@@ -1,33 +1,29 @@
 "use client";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
-export default function UserIcon({ isText = false }) {
+export default function UserIcon({ isText = false, onOpenLogin }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const [authState, setAuthState] = useState(isAuthenticated);
-
-  useEffect(() => {
-    setAuthState(isAuthenticated);
-    console.log(isAuthenticated, "isAuthenticated");
-  }, [isAuthenticated]);
 
   return (
     <>
-      {authState ? (
+      {isAuthenticated ? (
         <Link href={"/my-account"} className="nav-icon-item text-white">
           {!isText && <i className="icon icon-account" />}
           {isText && <span className="text-black">My Account</span>}
         </Link>
       ) : (
-        <Link
-          href={"#login"}
-          data-bs-toggle="modal"
+        <a
+          href="/login"
           className="nav-icon-item text-white"
+          onClick={(event) => {
+            event.preventDefault();
+            onOpenLogin?.();
+          }}
         >
           {!isText && <i className="icon icon-account" />}
           {isText && <span className="text-black">Login</span>}
-        </Link>
+        </a>
       )}
     </>
   );

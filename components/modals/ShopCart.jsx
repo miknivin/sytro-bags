@@ -31,14 +31,13 @@ import {
   useInitiateMultipartUploadMutation,
 } from "@/redux/api/multipartApi";
 import { uploadMultipartFile } from "@/utlis/uploadMultipart";
+import ModalShell from "@/components/modals/shared/ModalShell";
 
-export default function ShopCart() {
-  const [showPopover, setShowPopover] = useState(false);
+export default function ShopCart({ isOpen = false, onClose }) {
   // const [editStates, setEditStates] = useState({});
   const [uploadKidsImage, { isLoading, error }] = useUploadKidsImageMutation();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [imageUrl, setImageUrl] = useState("");
-  const modalRef = useRef(null);
   const dispatch = useDispatch();
   const { cartProducts, setCartProducts } = useContextElement();
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -164,16 +163,6 @@ export default function ShopCart() {
     }, 0);
     setSubtotal(newSubtotal);
   }, [cartItems]);
-
-  const handleNavigation = (e) => {
-    e.preventDefault();
-    const modalInstance = modalRef.current?.modalInstance;
-
-    if (modalInstance) {
-      modalInstance.hide();
-      router.push("/shop-collection-sub");
-    }
-  };
 
   const increaseQuantity = (cartItem, id) => {
     const newQuantity = Number(cartItem.quantity) + 1;
@@ -376,6 +365,7 @@ export default function ShopCart() {
         (!item.customNameToPrint || item.customNameToPrint.trim() === "")
     );
     if (invalidCustomBags.length === 0) {
+      onClose?.();
       router.push("/checkout", { scroll: false });
     } else {
       const productNames = invalidCustomBags
@@ -393,18 +383,20 @@ export default function ShopCart() {
   };
 
   return (
-    <div
-      ref={modalRef}
-      className="modal fullRight fade modal-shopping-cart"
-      id="shoppingCart"
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      className="fullRight modal-shopping-cart"
+      dialogClassName="modal-dialog"
     >
-      <div className="modal-dialog">
         <div className="modal-content">
           <div className="header">
             <div className="title fw-5">Shopping cart</div>
             <span
               className="icon-close icon-close-popup"
-              data-bs-dismiss="modal"
+              onClick={onClose}
+              role="button"
+              tabIndex={0}
             />
           </div>
           <div className="wrap">
@@ -750,10 +742,7 @@ export default function ShopCart() {
                   </div>
                   <div className="tf-mini-cart-line" />
                   <div className="tf-cart-checkbox"></div>
-                  <div
-                    data-bs-dismiss="modal"
-                    className="tf-mini-cart-view-checkout flex-column"
-                  >
+                  <div className="tf-mini-cart-view-checkout flex-column">
                     {isQuantityValid() ? (
                       <>
                         {nameErrorMessage && (
@@ -813,7 +802,6 @@ export default function ShopCart() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }

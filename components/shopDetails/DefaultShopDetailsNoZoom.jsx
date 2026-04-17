@@ -3,22 +3,24 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Quantity from "./Quantity";
 import toast from "react-hot-toast";
-import { openCartModal } from "@/utlis/openCartModal";
-import { setCartItem } from "@/redux/features/cartSlice";
+import {
+  replaceUploadedImage,
+  setCartItem,
+  setCustomName as persistCustomName,
+} from "@/redux/features/cartSlice";
 import OrdinaryStickyItem from "./OrdinaryStickyItems";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import Slider1ZoomOuterOrdinary from "./sliders/Slider1ZoomOuterOrdinary";
-import DetailsStatic from "./DetailsStatic";
 import OfferTimer from "@/utlis/OfferTimer";
-import DetailsStaticNoZoom from "./DetailsStaticNoZoom";
 import CustomAlert from "@/utlis/CustomAlert";
+import ShopCart from "@/components/modals/ShopCart";
+import SuperKidBag from "@/components/modals/SuperKidBag";
 
 export default function DefaultShopDetailsNoZoom({ product }) {
   const [quantity, setQuantity] = useState(1);
-
   const [customName, setCustomName] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const customNames = useSelector((state) => state.cart.customNames);
@@ -33,7 +35,6 @@ export default function DefaultShopDetailsNoZoom({ product }) {
   }, [product?._id, customNames]);
 
   const isOutOfStock = Number(product?.stock ?? product?.stocks ?? 0) <= 0;
-
 
   // Ensure product exists
   if (!product) {
@@ -59,7 +60,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
 
     if (isAddedToCartProducts(productId)) {
       toast.success("Item already in cart!");
-      openCartModal();
+      setIsCartOpen(true);
       return;
     }
 
@@ -76,7 +77,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
 
     dispatch(setCartItem(cartItem));
     toast.success("Item added to cart!");
-    openCartModal();
+    setIsCartOpen(true);
   };
 
   const handleAlertConfirm = (value) => {
@@ -99,7 +100,7 @@ export default function DefaultShopDetailsNoZoom({ product }) {
     };
     dispatch(setCartItem(cartItem));
     toast.success("Item added to cart!");
-    openCartModal();
+    setIsCartOpen(true);
   };
 
   const handleAlertCancel = () => {
@@ -108,6 +109,42 @@ export default function DefaultShopDetailsNoZoom({ product }) {
 
   const triggerAlert = () => {
     setShowAlert(true);
+  };
+
+  const handleOpenCustomizer = () => {
+    if (isOutOfStock) {
+      toast.error("This product is out of stock");
+      return;
+    }
+
+    setIsCustomizerOpen(true);
+  };
+
+  const handleUploadComplete = ({ uploadedUrls, customName: nextCustomName }) => {
+    if (!product?._id) {
+      return;
+    }
+
+    const normalizedUploadedImage = Array.isArray(uploadedUrls)
+      ? uploadedUrls.filter(Boolean).slice(0, 1)
+      : uploadedUrls
+        ? [uploadedUrls]
+        : [];
+
+    dispatch(
+      replaceUploadedImage({
+        productId: product._id,
+        uploadedImage: normalizedUploadedImage,
+      }),
+    );
+    dispatch(
+      persistCustomName({
+        productId: product._id,
+        customName: nextCustomName?.trim() || "",
+      }),
+    );
+    setCustomName(nextCustomName?.trim() || "");
+    setIsCustomizerOpen(false);
   };
 
   return (
@@ -306,10 +343,14 @@ export default function DefaultShopDetailsNoZoom({ product }) {
                         </a>
                       ) : (
                       <a
-                        href={product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0) ? "#super_kidbag" : undefined}
-                        data-bs-toggle={product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0) ? "modal" : undefined}
-                        onClick={() => {
-                          if (product.category === "Kids Bags" && !(uploadedImages[product._id]?.length > 0)) {
+                        href="/cart"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          if (
+                            product.category === "Kids Bags" &&
+                            !(uploadedImages[product._id]?.length > 0)
+                          ) {
+                            handleOpenCustomizer();
                             return;
                           }
                           handleAddToCart(product._id, quantity);
@@ -344,7 +385,17 @@ export default function DefaultShopDetailsNoZoom({ product }) {
         quantity={quantity}
         soldOut={isOutOfStock}
         triggerAlert={triggerAlert}
+        onOpenCart={() => setIsCartOpen(true)}
       />
+      <SuperKidBag
+        open={isCustomizerOpen}
+        product={product}
+        onClose={() => setIsCustomizerOpen(false)}
+        onUploadComplete={handleUploadComplete}
+        initialCustomName={customName}
+        maxFiles={1}
+      />
+      <ShopCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </section>
   );
 }

@@ -1,34 +1,9 @@
-export const openCartModal = async () => {
-  const bootstrap = await import("bootstrap");
+const OPEN_CART_EVENT = "styro:cart:open";
 
-  // Close any open modals
-  const modalElements = document.querySelectorAll(".modal.show");
-  modalElements.forEach((modal) => {
-    const modalInstance = bootstrap.Modal.getInstance(modal);
-    if (modalInstance) {
-      modalInstance.hide();
-    }
-  });
+export const openCartModal = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
 
-  // Close any open offcanvas
-  const offcanvasElements = document.querySelectorAll(".offcanvas.show");
-  offcanvasElements.forEach((offcanvas) => {
-    const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
-    if (offcanvasInstance) {
-      offcanvasInstance.hide();
-    }
-  });
-
-  // Open shopping cart modal
-  const myModal = new bootstrap.Modal(document.getElementById("shoppingCart"), {
-    keyboard: false,
-  });
-
-  myModal.show();
-
-  document
-    .getElementById("shoppingCart")
-    .addEventListener("hidden.bs.modal", () => {
-      myModal.hide();
-    });
+  window.dispatchEvent(new CustomEvent(OPEN_CART_EVENT));
 };

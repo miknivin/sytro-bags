@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useGetProductsQuery } from "@/redux/api/productsApi";
+import OffcanvasShell from "@/components/modals/shared/OffcanvasShell";
 
 const categoriesWithDetails = [
   {
@@ -43,7 +44,7 @@ const categoriesWithDetails = [
   },
 ];
 
-export default function SearchModal() {
+export default function SearchModal({ isOpen = false, onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const { data, isLoading, error } = useGetProductsQuery({
     keyword: searchTerm,
@@ -60,7 +61,11 @@ export default function SearchModal() {
   };
 
   return (
-    <div className="offcanvas offcanvas-end canvas-search" id="canvasSearch">
+    <OffcanvasShell
+      isOpen={isOpen}
+      onClose={onClose}
+      className="offcanvas-end canvas-search"
+    >
       <div className="canvas-wrapper">
         <header className="tf-search-head">
           <div className="title fw-5">
@@ -68,7 +73,7 @@ export default function SearchModal() {
             <div className="close">
               <span
                 className="icon-close icon-close-popup"
-                data-bs-dismiss="offcanvas"
+                onClick={onClose}
                 aria-label="Close"
               />
             </div>
@@ -104,6 +109,7 @@ export default function SearchModal() {
                     <Link
                       key={category.name}
                       href={category.url}
+                      onClick={onClose}
                       className="badge bg-light text-dark px-3 py-2 rounded-pill"
                     >
                       {category.name}
@@ -128,11 +134,14 @@ export default function SearchModal() {
                     products.map((product) => (
                       <div className="tf-loop-item" key={product._id}>
                         <div className="image">
-                          <Link href={
+                          <Link
+                            href={
                               product?.category && product.category !== "Kids Bags"
                                 ? `/product-no-zoom/${product._id}`
                                 : `/product-detail/${product._id}`
-                            }>
+                            }
+                            onClick={onClose}
+                          >
                             <Image
                               alt={product.name}
                               src={
@@ -144,11 +153,14 @@ export default function SearchModal() {
                           </Link>
                         </div>
                         <div className="content">
-                          <Link href={
+                          <Link
+                            href={
                               product?.category && product.category !== "Kids Bags"
                                 ? `/product-no-zoom/${product._id}`
                                 : `/product-detail/${product._id}`
-                            }>
+                            }
+                            onClick={onClose}
+                          >
                             {product.name}
                           </Link>
                           <div className="tf-product-info-price">
@@ -179,6 +191,6 @@ export default function SearchModal() {
           </div>
         </div>
       </div>
-    </div>
+    </OffcanvasShell>
   );
 }

@@ -1,21 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRegisterMutation } from "@/redux/api/authApi";
-import Swal from "sweetalert2";
-import dynamic from "next/dynamic";
 import GoogleSigninButton from "@/components/buttons/GoogleSigninButton";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-// Dynamically import Bootstrap with no SSR
-const BootstrapClient = dynamic(
-  () => import("bootstrap/dist/js/bootstrap.bundle.min.js"),
-  {
-    ssr: false,
-  }
-);
+import ModalShell from "@/components/modals/shared/ModalShell";
 
-export default function Register() {
+export default function Register({
+  isOpen = false,
+  onClose,
+  onSwitchToLogin,
+}) {
   const [register, { isLoading, error }] = useRegisterMutation();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -24,35 +20,20 @@ export default function Register() {
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
-  const [modalInstance, setModalInstance] = useState(null);
   const router = useRouter();
-  useEffect(() => {
-    // Load Bootstrap
-    BootstrapClient;
 
-    // Initialize modal
-    if (typeof window !== "undefined") {
-      const modalElement = document.getElementById("register");
-      if (modalElement) {
-        import("bootstrap").then(({ Modal }) => {
-          setModalInstance(new Modal(modalElement));
-        });
-      }
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isValidPassword = (password) =>
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-      password
+      password,
     );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const { firstName, lastName, email, password } = formData;
 
     if (!firstName.trim() || !lastName.trim()) {
@@ -67,7 +48,7 @@ export default function Register() {
 
     if (!isValidPassword(password)) {
       setErrorMessage(
-        "Password must be at least 8 characters long and contain at least one letter, one number, and one special character (e.g., @, #, $, %, &, )."
+        "Password must be at least 8 characters long and contain at least one letter, one number, and one special character (e.g., @, #, $, %, &, ).",
       );
       return;
     }
@@ -79,24 +60,16 @@ export default function Register() {
         password,
       }).unwrap();
 
-      // Close modal safely
-      if (modalInstance) {
-        modalInstance.hide();
-      }
-
-      // Swal.fire({
-      //   icon: "success",
-      //   title: "Registration Successful",
-      //   text: "You have been registered successfully!",
-      //   confirmButtonColor: "#3085d6",
-      // });
+      onClose?.();
       toast.success("You have been registered successfully!");
+
       const queryParams = new URLSearchParams(window.location.search);
       if (queryParams.get("toCheckout") === "proceeding") {
         router.push("/checkout");
-        console.log("Navigating to checkout");
       }
+
       setFormData({ firstName: "", lastName: "", email: "", password: "" });
+      setErrorMessage("");
     } catch (err) {
       console.error(err);
       if (
@@ -111,108 +84,108 @@ export default function Register() {
   };
 
   return (
-    <div
-      className="modal modalCentered fade form-sign-in modal-part-content"
-      id="register"
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      className="modalCentered form-sign-in modal-part-content"
     >
-      <div
-        className="modal-dialog modal-dialog-centered"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <div className="modal-content">
-          <div className="header">
-            <div className="demo-title">Register</div>
-            <span
-              className="icon-close icon-close-popup"
-              data-bs-dismiss="modal"
-            />
-          </div>
-          <div className="tf-login-form">
-            <form onSubmit={handleSubmit}>
-              <div className="tf-field style-1">
-                <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="text"
-                  required
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label">First name</label>
+      <div className="modal-content">
+        <div className="header">
+          <div className="demo-title">Register</div>
+          <span
+            className="icon-close icon-close-popup"
+            onClick={onClose}
+            role="button"
+            tabIndex={0}
+          />
+        </div>
+        <div className="tf-login-form">
+          <form onSubmit={handleSubmit}>
+            <div className="tf-field style-1">
+              <input
+                className="tf-field-input tf-input"
+                placeholder=" "
+                type="text"
+                required
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              <label className="tf-field-label">First name</label>
+            </div>
+            <div className="tf-field style-1">
+              <input
+                className="tf-field-input tf-input"
+                placeholder=" "
+                type="text"
+                required
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+              <label className="tf-field-label">Last name</label>
+            </div>
+            <div className="tf-field style-1">
+              <input
+                className="tf-field-input tf-input"
+                placeholder=" "
+                type="email"
+                required
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              <label className="tf-field-label">Email *</label>
+            </div>
+            <div className="tf-field style-1">
+              <input
+                className="tf-field-input tf-input"
+                placeholder=" "
+                type="password"
+                required
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <label className="tf-field-label">Password *</label>
+            </div>
+            {errorMessage && (
+              <p style={{ color: "red" }} className="error-message">
+                {errorMessage}
+              </p>
+            )}
+            <div className="bottom">
+              <div className="w-100">
+                <button
+                  type="submit"
+                  className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Registering..." : "Register"}
+                </button>
               </div>
-              <div className="tf-field style-1">
-                <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="text"
-                  required
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label">Last name</label>
-              </div>
-              <div className="tf-field style-1">
-                <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="email"
-                  required
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label">Email *</label>
-              </div>
-              <div className="tf-field style-1">
-                <input
-                  className="tf-field-input tf-input"
-                  placeholder=" "
-                  type="password"
-                  required
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <label className="tf-field-label">Password *</label>
-              </div>
-              {errorMessage && (
-                <p style={{ color: "red" }} className="error-message">
-                  {errorMessage}
-                </p>
-              )}
-              <div className="bottom">
+              {onSwitchToLogin && (
                 <div className="w-100">
                   <button
-                    type="submit"
-                    className="tf-btn btn-fill animate-hover-btn radius-3 w-100 justify-content-center"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Registering..." : "Register"}
-                  </button>
-                </div>
-                <div className="w-100">
-                  <a
-                    href="#login"
-                    data-bs-toggle="modal"
+                    type="button"
                     className="btn-link fw-6 w-100 link"
+                    onClick={onSwitchToLogin}
                   >
                     Already have an account? Log in here
                     <i className="icon icon-arrow1-top-left" />
-                  </a>
+                  </button>
                 </div>
-              </div>
-            </form>
-            <GoogleSigninButton />
-            {error && (
-              <p style={{ color: "red" }} className="error-message text-danger">
-                {error.data?.message}
-              </p>
-            )}
-          </div>
+              )}
+            </div>
+          </form>
+          <GoogleSigninButton />
+          {error && (
+            <p style={{ color: "red" }} className="error-message text-danger">
+              {error.data?.message}
+            </p>
+          )}
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

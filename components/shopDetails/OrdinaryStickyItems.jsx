@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { openCartModal } from "@/utlis/openCartModal";
 import Quantity from "./Quantity";
 import { setCartItem } from "@/redux/features/cartSlice";
 
@@ -15,9 +14,9 @@ export default function OrdinaryStickyItem({
   quantity,
   customNameToPrint,
   triggerAlert,
+  onOpenCart,
 }) {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.cartItems);
 
   const handleAddToCart = () => {
     if (
@@ -30,7 +29,7 @@ export default function OrdinaryStickyItem({
 
     if (isAddedToCartProducts(product._id)) {
       toast.success("Item already in cart!");
-      openCartModal();
+      onOpenCart?.();
       return;
     }
 
@@ -46,7 +45,7 @@ export default function OrdinaryStickyItem({
 
     dispatch(setCartItem(cartItem));
     toast.success("Item added to cart!");
-    openCartModal();
+    onOpenCart?.();
   };
 
   return (

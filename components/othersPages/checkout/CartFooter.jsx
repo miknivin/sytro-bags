@@ -25,6 +25,9 @@ import {
 import { validateCartItems } from "@/app/helpers/Cartvalidator";
 import toast from "react-hot-toast";
 import handleCheckoutSession from "@/utlis/checkoutSession";
+import Login from "@/components/modals/Login";
+import Register from "@/components/modals/Register";
+import ShopCart from "@/components/modals/ShopCart";
 
 // Import COD_CHARGE
 import { COD_CHARGE } from "@/lib/constants/constants";
@@ -44,7 +47,6 @@ const CartFooter = ({
   const prevRefs = useRef([]);
   const nextRefs = useRef([]);
   const buttonRef = useRef(null);
-  const cartModalref = useRef(null);
   const hasClickedRef = useRef(false);
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -56,6 +58,8 @@ const CartFooter = ({
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("BANK");
+  const [activeAuthModal, setActiveAuthModal] = useState(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // RTK Query hooks
   const [createFullSession, { isLoading: fullSessionLoading }] =
@@ -162,7 +166,7 @@ const CartFooter = ({
         text: `Please provide a name for: ${names}`,
         confirmButtonText: "OK",
       });
-      cartModalref.current?.click();
+      setIsCartOpen(true);
       return;
     }
 
@@ -285,8 +289,7 @@ const CartFooter = ({
   };
 
   // Login redirect logic (unchanged)
-  const handleLoginClick = (e) => {
-    e.preventDefault();
+  const handleLoginClick = () => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("toclickplaceorder", "true");
     router.push(`?${newSearchParams.toString()}`);
@@ -672,11 +675,13 @@ const CartFooter = ({
                   </button>
                 ) : (
                   <a
-                    href="#"
-                    data-bs-toggle="modal"
-                    data-bs-target="#login"
+                    href="/login"
                     className="tf-btn radius-3 btn-fill btn-icon animate-hover-btn justify-content-center mt-0"
-                    onClick={handleLoginClick}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      handleLoginClick();
+                      setActiveAuthModal("login");
+                    }}
                   >
                     Place order
                   </a>
@@ -715,17 +720,19 @@ const CartFooter = ({
 
             <Tooltip id="cart-tooltip" place="top" />
           </form>
-
-          <a
-            ref={cartModalref}
-            href="#shoppingCart"
-            style={{ display: "none" }}
-            data-bs-toggle="modal"
-          >
-            <span className="sr-only">cart modal</span>
-          </a>
         </div>
       </div>
+      <Login
+        isOpen={activeAuthModal === "login"}
+        onClose={() => setActiveAuthModal(null)}
+        onSwitchToRegister={() => setActiveAuthModal("register")}
+      />
+      <Register
+        isOpen={activeAuthModal === "register"}
+        onClose={() => setActiveAuthModal(null)}
+        onSwitchToLogin={() => setActiveAuthModal("login")}
+      />
+      <ShopCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };
