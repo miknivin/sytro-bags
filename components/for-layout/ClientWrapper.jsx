@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 import WhatsAppButton from "../modals/WhatsAppButton";
 export default function ClientWrapper({ children }) {
   const pathname = usePathname();
-
+  //
   useEffect(() => {
     if (typeof window !== "undefined") {
       import("bootstrap/dist/js/bootstrap.esm");
@@ -99,7 +99,10 @@ export default function ClientWrapper({ children }) {
           document.documentElement.dir = "ltr";
         }
       } catch (error) {
-        console.error("Local storage access failed or invalid direction data:", error);
+        console.error(
+          "Local storage access failed or invalid direction data:",
+          error,
+        );
         document.documentElement.dir = "ltr";
       } finally {
         // Ensure preloader is disabled even if there's an error
