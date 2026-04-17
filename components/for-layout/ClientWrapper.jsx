@@ -87,19 +87,40 @@ export default function ClientWrapper({ children }) {
 
   useEffect(() => {
     const initializeDirection = () => {
-      const direction = localStorage.getItem("direction");
-      if (direction) {
-        const parsedDirection = JSON.parse(direction);
-        document.documentElement.dir = parsedDirection.dir;
-        document.body.classList.add(parsedDirection.dir);
-      } else {
+      try {
+        const direction = localStorage.getItem("direction");
+        if (direction) {
+          const parsedDirection = JSON.parse(direction);
+          if (parsedDirection && parsedDirection.dir) {
+            document.documentElement.dir = parsedDirection.dir;
+            document.body.classList.add(parsedDirection.dir);
+          }
+        } else {
+          document.documentElement.dir = "ltr";
+        }
+      } catch (error) {
+        console.error("Local storage access failed or invalid direction data:", error);
         document.documentElement.dir = "ltr";
+      } finally {
+        // Ensure preloader is disabled even if there's an error
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+          preloader.classList.add("disabled");
+        }
       }
-
-      document.getElementById("preloader")?.classList.add("disabled");
     };
 
     initializeDirection();
+
+    // Fallback: Ensure preloader is hidden after 2 seconds no matter what
+    const timeoutId = setTimeout(() => {
+      const preloader = document.getElementById("preloader");
+      if (preloader && !preloader.classList.contains("disabled")) {
+        preloader.classList.add("disabled");
+      }
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useGetMeQuery } from "@/redux/api/userApi.js";
 import { useSelector } from "react-redux";
@@ -54,8 +55,23 @@ const ShareModal = dynamic(() => import("@/components/modals/ShareModal"), {
 export function ReduxConsumer({ children }) {
   const { isLoading } = useGetMeQuery();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const [showLoader, setShowLoader] = useState(true);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading) {
+      setShowLoader(false);
+    }
+  }, [isLoading]);
+
+  // Safety timeout: hide loader after 5 seconds even if request hangs
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading && showLoader) {
     return <FullScreenSpinner />;
   }
 
