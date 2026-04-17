@@ -95,9 +95,8 @@ const sessionStartedOrderSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-
 // Auto-expire old sessions (optional but recommended)
-sessionStartedOrderSchema.index({ createdAt: 1 }, { expireAfterSeconds: 7200 }); // 2 hours
+sessionStartedOrderSchema.index({ createdAt: 1 }); // 2 hours
 
 const SessionStartedOrder =
   mongoose.models.SessionStartedOrder ||
