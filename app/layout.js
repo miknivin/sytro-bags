@@ -7,7 +7,7 @@ import "rc-slider/assets/index.css";
 import PixelTracker from "@/components/common/PixelTracker";
 import { Analytics } from "@vercel/analytics/next";
 export const metadata = {
-  title: "Sytro",
+  title: "Sytrobags",
   description: "Sytro bags",
   icons: {
     icon: "/favicon.ico?v=2",
@@ -55,8 +55,8 @@ export default function RootLayout({ children }) {
         )}
       </head>
       <body className="preload-wrapper">
-        <div 
-          className="preload preload-container" 
+        <div
+          className="preload preload-container"
           id="preloader"
           style={{
             position: "fixed",
