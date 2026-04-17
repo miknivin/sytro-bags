@@ -10,7 +10,8 @@ const FullScreenSpinner = () => {
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: 9999,
+        backgroundColor: "#ffffff",
+        zIndex: 99999,
       }}
     >
       <div className="spinner-border text-warning" role="status">

@@ -55,7 +55,19 @@ export default function RootLayout({ children }) {
         )}
       </head>
       <body className="preload-wrapper">
-        <div className="preload preload-container" id="preloader">
+        <div 
+          className="preload preload-container" 
+          id="preloader"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#ffffff",
+            zIndex: 9999999,
+          }}
+        >
           <div className="preload-logo">
             <div className="spinner"></div>
           </div>

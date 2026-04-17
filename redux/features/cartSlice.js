@@ -11,30 +11,38 @@ const initialState = {
 };
 
 if (typeof window !== "undefined") {
-  initialState.cartItems = localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems"))
-    : [];
+  try {
+    initialState.cartItems = localStorage.getItem("cartItems")
+      ? JSON.parse(localStorage.getItem("cartItems"))
+      : [];
 
-  initialState.shippingInfo = localStorage.getItem("shippingInfo")
-    ? JSON.parse(localStorage.getItem("shippingInfo"))
-    : {};
+    initialState.shippingInfo = localStorage.getItem("shippingInfo")
+      ? JSON.parse(localStorage.getItem("shippingInfo"))
+      : {};
 
-  initialState.uploadedImages = localStorage.getItem("uploadedImages")
-    ? JSON.parse(localStorage.getItem("uploadedImages"))
-    : {};
+    initialState.uploadedImages = localStorage.getItem("uploadedImages")
+      ? JSON.parse(localStorage.getItem("uploadedImages"))
+      : {};
 
-  initialState.selectedDesigns = localStorage.getItem("selectedDesigns")
-    ? JSON.parse(localStorage.getItem("selectedDesigns"))
-    : {};
+    initialState.selectedDesigns = localStorage.getItem("selectedDesigns")
+      ? JSON.parse(localStorage.getItem("selectedDesigns"))
+      : {};
 
-  initialState.customNames = localStorage.getItem("customNames")
-    ? JSON.parse(localStorage.getItem("customNames"))
-    : {};
+    initialState.customNames = localStorage.getItem("customNames")
+      ? JSON.parse(localStorage.getItem("customNames"))
+      : {};
+  } catch (error) {
+    console.error("Redux initial state load failed safely:", error);
+  }
 }
 
 // Helper function to persist data in local storage
 const saveToLocalStorage = (key, value) => {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    // Fail silently or log
+  }
 };
 
 export const cartSlice = createSlice({

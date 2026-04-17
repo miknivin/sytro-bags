@@ -8,18 +8,26 @@ const initialState = {
 };
 
 if (typeof window !== "undefined") {
-  initialState.cartItems = localStorage.getItem("cartItems")
-    ? JSON.parse(localStorage.getItem("cartItems"))
-    : [];
+  try {
+    initialState.cartItems = localStorage.getItem("cartItems")
+      ? JSON.parse(localStorage.getItem("cartItems"))
+      : [];
 
-  initialState.shippingInfo = localStorage.getItem("shippingInfo")
-    ? JSON.parse(localStorage.getItem("shippingInfo"))
-    : {};
+    initialState.shippingInfo = localStorage.getItem("shippingInfo")
+      ? JSON.parse(localStorage.getItem("shippingInfo"))
+      : {};
+  } catch (error) {
+    console.error("Ordinary state load failed safely:", error);
+  }
 }
 
 // Helper function to persist data in local storage
 const saveToLocalStorage = (key, value) => {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    // Fail silently
+  }
 };
 
 export const ordinaryCartSlice = createSlice({
