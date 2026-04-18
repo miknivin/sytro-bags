@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useCreateNewOrderMutation } from "@/redux/api/orderApi";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import CartFooter from "./checkout/CartFooter";
 import { countries } from "@/data/countries.js";
 import { states } from "@/data/states.js";
@@ -430,18 +431,20 @@ export default function Checkout() {
               {error && <p>Error placing order</p>}
             </form>
           </div>
-          <CartFooter
-            cartItems={cartItems}
-            subtotal={subtotal}
-            discountAmount={discountAmount}
-            totalAmount={totalAmount}
-            appliedCoupon={appliedCoupon}
-            setAppliedCoupon={setAppliedCoupon}
-            formData={formData}
-            // email={email}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
+          <Suspense fallback={<FullScreenSpinner />}>
+            <CartFooter
+              cartItems={cartItems}
+              subtotal={subtotal}
+              discountAmount={discountAmount}
+              totalAmount={totalAmount}
+              appliedCoupon={appliedCoupon}
+              setAppliedCoupon={setAppliedCoupon}
+              formData={formData}
+              // email={email}
+              handleSubmit={handleSubmit}
+              isLoading={isLoading}
+            />
+          </Suspense>
         </div>
       </div>
     </section>

@@ -5,7 +5,9 @@ import "@/styles/main.scss";
 import "photoswipe/dist/photoswipe.css";
 import "rc-slider/assets/index.css";
 import PixelTracker from "@/components/common/PixelTracker";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import { Analytics } from "@vercel/analytics/next";
+import { Suspense } from "react";
 export const metadata = {
   title: "Sytrobags",
   description: "Sytro bags",
@@ -57,7 +59,9 @@ export default function RootLayout({ children }) {
       <body>
         <ReduxProvider>
           <ClientWrapper>
-            <PixelTracker />
+            <Suspense fallback={<FullScreenSpinner />}>
+              <PixelTracker />
+            </Suspense>
             {children}
             <Analytics />
           </ClientWrapper>

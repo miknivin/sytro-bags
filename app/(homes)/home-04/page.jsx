@@ -2,6 +2,7 @@ import Features from "@/components/common/Features";
 import Footer2 from "@/components/footers/Footer2";
 import Header2 from "@/components/headers/Header2";
 import Topbar2 from "@/components/headers/Topbar2";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import Categories from "@/components/homes/home-4/Categories";
 import Categories2 from "@/components/homes/home-4/Categories2";
 import Hero from "@/components/homes/home-4/Hero";
@@ -9,7 +10,7 @@ import Marquee from "@/components/homes/home-4/Marquee";
 import Products from "@/components/homes/home-4/Products";
 import ShopGram from "@/components/homes/home-4/ShopGram";
 import Testimonials from "@/components/homes/home-4/Testimonials";
-import React from "react";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Home",
@@ -23,7 +24,9 @@ export default function page() {
       <Hero />
       <Marquee />
       <Categories />
-      <Products />
+      <Suspense fallback={<FullScreenSpinner />}>
+        <Products />
+      </Suspense>
       <Testimonials />
       <Categories2 />
       <Features />

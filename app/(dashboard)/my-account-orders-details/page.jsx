@@ -1,9 +1,9 @@
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import DashboardNav from "@/components/othersPages/dashboard/DashboardNav";
 import OrderDetails from "@/components/othersPages/dashboard/OrderDetails";
-import Orders from "@/components/othersPages/dashboard/Orders";
-import React from "react";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "My Account Orders || Sytro",
@@ -25,7 +25,9 @@ export default function page() {
               <DashboardNav />
             </div>
             <div className="col-lg-9">
-              <OrderDetails />
+              <Suspense fallback={<FullScreenSpinner />}>
+                <OrderDetails />
+              </Suspense>
             </div>
           </div>
         </div>

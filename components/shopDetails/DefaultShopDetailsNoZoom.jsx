@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Quantity from "./Quantity";
 import toast from "react-hot-toast";
@@ -12,6 +12,7 @@ import OrdinaryStickyItem from "./OrdinaryStickyItems";
 import Slider1ZoomOuterOrdinary from "./sliders/Slider1ZoomOuterOrdinary";
 import OfferTimer from "@/utlis/OfferTimer";
 import CustomAlert from "@/utlis/CustomAlert";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import ShopCart from "@/components/modals/ShopCart";
 import SuperKidBag from "@/components/modals/SuperKidBag";
 
@@ -387,14 +388,16 @@ export default function DefaultShopDetailsNoZoom({ product }) {
         triggerAlert={triggerAlert}
         onOpenCart={() => setIsCartOpen(true)}
       />
-      <SuperKidBag
-        open={isCustomizerOpen}
-        product={product}
-        onClose={() => setIsCustomizerOpen(false)}
-        onUploadComplete={handleUploadComplete}
-        initialCustomName={customName}
-        maxFiles={1}
-      />
+      <Suspense fallback={<FullScreenSpinner />}>
+        <SuperKidBag
+          open={isCustomizerOpen}
+          product={product}
+          onClose={() => setIsCustomizerOpen(false)}
+          onUploadComplete={handleUploadComplete}
+          initialCustomName={customName}
+          maxFiles={1}
+        />
+      </Suspense>
       <ShopCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </section>
   );

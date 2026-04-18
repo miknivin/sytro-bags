@@ -10,7 +10,9 @@ import Header4 from "@/components/headers/Header4";
 import Moments from "@/components/common/Moments";
 import GoogleReviews from "@/components/common/GoogleReviews";
 import TrustBanner from "@/components/common/TrustBanner";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import Footer1 from "@/components/footers/Footer1";
+import { Suspense } from "react";
 export const metadata = {
   title: "Home || Sytro",
   description: "Sytro",
@@ -25,7 +27,9 @@ export default function Home() {
       <BackToSchoolCollection />
       {/* <Marquee /> */}
       <Categories />
-      <Products />
+      <Suspense fallback={<FullScreenSpinner />}>
+        <Products />
+      </Suspense>
       <Moments />
       <GoogleReviews />
       {/* <Testimonials /> */}

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { memo, useState } from "react";
+import { memo, Suspense, useState } from "react";
 import { useGetProductDetailsQuery } from "@/redux/api/productsApi";
 import { useDispatch, useSelector } from "react-redux";
 import FullScreenSpinner from "@/components/common/FullScreenSpinner";
@@ -156,14 +156,16 @@ function ProductDetailsClient({ productId }) {
       <Features />
       <TrustBanner />
       <TestimonialImages />
-      <SuperKidBag
-        open={isCustomizerOpen}
-        product={product}
-        onClose={handleCloseCustomizer}
-        onUploadComplete={handleUploadComplete}
-        initialCustomName={initialCustomName}
-        maxFiles={1}
-      />
+      <Suspense fallback={<FullScreenSpinner />}>
+        <SuperKidBag
+          open={isCustomizerOpen}
+          product={product}
+          onClose={handleCloseCustomizer}
+          onUploadComplete={handleUploadComplete}
+          initialCustomName={initialCustomName}
+          maxFiles={1}
+        />
+      </Suspense>
       <ShopCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );

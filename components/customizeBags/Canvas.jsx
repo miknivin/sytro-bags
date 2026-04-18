@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { Suspense, useRef, useState, useEffect } from "react";
 import DesignUpload from "./DesignUpload";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import DraggableImage from "./DraggableImage";
 import { useDispatch } from "react-redux";
 import { clearImages, setCustomDesign } from "@/redux/features/customBagSlice";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import html2canvas from "html2canvas";
 
 export default function Canvas({ modalRef }) {
@@ -129,7 +130,9 @@ export default function Canvas({ modalRef }) {
         </div>
       ) : (
         <div className="d-flex justify-content-center align-items-center">
-          <DesignUpload onFileUpload={setIsFileUploaded} />
+          <Suspense fallback={<FullScreenSpinner />}>
+            <DesignUpload onFileUpload={setIsFileUploaded} />
+          </Suspense>
         </div>
       )}
     </div>

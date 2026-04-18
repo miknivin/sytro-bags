@@ -1,7 +1,8 @@
 import Footer1 from "@/components/footers/Footer1";
+import FullScreenSpinner from "@/components/common/FullScreenSpinner";
 import Header4 from "@/components/headers/Header4";
 import Checkout from "@/components/othersPages/Checkout";
-import React from "react";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Sytro bags",
@@ -17,7 +18,9 @@ export default function page() {
         </div>
       </div>
 
-      <Checkout />
+      <Suspense fallback={<FullScreenSpinner />}>
+        <Checkout />
+      </Suspense>
       <Footer1 />
     </>
   );
