@@ -43,8 +43,7 @@ export default function RootLayout({ children }) {
             src="https://www.facebook.com/tr?id=9518901524895878&ev=PageView&noscript=1"
           />
         </noscript>
-
-        {/* {isProduction && (
+        {isProduction && (
           <Script id="microsoft-clarity" strategy="afterInteractive">
             {`
               (function(c,l,a,r,i,t,y){
@@ -54,7 +53,7 @@ export default function RootLayout({ children }) {
      })(window, document, "clarity", "script", "qq5qu3wvx2");
            `}
           </Script>
-        )} */}
+        )}
       </head>
       <body>
         <ReduxProvider>

@@ -87,6 +87,15 @@ export const slides3 = [
   // },
   {
     imgSrc:
+      "https://ik.imagekit.io/byaqwirhz/banner10.jpeg",
+    alt: "New Banner",
+    link: "/shop-collection-sub/Kids%20Bags",
+    heading: "New Collection",
+    subheading: "LATEST ARRIVALS",
+    shortDescription: "Check out our latest collection",
+  },
+  {
+    imgSrc:
       "https://ik.imagekit.io/c1jhxlxiy/gym%20bag.jpg?updatedAt=1752560718222",
     alt: "gym duffle bags",
     link: "/shop-collection-sub/gym_duffle_bag",
@@ -137,6 +146,7 @@ export const slides3 = [
     shortDescription:
       "Showcasing premium travel bags that adapt to your journey",
   },
+
   // {
   //   imgSrc:
   //     "https://ik.imagekit.io/c1jhxlxiy/u1d3zm7uxlaihgeevavt.webp?updatedAt=1741438878940",
