@@ -48,6 +48,18 @@ export default function VideoPlayer() {
     };
   }, []);
 
+  // Safely attempt autoplay when video src is loaded (iOS Safari returns a Promise that can reject)
+  useEffect(() => {
+    if (!shouldLoadVideo || !videoRef.current) return;
+    const video = videoRef.current;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Autoplay blocked by browser policy (common on iOS) — safe to ignore
+      });
+    }
+  }, [shouldLoadVideo]);
+
   const bind = useDrag(({ movement: [mx, my], memo }) => {
     const startX = memo?.x ?? position.x;
     const startY = memo?.y ?? position.y;
@@ -67,12 +79,36 @@ export default function VideoPlayer() {
   });
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      videoRef.current?.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+    try {
+      const video = videoRef.current;
+      if (!video) return;
+
+      // Check for standard OR webkit-prefixed fullscreen support (Safari desktop)
+      const isInFullscreen =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement;
+
+      if (!isInFullscreen) {
+        // Use webkit prefix for Safari desktop, standard for others
+        if (video.requestFullscreen) {
+          video.requestFullscreen().catch(() => {});
+        } else if (video.webkitEnterFullscreen) {
+          // iOS Safari native video fullscreen
+          video.webkitEnterFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+          video.webkitRequestFullscreen();
+        }
+        setIsFullscreen(true);
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        setIsFullscreen(false);
+      }
+    } catch (e) {
+      // Fullscreen not supported (iOS Safari in-page) — silently ignore
     }
   };
 
@@ -101,7 +137,6 @@ export default function VideoPlayer() {
       <video
         ref={videoRef}
         src={shouldLoadVideo ? "/videos/sytro.mp4" : undefined}
-        autoPlay
         muted
         loop
         playsInline
@@ -110,6 +145,7 @@ export default function VideoPlayer() {
         style={{
           objectFit: isFullscreen ? "contain" : "cover",
         }}
+        onError={() => {}}
       />
       <button
         onClick={toggleFullscreen}
