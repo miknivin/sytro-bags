@@ -18,7 +18,7 @@ function GoogleReviews({ isTitle = true }) {
   }
 
   if (error) {
-    return <div>Error loading reviews: {error.message}</div>;
+    return <div>Error loading reviews.</div>;
   }
 
   const reviews = reviewsData?.reviews || [];
