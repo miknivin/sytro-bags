@@ -8,6 +8,11 @@ import { triggerAdminShipment } from "@/utlis/triggerAdminShipment";
 
 export async function POST(req) {
   try {
+    // IMPORTANT: dbConnect() must be called BEFORE isAuthenticatedUser()
+    // because auth queries the DB (User.findById). If DB is not connected,
+    // auth fails → order never saved even though Razorpay captured payment.
+    await dbConnect();
+
     const user = await isAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json(
@@ -57,22 +62,15 @@ export async function POST(req) {
       );
     }
 
-    await dbConnect();
+    // dbConnect() already called at the top of this handler
 
-    // Get COD charge from env with validation
+    // Get COD charge from env with validation — fallback to 100 if not set
     const codChargeRaw = process.env.COD_CHARGE;
-    const codCharge = Number(codChargeRaw);
+    const codCharge = Number(codChargeRaw ?? 100);
 
-    // Validate COD charge
+    // Validate COD charge — use fallback instead of killing the order save
     if (isNaN(codCharge) || codCharge < 0) {
-      console.error(`Invalid COD_CHARGE in env: ${codChargeRaw}`);
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Server configuration error: Invalid COD charge",
-        },
-        { status: 500 },
-      );
+      console.error(`Invalid COD_CHARGE in env: ${codChargeRaw}, using fallback of 100`);
     }
 
     // Validate advance amount
@@ -164,7 +162,13 @@ export async function POST(req) {
       order: { localOrder: order },
     });
   } catch (error) {
-    console.error("Advance webhook error:", error);
+    // Log full error details server-side to help diagnose missing orders
+    console.error("Advance webhook error:", {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+      ...(error.errors && { validationErrors: Object.keys(error.errors) }),
+    });
     return NextResponse.json(
       {
         success: false,

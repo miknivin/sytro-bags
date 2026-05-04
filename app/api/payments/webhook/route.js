@@ -9,6 +9,10 @@ import SessionStartedOrder from "@/models/SessionStartedOrder";
 import { triggerAdminShipment } from "@/utlis/triggerAdminShipment";
 export async function POST(req) {
   try {
+    // IMPORTANT: dbConnect() must be called BEFORE isAuthenticatedUser()
+    // because auth queries the DB (User.findById). If DB is not connected,
+    // auth fails → order never saved even though Razorpay captured payment.
+    await dbConnect();
     SessionStartedOrder;
     Product;
     User;
@@ -59,7 +63,7 @@ export async function POST(req) {
     }
     console.log("verified payment");
 
-    await dbConnect();
+    // dbConnect() already called at the top of this handler
     console.log("db connected");
 
     const order = await Order.create({
@@ -106,7 +110,14 @@ export async function POST(req) {
       },
     });
   } catch (error) {
-    console.error("Error handling webhook:", error);
+    // Log full error details server-side to help diagnose missing orders
+    console.error("Error handling webhook:", {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+      // If it's a Mongoose ValidationError, log which fields failed
+      ...(error.errors && { validationErrors: Object.keys(error.errors) }),
+    });
     return NextResponse.json(
       { success: false, error: "Internal Server Error" },
       { status: 500 }
