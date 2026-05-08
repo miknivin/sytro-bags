@@ -109,38 +109,72 @@ export async function POST(req) {
       );
     }
 
-    const order = await Order.create({
-      shippingInfo,
-      user: user._id,
-      orderItems: cartItems,
-
-      paymentMethod: "Partial-COD",
-      advancePaid: advanceAmount,
-      advancePaidAt: new Date(),
-
-      paymentInfo: {
-        id: razorpay_payment_id,
-        status: "Advance Paid",
-      },
-
-      itemsPrice,
-      shippingAmount: shippingPrice,
-      taxAmount: taxPrice,
-      totalAmount: overallTotal, // base + COD charge
-
-      // Explicitly set calculated fields
-      remainingAmount: remainingProductValue,
-      codAmount: codAmountToCollect,
-
-      orderNotes,
-      couponApplied,
-      discountAmount: discountAmount || 0,
-      couponDiscountType: couponDiscountType || "",
-      couponDiscountValue: couponDiscountValue || 0,
-
-      // Optional: also store the COD charge explicitly (useful for reports)
-      codChargeCollected: codCharge,
+    // 5. IDEMPOTENCY CHECK — if order already saved by server-side webhook, skip
+    const existingOrder = await Order.findOne({
+      "paymentInfo.id": razorpay_payment_id,
     });
+
+    if (existingOrder) {
+      console.log(
+        `[Advance Client Webhook] Order already exists for payment ${razorpay_payment_id} — skipping`
+      );
+      return NextResponse.json({
+        success: true,
+        message: "Order already exists",
+        order: { localOrder: existingOrder },
+      });
+    }
+
+    let order;
+    try {
+      order = await Order.create({
+        shippingInfo,
+        user: user._id,
+        orderItems: cartItems,
+
+        paymentMethod: "Partial-COD",
+        advancePaid: advanceAmount,
+        advancePaidAt: new Date(),
+
+        paymentInfo: {
+          id: razorpay_payment_id,
+          status: "Advance Paid",
+        },
+
+        itemsPrice,
+        shippingAmount: shippingPrice,
+        taxAmount: taxPrice,
+        totalAmount: overallTotal, // base + COD charge
+
+        // Explicitly set calculated fields
+        remainingAmount: remainingProductValue,
+        codAmount: codAmountToCollect,
+
+        orderNotes,
+        couponApplied,
+        discountAmount: discountAmount || 0,
+        couponDiscountType: couponDiscountType || "",
+        couponDiscountValue: couponDiscountValue || 0,
+
+        // Optional: also store the COD charge explicitly (useful for reports)
+        codChargeCollected: codCharge,
+      });
+    } catch (createError) {
+      if (createError.code === 11000) {
+        console.log(
+          `[Advance Client Webhook] Race condition hit: Order already created for ${razorpay_payment_id}`
+        );
+        const existing = await Order.findOne({
+          "paymentInfo.id": razorpay_payment_id,
+        });
+        return NextResponse.json({
+          success: true,
+          message: "Order already exists (handled via index)",
+          order: { localOrder: existing },
+        });
+      }
+      throw createError;
+    }
 
     // Cleanup session
     setImmediate(() => {

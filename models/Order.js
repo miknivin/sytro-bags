@@ -175,6 +175,17 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Add a partial unique index on paymentInfo.id
+// This prevents duplicates at the database level even if two requests arrive at the exact same time.
+// It only applies when paymentInfo.id is a string (skips null/missing for COD).
+orderSchema.index(
+  { "paymentInfo.id": 1 },
+  {
+    unique: true,
+    partialFilterExpression: { "paymentInfo.id": { $type: "string" } },
+  },
+);
+
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
 export default Order;

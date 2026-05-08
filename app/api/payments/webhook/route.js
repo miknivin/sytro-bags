@@ -63,28 +63,59 @@ export async function POST(req) {
     }
     console.log("verified payment");
 
-    // dbConnect() already called at the top of this handler
-    console.log("db connected");
-
-    const order = await Order.create({
-      shippingInfo,
-      user: user._id,
-      orderItems: cartItems,
-      paymentMethod: "Online",
-      paymentInfo: {
-        id: razorpay_payment_id,
-        status: "Paid",
-      },
-      itemsPrice,
-      shippingAmount: shippingPrice,
-      taxAmount: taxPrice,
-      orderNotes: orderNotes,
-      totalAmount: totalPrice,
-      couponApplied,
-      discountAmount: discountAmount || 0,
-      couponDiscountType: couponDiscountType || "",
-      couponDiscountValue: couponDiscountValue || 0,
+    // 5. IDEMPOTENCY CHECK — if order already saved by server-side webhook, skip
+    const existingOrder = await Order.findOne({
+      "paymentInfo.id": razorpay_payment_id,
     });
+
+    if (existingOrder) {
+      console.log(
+        `[Client Webhook] Order already exists for payment ${razorpay_payment_id} — skipping`
+      );
+      return NextResponse.json({
+        success: true,
+        message: "Order already exists",
+        order: { localOrder: existingOrder },
+      });
+    }
+
+    let order;
+    try {
+      order = await Order.create({
+        shippingInfo,
+        user: user._id,
+        orderItems: cartItems,
+        paymentMethod: "Online",
+        paymentInfo: {
+          id: razorpay_payment_id,
+          status: "Paid",
+        },
+        itemsPrice,
+        shippingAmount: shippingPrice,
+        taxAmount: taxPrice,
+        orderNotes: orderNotes,
+        totalAmount: totalPrice,
+        couponApplied,
+        discountAmount: discountAmount || 0,
+        couponDiscountType: couponDiscountType || "",
+        couponDiscountValue: couponDiscountValue || 0,
+      });
+    } catch (createError) {
+      if (createError.code === 11000) {
+        console.log(
+          `[Client Webhook] Race condition hit: Order already created for ${razorpay_payment_id}`
+        );
+        const existing = await Order.findOne({
+          "paymentInfo.id": razorpay_payment_id,
+        });
+        return NextResponse.json({
+          success: true,
+          message: "Order already exists (handled via index)",
+          order: { localOrder: existing },
+        });
+      }
+      throw createError;
+    }
 
     setImmediate(() => {
       SessionStartedOrder.deleteOne({ razorpayOrderId: razorpay_order_id })
