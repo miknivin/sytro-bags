@@ -34,21 +34,37 @@ const OTPAuthentication = ({ phone, closeModal, onPhoneVerified }) => {
   }, [timer]);
 
   const setupRecaptcha = () => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: (response) => {
-            console.log("reCAPTCHA verified");
-          },
-          "expired-callback": () => {
-            console.log("reCAPTCHA expired");
-          },
-        }
-      );
+    // Always clear the old verifier — if the modal re-rendered, the DOM
+    // element it was attached to is gone, causing the "element removed" error.
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (_) {
+        // Ignore errors during cleanup
+      }
+      window.recaptchaVerifier = null;
     }
+
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {
+          console.log("reCAPTCHA verified");
+        },
+        "expired-callback": () => {
+          console.log("reCAPTCHA expired");
+          // Clear on expiry so next attempt gets a fresh verifier
+          if (window.recaptchaVerifier) {
+            try {
+              window.recaptchaVerifier.clear();
+            } catch (_) {}
+            window.recaptchaVerifier = null;
+          }
+        },
+      }
+    );
   };
 
   const validateAndFormatPhoneNumber = (phone) => {
