@@ -26,11 +26,11 @@ function DetailsOuterZoom({ product, details, onOrderNow, isAddedToCart }) {
   return (
     <section
       className="flat-spacing-4 pt_0"
-      style={{ maxWidth: "100vw", overflow: "hidden" }}
+      style={{ maxWidth: "100%", overflow: "hidden" }}
     >
       <div
         className="tf-main-product section-image-zoom"
-        style={{ maxWidth: "100vw", overflow: "hidden" }}
+        style={{ maxWidth: "100%", overflow: "hidden" }}
       >
         <div className="container">
           <div className="row">

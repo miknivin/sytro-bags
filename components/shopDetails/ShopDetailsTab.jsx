@@ -21,7 +21,7 @@ function ShopDetailsTab({ details, defaultTab = 1 }) {
   return (
     <section
       className="flat-spacing-17 pt_0"
-      style={{ maxWidth: "100vw", overflow: "clip" }}
+      style={{ maxWidth: "100%", overflow: "clip" }}
     >
       <div className="container">
         <div className="row">

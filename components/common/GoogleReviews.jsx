@@ -28,7 +28,7 @@ function GoogleReviews({ isTitle = true }) {
   return (
     <section
       className="flat-spacing-5 pt_0 flat-testimonial"
-      style={{ maxWidth: "100vw", overflow: "hidden" }}
+      style={{ maxWidth: "100%", overflow: "hidden" }}
     >
       <div className="container px-md-5">
         {isTitle && (

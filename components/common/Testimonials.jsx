@@ -10,7 +10,7 @@ export default function Testimonials({isTitle}) {
   return (
     <section
       className="flat-spacing-5 pt_0 flat-testimonial"
-      style={{ maxWidth: "100vw", overflow: "hidden" }}
+      style={{ maxWidth: "100%", overflow: "hidden" }}
     >
       <div style={{ padding: "0 20px" }} className="container px-2.5">
         {isTitle&&(
