@@ -10,23 +10,7 @@ import { useGetMomentsQuery } from "@/redux/api/websiteSettings";
 export const dynamic = "force-dynamic";
 function Moments() {
   const { data, error, isLoading } = useGetMomentsQuery();
-  const [playingVideos, setPlayingVideos] = useState({});
-  const videoRefs = useRef({});
-
-  const handlePlay = (index) => {
-    const video = videoRefs.current[index];
-    if (video) {
-      video.play();
-    }
-  };
-
-  const handleVideoPlay = (index) => {
-    setPlayingVideos((prev) => ({ ...prev, [index]: true }));
-  };
-
-  const handleVideoPause = (index) => {
-    setPlayingVideos((prev) => ({ ...prev, [index]: false }));
-  };
+  const [activePlayingIndex, setActivePlayingIndex] = useState(null);
 
   return (
     <section
@@ -60,6 +44,7 @@ function Moments() {
                 delay: 5000,
                 disableOnInteraction: true,
               }}
+              onSlideChange={() => setActivePlayingIndex(null)}
               breakpoints={{
                 1200: {
                   slidesPerView: 5,
@@ -83,58 +68,61 @@ function Moments() {
               {data.data.flat().map((url, i) => (
                 <SwiperSlide key={i} className="swiper-slide">
                   <div className="tf-video-box style-border-line text-center mx-auto position-relative">
-                    <video
-                      className="w-100 video-aspect-ratio object-fit-cover rounded-4"
-                      ref={(el) => (videoRefs.current[i] = el)}
-                      controls={playingVideos[i]}
-                      muted
-                      playsInline
-                      preload="metadata"
-                      onPlay={() => handleVideoPlay(i)}
-                      onPause={() => handleVideoPause(i)}
-                    >
-                      <source src={`${url}#t=0.001`} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                    {!playingVideos[i] && (
-                      <button
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          background: "rgba(0, 0, 0, 0.5)",
-                          border: "none",
-                          borderRadius: "50%",
-                          width: "50px",
-                          height: "50px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          cursor: "pointer",
-                          transition: "background 0.3s",
-                        }}
-                        className="play-button position-absolute"
-                        onClick={() => handlePlay(i)}
+                    {activePlayingIndex === i ? (
+                      <video
+                        className="w-100 video-aspect-ratio object-fit-cover rounded-4"
+                        controls
+                        autoPlay
+                        playsInline
+                        preload="auto"
+                        onPause={() => setActivePlayingIndex(null)}
+                        onEnded={() => setActivePlayingIndex(null)}
                       >
-                        <svg
-                          className="text-gray-800 dark:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={30}
-                          height={30}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke="white"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 18V6l8 6-8 6Z"
-                          />
-                        </svg>
-                      </button>
+                        <source src={url} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <div
+                        className="w-100 video-aspect-ratio rounded-4 d-flex flex-column align-items-center justify-content-center position-relative cursor-pointer"
+                        style={{
+                          background: "linear-gradient(135deg, #111827 0%, #1f2937 100%)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3)",
+                          minHeight: "280px"
+                        }}
+                        onClick={() => setActivePlayingIndex(i)}
+                      >
+                        {/* Watermark Logo */}
+                        <div style={{ opacity: 0.08, position: "absolute", top: "20px" }}>
+                          <img src="/images/logo/logo-white.svg" alt="Sytro Logo" width="80" />
+                        </div>
+
+                        {/* Play Button Overlay */}
+                        <div className="d-flex flex-column align-items-center" style={{ zIndex: 2 }}>
+                          <div className="play-button-outer d-flex align-items-center justify-content-center mb-3" style={{
+                            width: "54px",
+                            height: "54px",
+                            borderRadius: "50%",
+                            backgroundColor: "#ffc720",
+                            color: "#000",
+                            boxShadow: "0 4px 20px rgba(255, 199, 32, 0.4)",
+                            transition: "transform 0.2s ease"
+                          }}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                          <span className="badge rounded-pill bg-dark border border-secondary text-white px-3 py-2 small fw-bold" style={{ fontSize: "11px", letterSpacing: "0.05em" }}>
+                            WATCH REEL
+                          </span>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </SwiperSlide>
